@@ -75,18 +75,7 @@ Added the 24 hour temperature centered on the sampling day. Ended up making the 
 
 \# Feb 18, 2026 Created a couple of abundance plots to show differences between 16s data and sylph data. Moved a bunch of plots scirpts to the 02_plots script. Based on differences in how families change continue to keep writing down my findings. \*\*Created a script to look at graphs of the most abundant families.
 
-**TODO** 
-  -  How to deal with the difference between the mag data and the 16s data?
-  -  Show NDMS graphs 
-  -  Show temperature determination 
-  -  Binning script? 
-  -  missing merged.fasta file 
-  -  Committee 
-    -  Jay 
-    -  Ted 
-    -  Bill 
--  Formal Thesis Proposal? 
--  Job Stuff.
+**TODO** - How to deal with the difference between the mag data and the 16s data? - Show NDMS graphs - Show temperature determination - Binning script? - missing merged.fasta file - Committee - Jay - Ted - Bill - Formal Thesis Proposal? - Job Stuff.
 
 **First work on binning stuff, then lefse, then think about committee things.**
 
@@ -349,27 +338,19 @@ t1$plot_bar(facet = "strat_season") +
   ggtitle(taxa)
 ```
 
-Scratch that. Talked with Cody today and he said we should be looking at the 16s data as it has a less sensitive cutoff so may be more "accurate" than the sylph data. Updated binning script by checking each part individually, removed the 'environment' option fom the multi binning part, and changed the delimiter in the final contigs file to look for '_' instead of ':'. Once each one worked, I started the whole binning script and we will see how long it takes. 
+Scratch that. Talked with Cody today and he said we should be looking at the 16s data as it has a less sensitive cutoff so may be more "accurate" than the sylph data. Updated binning script by checking each part individually, removed the 'environment' option fom the multi binning part, and changed the delimiter in the final contigs file to look for '\_' instead of ':'. Once each one worked, I started the whole binning script and we will see how long it takes.
 
-  -  Did some research into lefSE and using that in microeco. The resulting code is at the bottom of 16s analysis. The next thing to do is to look at what taxa are coming out there. 
-  -  See if I can get some other data from Jay. - CHECK
-  -  Start laying out some figures (read a couple of papers)
-  - Email Stormi about outside thesis committee folks - CHECK
+-   Did some research into lefSE and using that in microeco. The resulting code is at the bottom of 16s analysis. The next thing to do is to look at what taxa are coming out there.
+-   See if I can get some other data from Jay. - CHECK
+-   Start laying out some figures (read a couple of papers)
+-   Email Stormi about outside thesis committee folks - CHECK
 
 # March 6, 2026
-Loaded maestro data into R. There is bad data at the beginning of the deployment for the first two days. Then some of the sensors crap out at the end (pCO2). 
-**TODO:**
-  -  Figure out how to best deal with outliers in the variables
-  -  Average data and add to metadata
-  -  Ask Cody about how to best average the environmental data
-  -  Reorganize scripts to output the .csvs and load in the rest from excel files - CHECK
-  -  Use Bill's script to average the other data -CHECK
+
+Loaded maestro data into R. There is bad data at the beginning of the deployment for the first two days. Then some of the sensors crap out at the end (pCO2). **TODO:** - Figure out how to best deal with outliers in the variables - Average data and add to metadata - Ask Cody about how to best average the environmental data - Reorganize scripts to output the .csvs and load in the rest from excel files - CHECK - Use Bill's script to average the other data -CHECK
 
 # March 17, 2026
 
-Worked a lot today on the maestro data and tried to clean it up. Removed visually obvious outliers. made 24hr averages and added them to the meta data file. Decided on a 1degC temperature difference from the maestro to the closest thermistor to determine whether we could incorporate the maestro data into our analysis. Made my '01_metadata_import_clean.R' easy to just source or I can take the data products from my data folder. 
+Worked a lot today on the maestro data and tried to clean it up. Removed visually obvious outliers. made 24hr averages and added them to the meta data file. Decided on a 1degC temperature difference from the maestro to the closest thermistor to determine whether we could incorporate the maestro data into our analysis. Made my '01_metadata_import_clean.R' easy to just source or I can take the data products from my data folder.
 
-**Outstanding questions:**
-  -  How to deal with outliers in oxygen data
-  -  Is a 1 degree change close enough for us to assume the water column is mixing?
-  -  pH and turbidity data
+**Outstanding questions:** - How to deal with outliers in oxygen data - Is a 1 degree change close enough for us to assume the water column is mixing? - pH and turbidity data
