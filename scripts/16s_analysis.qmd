@@ -1,0 +1,85 @@
+---
+title: "16s Abundance"
+format: html
+---
+# Load required libraries
+``` {r}
+library(tidyverse)
+library(microeco)
+# For importing .biom file
+library(phyloseq)
+library(file2meco)
+# Extra packages for plotting
+library(ggalluvial)
+library(ggnested) # Needs to be installed from github not CRAN
+library(ggarrow)
+```
+
+
+# Abundance Plots
+```{r}
+
+# Set rank (k, p, c, etc) and number of taxa to include
+rank <- "p"
+n <- 20
+
+# Create abundance object
+t1 <- trans_abund$new(meco_16s, taxrank = "p", ntaxa = 20)
+
+# Plot abunances
+
+t1$plot_bar(others_color = "grey70", xtext_keep = TRUE, legend_text_italic = FALSE) +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1, vjust = 1, size=9))
+
+# Plot alluvial
+
+t1$plot_bar(bar_full = F, use_alluvium = T, others_color = "grey70", xtext_keep = TRUE, legend_text_italic = FALSE, clustering = T) +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1, vjust = 1, size=9))
+
+# Double Abudances plot
+
+t2 <- trans_abund$new(dataset = meco_16s, taxrank = "f", ntaxa = 30, show = 0, high_level = "c")
+
+t2$plot_bar(ggnested = T, xtext_angle = 45) +
+  ggtitle("16S", subtitle = "30 abundant families")
+
+# Heat Map
+
+t3 <- trans_abund$new(dataset = meco_16s, taxrank = "g", ntaxa = 40)
+g1 <- t3$plot_heatmap(xtext_keep = T, withmargin = FALSE, plot_breaks = c(0.01, 0.1, 1, 10))
+g1
+g1 + theme(axis.text.y = element_text(face = 'italic'), axis.text.x = element_text(angle = 45, hjust = 1, vjust = 1, size=9))
+```
+
+# Alpha Diversity Plots
+
+```{r}
+# Create Trans alpha class
+ta_1 <- trans_alpha$new(meco_16s)
+ # view
+ta_1
+```
+
+# Beta Diversity Plots
+
+```{r}
+
+tb1 <- trans_beta$new(meco_16s, measure = "bray")
+tb1$cal_ordination(method = "NMDS")
+
+tb1$plot_ordination(color_values = scale_color_viridis_b(), NMDS_stress_text_prefix = "TEST") +
+geom_arrow_chain(colour = "red") +
+  scale_color_viridis_b()
+```
+
+#LeFSE plots
+
+
+```{r}
+t1 <- trans_diff$new(dataset = meco_16s, method = "lefse", group = "strat_season", alpha = 0.05, lefse_subgroup = NULL, p_adjust_method = "none")
+# see t1$res_diff for the result
+# From v0.8.0, threshold is used for the LDA score selection.
+t1$plot_diff_bar(threshold = 4)
+# we show 20 taxa with the highest LDA (log10)
+t1$plot_diff_bar(use_number = 1:20, width = 0.8)
+```

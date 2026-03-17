@@ -1,0 +1,375 @@
+---
+title: "Lab Notebook"
+format: html
+toc: true
+---
+
+# Date
+
+## Goals
+
+## Insights
+
+## 
+
+# Feb 05, 2026
+
+Looking at the 16s and sylph data it seems like the general major taxa are all similar however some of the minor taxa are different. **Question:** How sensitive are each method of taxonomy, which do we trust? **Next Steps:** - Split phyla into autotrophs and heterotrophs and mixotrophs - Incorporate env metadata (O2 measurements as measure of respiration and carbon consumed?) - Research into how I should go about sorting through this data - Research into how the 16S data vs the metagenomic data works - Keep working on getting binning data - *Figure out if I need to normalize the data and how?*
+
+```{r}
+source("scripts/01_intro_script.R")
+```
+
+# Feb 06, 2026
+
+Started looking at top 20 families. Code is in the bottom of "sylph_mircoeco". Also created spreadsheet with names of families and comments about what I could find out about their metabolism or ecology. - Continue this work - Email Jay to get temp data
+
+# Feb 10, 2026
+
+**Questions:** Chitinophagaceae diversity at WM03. Is there a way to look into how confident we are about that? What is the metagenome data that I am seeing?
+
+I am seeing a lot of variety within some of these families. I wonder if I should start to filter out some of the smaller taxa?
+
+Setup a script to isolate families - at the end of sylph_microeco **Chitinophagaceae** - mostly just one genus and species though within the most common genus (sedimini..) there was a ton of diversity at WM03. Maybe points to errors in sequencing?
+
+**Nitrosomonadaceae** - Lots of ammonia oxidizing to nitrate, nitrosomonas more abundant in the spring but nitrosospira abundant in the winter time. Is there functional redundancy here?
+
+**Sphingomonadaceae** - More diversity in species within this family. There is not a ton of information exept some that might suggest they are aerobic and some strains were found in freshwater sediments and drinking water
+
+Plotted abundances and saw a huge drop in abundance from WM16 to WM22 (April to June)
+
+For next time: https://library.virginia.edu/data/articles/starting-non-metric-multidimensional-scaling-nmds
+
+# Feb 16, 2026
+
+-   Imported matlab data to R. Used claude to get intial scripts to import the .mat file into python and then write to csvs. At the bottom of "Intro Scripts" there is a chunk to write all of those to a dataframe in R. Matlab date is since jan 1, 1900 rather than jan 1, 1970.
+-   Decided to rewrite the matlab import in R, kept at the bottom of 01_intro_scripts. Updated `sw_meta$strat_season` based on first 40m of temperature. Summer = stratification, fall = post summer isothermal period, winter = reverse stratification, spring = post winter isothermal Found some cool plots that look different based on the temperature but both seem to show seasonal differences.
+
+```{r}
+source("scripts/01_intro_script.R") # if needed
+tb2 <- trans_beta$new(mt_sylph, group = "strat_season", measure = "bray")
+tb2$cal_ordination(method = "NMDS")
+tb2$cal_ordination(method = "NMDS")
+tb2$cal_manova(manova_all = TRUE)
+print(tb2$res_manova)
+
+tb2$plot_ordination(plot_color = "strat_season", plot_shape = "strat_season", plot_type = c("point", "ellipse")) +
+  geom_arrow_chain(colour = "black") +
+    ggtitle("Sylph NMDS")
+
+  tb2 <- trans_beta$new(meco_16s, group = "strat_season", measure = "bray")
+tb2$cal_ordination(method = "NMDS")
+tb2$cal_ordination(method = "NMDS")
+tb2$cal_manova(manova_all = TRUE)
+print(tb2$res_manova)
+
+tb2$plot_ordination(plot_color = "strat_season", plot_shape = "strat_season", plot_type = c("point", "ellipse")) +
+  geom_arrow_chain(colour = "black") +
+    ggtitle("16s NMDS") +
+  NULL
+```
+
+# Feb 17, 2026
+
+Added the 24 hour temperature centered on the sampling day. Ended up making the 14 day average. **TODO:** create a couple of figures to show cody the differences in 16s vs sylph data. Plot temperature on these axis, maybe look at PCoA? - Also trim the temperature data to have the same number of days averaged before the first station.
+
+\# Feb 18, 2026 Created a couple of abundance plots to show differences between 16s data and sylph data. Moved a bunch of plots scirpts to the 02_plots script. Based on differences in how families change continue to keep writing down my findings. \*\*Created a script to look at graphs of the most abundant families.
+
+**TODO** 
+  -  How to deal with the difference between the mag data and the 16s data?
+  -  Show NDMS graphs 
+  -  Show temperature determination 
+  -  Binning script? 
+  -  missing merged.fasta file 
+  -  Committee 
+    -  Jay 
+    -  Ted 
+    -  Bill 
+-  Formal Thesis Proposal? 
+-  Job Stuff.
+
+**First work on binning stuff, then lefse, then think about committee things.**
+
+```{r}
+  # Set rank (k, p, c, etc) and number of taxa to include
+rank <- "o"
+n <- 20
+
+# Create abundance object
+ts1 <- trans_abund$new(mt_sylph, taxrank = rank, ntaxa = n)
+
+# Plot abunances
+abund_s <- ts1$plot_bar(others_color = "grey70", xtext_keep = TRUE, legend_text_italic = FALSE, facet = "strat_season") +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1, vjust = 1, size=9)) +
+  ggtitle("Sylph Data", subtitle = paste(n, "most abundant", rank))
+abund_s
+
+plotly_build(abund_s)
+
+# Do the same but for 16s data
+ts1 <- trans_abund$new(meco_16s, taxrank = rank, ntaxa = n)
+
+# Plot abunances
+abund_16 <- ts1$plot_bar(others_color = "grey70", xtext_keep = TRUE, legend_text_italic = FALSE, facet = "strat_season") +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1, vjust = 1, size=9)) +
+  ggtitle("16s Data", subtitle = paste(n, "most abundant", rank))
+abund_16
+```
+
+# Plot just a single taxa abundance
+
+```{r}
+# Clone dataset
+taxa <- "Chitinophagaceae" # taxa of interest
+n <- 20 # Number of taxa to included in final graph
+mt_sylph_subset <- clone(mt_sylph)
+
+###mt_sylph_subset include the taxa below
+mt_sylph_subset$tax_table <- mt_sylph_subset$tax_table |> 
+  filter(f == taxa)
+mt_sylph_subset$tidy_dataset()
+
+# check
+mt_sylph_subset # OK
+head(mt_sylph_subset$tax_table)
+
+# recalculate abundances (needed?)
+mt_sylph_subset$cal_abund()
+mt_sylph_subset$taxa_abund
+
+# plot:
+
+t1 <- trans_abund$new(dataset = mt_sylph_subset, taxrank = "g", ntaxa = n)
+t1$plot_bar(facet = "strat_season") +
+  ggtitle(taxa)
+
+# Clone dataset
+taxa <- "Nitrosomonadaceae" # taxa of interest
+n <- 20 # Number of taxa to included in final graph
+mt_sylph_subset <- clone(mt_sylph)
+
+###mt_sylph_subset include the taxa below
+mt_sylph_subset$tax_table <- mt_sylph_subset$tax_table |> 
+  filter(f == taxa)
+mt_sylph_subset$tidy_dataset()
+
+# check
+mt_sylph_subset # OK
+head(mt_sylph_subset$tax_table)
+
+# recalculate abundances (needed?)
+mt_sylph_subset$cal_abund()
+mt_sylph_subset$taxa_abund
+
+# plot:
+
+t1 <- trans_abund$new(dataset = mt_sylph_subset, taxrank = "g", ntaxa = n)
+t1$plot_bar(facet = "strat_season") +
+  ggtitle(taxa)
+
+
+# Clone dataset
+taxa <- "Sphingomonadaceae" # taxa of interest
+n <- 20 # Number of taxa to included in final graph
+mt_sylph_subset <- clone(mt_sylph)
+
+###mt_sylph_subset include the taxa below
+mt_sylph_subset$tax_table <- mt_sylph_subset$tax_table |> 
+  filter(f == taxa)
+mt_sylph_subset$tidy_dataset()
+
+# check
+mt_sylph_subset # OK
+head(mt_sylph_subset$tax_table)
+
+# recalculate abundances (needed?)
+mt_sylph_subset$cal_abund()
+mt_sylph_subset$taxa_abund
+
+# plot:
+
+t1 <- trans_abund$new(dataset = mt_sylph_subset, taxrank = "g", ntaxa = n)
+t1$plot_bar(facet = "strat_season") +
+  ggtitle(taxa)
+
+
+# Nested plot
+# t1 <- trans_abund$new(dataset = mt_sylph_subset, taxrank = "s", ntaxa = n, show = 0, high_level = "g", high_level_fix_nsub = 10)
+# t1$plot_bar(ggnested = T) |> plotly::ggplotly()
+```
+
+# Temp Plots
+
+```{r}
+#import temp file
+mat_df <- readMat.default(con = "data/metadata/LSEO24h_temp.mat")
+
+# Extract dataframe we want from 'T' for temp and convert matlab time to poxit time
+temp_df <- mat_df$T |> 
+  as.data.frame()
+# Set colnames and rownames
+colnames(temp_df) <- mat_df$dep  
+rownames(temp_df) <- mat_df$t 
+# move dttm column out, convert to datetime and pivot long
+temp_df_long <- temp_df |> 
+  rownames_to_column(var = "dttm") |>
+  mutate(dttm = as_datetime((as.numeric(dttm) - 719529) * 86400)) |> 
+  pivot_longer(cols = !dttm, names_to = "depth", values_to = "temp") |> 
+# Add averaged temperature column
+  mutate(date = round_date(dttm, unit = "day"), 
+  depth = as.numeric(depth)) |> 
+  group_by(date, depth) |> 
+  mutate(temp_c_24h_avg = mean(temp)) |> 
+  ungroup()
+
+## Create a 14 day averaged temperature---------------------------------
+locs <- seaprocess::find_near(vec = as_date(temp_df_long$date), vals = as_date(sw_meta$date))
+dates <- as_date(rep(NA, nrow(temp_df_long)))
+for(i in length(locs):1) {
+dates[1:locs[i]] <- as_date(sw_meta$date[i])
+}
+rm(i)
+# Add the 14ish day average
+temp_df_long<-temp_df_long |>
+  mutate(sample_date = dates) |> 
+  group_by(sample_date, depth) |> 
+  mutate(temp_c_14d_avg = mean(temp)) |> 
+  ungroup()
+
+temp_plot <- temp_df_long |> 
+  mutate(depth = as.numeric(depth), color = depth) |> 
+  filter(depth < 50) |> 
+  ggplot(aes(dttm, temp_c_24h_avg)) +
+    geom_vline(xintercept = sw_meta$date) +
+    geom_vline(xintercept = sw_meta$date[which(sw_meta$sample == sw_meta$sample[6:10])], color = "red") +
+    geom_point() +
+    scale_color_grey() +
+    geom_point(data = temp_df_long[temp_df_long$depth == 38,], color = "red") +
+    theme(legend.position = "none") + 
+    theme_classic()
+
+temp_plot
+
+
+```
+
+# Diversity Plot
+
+```{r}
+mt_sylph$alpha_diversity |>
+  rownames_to_column("sample") |> 
+  ggplot(aes(sample, Simpson, group = 1)) +
+  geom_point() +
+  geom_line() +
+  ggtitle("Sylph")
+
+
+meco_16s$alpha_diversity |>
+  rownames_to_column("sample") |> 
+  ggplot(aes(sample, Simpson, group = 1)) +
+  geom_point() +
+  geom_line() + 
+  ggtitle("16s")
+
+```
+
+# Interpretation
+
+See a big drop in diversity at WM19 in both 16s and sylph, both are less consistent in the initial months. WM19 is at the end of April beginning of May when the water column is weakly stratified.
+
+# Feb 19, 2026
+
+Looking at MAG families:
+
+## **Microbacteraceae:**
+
+Decreases summer into fall, increases winter into spring. All the same genus *Rhodoglobus* within actinobacteria. Species of *Rhodoglobus* change from summer into spring. Some other speices cultured from an antarctic lake and able to work at 5degC.
+
+### Rhodoglobus Plot
+
+```{r}
+# Clone dataset
+taxa <- "Rhodoglobus" # taxa of interest
+n <- 5 # Number of taxa to included in final graph
+mt_sylph_subset <- clone(mt_sylph)
+
+###mt_sylph_subset include the taxa below
+mt_sylph_subset$tax_table <- mt_sylph_subset$tax_table |> 
+  filter(g == taxa)
+mt_sylph_subset$tidy_dataset()
+
+# check
+mt_sylph_subset # OK
+head(mt_sylph_subset$tax_table)
+
+# recalculate abundances (needed?)
+mt_sylph_subset$cal_abund()
+mt_sylph_subset$taxa_abund
+
+# plot:
+
+t1 <- trans_abund$new(dataset = mt_sylph_subset, taxrank = "s", ntaxa = n)
+t1$plot_bar(facet = "strat_season") +
+  ggtitle(taxa)
+```
+
+### Microbacteraceae Plot
+
+![](output/mag_plots/f_microbacteriaceae_abund_mag.png)
+
+## UBA 1268
+
+#### Trends
+
+Drops a lot going into the winter time, doesn't return coming into spring time. QWPN01 dominates at first but then BAIKAL-G1-2R takes over.
+
+```{r}
+# Clone dataset
+taxa <- "Pirellulales" # taxa of interest
+n <- 5 # Number of taxa to included in final graph
+mt_sylph_subset <- clone(mt_sylph)
+
+###mt_sylph_subset include the taxa below
+mt_sylph_subset$tax_table <- mt_sylph_subset$tax_table |> 
+  filter(o == taxa)
+mt_sylph_subset$tidy_dataset()
+
+# check
+mt_sylph_subset # OK
+head(mt_sylph_subset$tax_table)
+
+# recalculate abundances (needed?)
+mt_sylph_subset$cal_abund()
+mt_sylph_subset$taxa_abund
+
+# plot:
+
+t1 <- trans_abund$new(dataset = mt_sylph_subset, taxrank = "g", ntaxa = n)
+t1$plot_bar(facet = "strat_season") +
+  ggtitle(taxa)
+```
+
+Scratch that. Talked with Cody today and he said we should be looking at the 16s data as it has a less sensitive cutoff so may be more "accurate" than the sylph data. Updated binning script by checking each part individually, removed the 'environment' option fom the multi binning part, and changed the delimiter in the final contigs file to look for '_' instead of ':'. Once each one worked, I started the whole binning script and we will see how long it takes. 
+
+  -  Did some research into lefSE and using that in microeco. The resulting code is at the bottom of 16s analysis. The next thing to do is to look at what taxa are coming out there. 
+  -  See if I can get some other data from Jay. - CHECK
+  -  Start laying out some figures (read a couple of papers)
+  - Email Stormi about outside thesis committee folks - CHECK
+
+# March 6, 2026
+Loaded maestro data into R. There is bad data at the beginning of the deployment for the first two days. Then some of the sensors crap out at the end (pCO2). 
+**TODO:**
+  -  Figure out how to best deal with outliers in the variables
+  -  Average data and add to metadata
+  -  Ask Cody about how to best average the environmental data
+  -  Reorganize scripts to output the .csvs and load in the rest from excel files - CHECK
+  -  Use Bill's script to average the other data -CHECK
+
+# March 17, 2026
+
+Worked a lot today on the maestro data and tried to clean it up. Removed visually obvious outliers. made 24hr averages and added them to the meta data file. Decided on a 1degC temperature difference from the maestro to the closest thermistor to determine whether we could incorporate the maestro data into our analysis. Made my '01_metadata_import_clean.R' easy to just source or I can take the data products from my data folder. 
+
+**Outstanding questions:**
+  -  How to deal with outliers in oxygen data
+  -  Is a 1 degree change close enough for us to assume the water column is mixing?
+  -  pH and turbidity data
