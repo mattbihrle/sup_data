@@ -1,0 +1,274 @@
+---
+title: "Abundance Graphs"
+format: html
+---
+
+# Run introscript
+```{r}
+source("scripts/02_import_sylph_16s.R")
+```
+
+# Load Required Libraries
+
+```{r}
+library(plotly)
+library(ggalluvial)
+library(ggarrow)
+library(tidyverse)
+```
+
+# Abundance Plots
+```{r}
+
+# Set rank (k, p, c, etc) and number of taxa to include
+rank <- "o"
+n <- 30
+
+# Create abundance object
+ts1 <- trans_abund$new(mt_sylph, taxrank = rank, ntaxa = n)
+
+# Plot abunances
+abund_s <- ts1$plot_bar(others_color = "grey70", xtext_keep = TRUE, legend_text_italic = FALSE, facet = "strat_season") +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1, vjust = 1, size=9)) +
+  ggtitle("Sylph Data", subtitle = paste(n, "most abundant", rank))
+abund_s
+
+plotly_build(abund_s)
+
+# Do the same but for 16s data
+ts1 <- trans_abund$new(meco_16s, taxrank = rank, ntaxa = n)
+
+# Plot abunances
+abund_16 <- ts1$plot_bar(others_color = "grey70", xtext_keep = TRUE, legend_text_italic = FALSE, facet = "strat_season") +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1, vjust = 1, size=9)) +
+  ggtitle("16s Data", subtitle = paste(n, "most abundant", rank))
+abund_16
+
+plotly_build(abund_16)
+```
+
+## Plot single taxa abundance
+
+# Plot just a single taxa abundance
+
+
+```{r}
+# Clone dataset
+taxa <- "Planctomycetia" # taxa of interest
+n <- 20 # Number of taxa to included in final graph
+mt_sylph_subset <- clone(mt_sylph)
+
+###mt_sylph_subset include the taxa below
+mt_sylph_subset$tax_table <- mt_sylph_subset$tax_table |> 
+  filter(c == taxa)
+mt_sylph_subset$tidy_dataset()
+
+# check
+mt_sylph_subset # OK
+head(mt_sylph_subset$tax_table)
+
+# recalculate abundances (needed?)
+mt_sylph_subset$cal_abund()
+mt_sylph_subset$taxa_abund
+
+# plot:
+
+# t1 <- trans_abund$new(dataset = mt_sylph_subset, taxrank = "f", ntaxa = n)
+# t1$plot_bar() |> ggplotly()
+
+# Nested plot
+t1 <- trans_abund$new(dataset = mt_sylph_subset, taxrank = "f", ntaxa = n, show = 0, high_level = "o", high_level_fix_nsub = 10)
+t1$plot_bar(ggnested = T) |> ggplotly()
+```
+
+# Single taxa abundance based on top 20 families
+
+```{r}
+rank = "f"
+ntaxa = 10
+# Get vector of 20 most abundant families
+t1 <- trans_abund$new(dataset = meco_16s, taxrank = rank, ntaxa = ntaxa)
+t1$plot_bar(facet = "strat_season") +
+     ggtitle("16s", subtitle = paste("top", ntaxa, rank))
+taxa_names <- t1$data_taxanames
+taxa_names
+
+for (i in 1:length(taxa_names)) {
+    subset <- clone(meco_16s)
+    #subset include the taxa below
+    subset$tax_table <- subset$tax_table |> 
+    filter(f == paste0(rank, "__",taxa_names[i]))
+    # filter(f == taxa_names[i])
+    subset$tidy_dataset()
+
+    # recalculate abundances (needed?)
+    subset$cal_abund()
+    subset$taxa_abund
+
+    # plot:
+
+    t1 <- trans_abund$new(dataset = subset, taxrank = "g", ntaxa = 20)
+    plot <- t1$plot_bar(facet = "strat_season") +
+    ggtitle(taxa_names[i], subtitle = "16s")
+    print(plot) 
+        }
+
+    # Get vector of 20 most abundant families
+t1 <- trans_abund$new(dataset = mt_sylph, taxrank = rank, ntaxa = ntaxa)
+taxa_names <- t1$data_taxanames
+taxa_names
+t1$plot_bar(facet = "strat_season") +
+  ggtitle("MAGs", subtitle = paste("top", ntaxa, rank))
+
+for (i in 1:length(taxa_names)) {
+    subset <- clone(mt_sylph)
+    #subset include the taxa below
+    subset$tax_table <- subset$tax_table |> 
+    filter(f == taxa_names[i])
+    subset$tidy_dataset()
+
+    # recalculate abundances (needed?)
+    subset$cal_abund()
+    subset$taxa_abund
+
+    # plot:
+
+    t1 <- trans_abund$new(dataset = subset, taxrank = "g", ntaxa = 20)
+    plot <- t1$plot_bar(facet = "strat_season") +
+    ggtitle(taxa_names[i], subtitle = "MAG")
+    print(plot) 
+        }
+```
+
+```{r}
+# Miscellaneous tests
+
+abundant_taxa(meco_16s, 20, rank = "f", plot = T)
+abundant_taxa <- function(meco_table, ntaxa = NULL, rank = "f", plot = F) {
+    t1 <- trans_abund$new(dataset = meco_table, taxrank = rank, ntaxa = ntaxa)
+    taxa_names <- t1$data_taxanames
+    if(!plot) {
+        next
+    } else {
+        for (i in 1:length(taxa_names)) {
+            subset <- clone(meco_table)
+
+    #subset include the taxa below
+    subset$tax_table <- subset$tax_table |> 
+    filter(o == taxa_names[i])
+    subset$tidy_dataset()
+
+    # recalculate abundances (needed?)
+    mt_sylph_subset$cal_abund()
+    mt_sylph_subset$taxa_abund
+
+    # plot:
+
+    t1 <- trans_abund$new(dataset = subset, taxrank = "g", ntaxa = 20)
+    t1$plot_bar(facet = "strat_season") +
+    ggtitle(taxa_name[i])
+            }
+        }
+    return(taxa_names)
+    }
+
+
+taxa <- abundant_taxa(mt_sylph, 20, "f")
+```
+
+```{r}
+# Clone dataset
+taxa <- "Rhodoglobus" # taxa of interest
+n <- 5 # Number of taxa to included in final graph
+mt_sylph_subset <- clone(mt_sylph)
+
+###mt_sylph_subset include the taxa below
+mt_sylph_subset$tax_table <- mt_sylph_subset$tax_table |> 
+  filter(g == taxa)
+mt_sylph_subset$tidy_dataset()
+
+# check
+mt_sylph_subset # OK
+head(mt_sylph_subset$tax_table)
+
+# recalculate abundances (needed?)
+mt_sylph_subset$cal_abund()
+mt_sylph_subset$taxa_abund
+
+# plot:
+
+t1 <- trans_abund$new(dataset = mt_sylph_subset, taxrank = "s", ntaxa = n)
+t1$plot_bar(facet = "strat_season") +
+  ggtitle(taxa)
+```
+```{r}
+# Plot alluvial
+
+ts1$plot_bar(bar_full = F, use_alluvium = T, others_color = "grey70", xtext_keep = TRUE, legend_text_italic = FALSE, clustering = T) +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1, vjust = 1, size=9))
+
+# Double Abudances plot
+  # Sylph data
+ts2 <- trans_abund$new(dataset = mt_sylph, taxrank = "f", ntaxa = 20)
+#  show = 0, high_level = "p", high_level_fix_nsub = 2)
+
+ts2$plot_bar(ggnested = F, xtext_angle = 45) |> 
+    ggplotly()
+    # 16S data
+  t2 <- trans_abund$new(dataset = meco_16s, taxrank = "f", ntaxa = 20, show = 0, high_level = "p", high_level_fix_nsub = 6)
+
+t2$plot_bar(ggnested = T, xtext_angle = 45) +
+    ggtitle("16S") |> 
+    ggplotly()
+
+# Heat Map
+
+t3 <- trans_abund$new(dataset = mt, taxrank = "g", ntaxa = 40)
+g1 <- t3$plot_heatmap(xtext_keep = T, withmargin = FALSE, plot_breaks = c(0.01, 0.1, 1, 10))
+g1
+g1 + theme(axis.text.y = element_text(face = 'italic'), axis.text.x = element_text(angle = 45, hjust = 1, vjust = 1, size=9))
+```
+
+# Alpha Diversity
+
+```{r}
+
+mt_sylph$alpha_diversity |>
+  rownames_to_column("sample") |> 
+  ggplot(aes(sample, Simpson, group = 1)) +
+  geom_point() +
+  geom_line()
+```
+
+# Beta Diversity
+
+```{r}
+tb2 <- trans_beta$new(mt_sylph, group = "strat_season", measure = "bray")
+tb2$cal_ordination(method = "NMDS")
+tb2$cal_manova(manova_all = TRUE)
+print(tb2$res_manova)
+
+tb2$plot_ordination(plot_color = "strat_season", plot_shape = "strat_season", plot_type = c("point", "ellipse"), NMDS_stress_text_prefix = "", ellipse_level = 0.95) +
+  #   geom_text(
+  #   data = tb2$dataset$otu_table, # Filter data for the label layer
+  #   aes(label = sample),
+  #   vjust = -1.1, # Adjust vertical position
+  #   hjust = 0.5,  # Adjust horizontal position
+  #   color = "black"
+  # ) +
+  # geom_arrow_chain(colour = "black") + 
+    ggtitle("Sylph NMDS") +
+  # scale_color_viridis_b() +
+  NULL
+
+tb2 <- trans_beta$new(meco_16s, group = "strat_season", measure = "bray")
+tb2$cal_ordination(method = "NMDS")
+tb2$cal_manova(manova_all = TRUE)
+print(tb2$res_manova)
+
+tb2$plot_ordination(plot_color = "strat_season", plot_shape = "strat_season", NMDS_stress_text_prefix = "",plot_type = c("point", "ellipse"), ellipse_level = 0.95) +
+  # geom_arrow_chain(colour = "black") + 
+    ggtitle("16s NMDS") +
+  # scale_color_viridis_b() +
+  NULL
+```
