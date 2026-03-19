@@ -31,6 +31,8 @@ temp_df_long <- temp_df |>
   mutate(temp_c_24h_avg = mean(temp)) |> 
   ungroup()
 
+
+
 ## Create a 14 day averaged temperature---------------------------------
   # First create temporary df of sample dates
   samp_dates <- sw_meta |> 
@@ -65,7 +67,19 @@ temp_df_long <- temp_df_long |>
 #   group_by(sample_date, depth) |> 
 #   mutate(temp_c_14d_avg = mean(temp)) |> 
 #   ungroup()
+# Create a coefficient of variation to see if we should average or not
 
+temp_df_long <- temp_df_long |> 
+  group_by(date) |> 
+  mutate(coeff_var = (sd(temp, na.rm = T)/mean(temp, na.rm = T)) * 100)
+
+  # Plot coeff_var only on sample dates
+temp_df_long |> 
+  filter(sample_date == date, depth == 38) |> 
+  mutate(coeff_test = ifelse(coeff_var > 10, "FALSE", "TRUE")) |> 
+  ggplot(aes(dttm, temp, color = coeff_test)) +
+  geom_point() +
+  facet_wrap(~sample_date, scales = "free")
 ### Add averaged temp column to metadata ---------------------
 sw_meta_final <- temp_df_long |> 
   filter(depth == 38) |> 
@@ -85,7 +99,7 @@ maestro_df <- readMat.default(con = "data/metadata/lseo_maestro_time.mat") |>
   filter(P > 20) |> 
   # add a sample date column for future averaging
   left_join(samp_dates, by = join_by(closest(date <= sample_date)))
-
+stop
   # Create summary stats to check for nas
 sum_stats <- skim(maestro_df)
 sum_stats
@@ -94,6 +108,7 @@ sum_stats
 long_maestro_df <- maestro_df |> 
   pivot_longer(cols = -c(dttm, date, sample, sample_date),
   names_to = "variable", values_to = "vals", values_drop_na = T)
+
   # Quick plot
 long_maestro_df |> 
   ggplot(aes(dttm, vals, color = variable)) +
@@ -303,11 +318,11 @@ plot
 # Leaving pH as is for now
 
 ## Recalculate multivariate outliers just for fun --------------------------------------
-outliers <- maestro_df_clean |> 
-  select(data_vars) |>  
-  drop_na() |> 
-  check_outliers(method = "mcd", verbose = T)
-outliers
+# outliers <- maestro_df_clean |> 
+#   select(data_vars) |>  
+#   drop_na() |> 
+#   check_outliers(method = "mcd", verbose = T)
+# outliers
 
 maestro_df_clean |> 
   select(data_vars, dttm) |> 
@@ -334,6 +349,27 @@ maestro_df_clean <- maestro_df_clean |>
          ph_24h_avg = mean(pH, na.rm = T),
 ) |> 
   ungroup()
+stop()
+clean_long_m_df <- maestro_df_clean |> 
+  select(all_of(data_vars), dttm, date, sample, sample_date) |> 
+  pivot_longer(cols = -c(dttm, date, sample, sample_date),
+  names_to = "variable", values_to = "vals", values_drop_na = T) |> 
+  # Create a coefficient of variation to see if we should average or not 
+  group_by(date, variable) |> 
+  mutate(coeff_var = (sd(vals, na.rm = T)/mean(vals, na.rm = T)) * 100) |> 
+  ungroup()
+
+
+  # Plot coeff_var only on sample dates
+clean_long_m_df |> 
+  mutate(coeff_test = ifelse(coeff_var > 20, "FALSE", "TRUE")) |> 
+  filter(sample_date == date, variable == "CHL") |> 
+  ggplot(aes(dttm, vals, color = coeff_var)) +
+  scale_color_viridis_c()+
+  geom_point() +
+  facet_wrap(~sample_date, scales = "free")
+
+
 
 #### Add maestro data to broader metadata file --------------------------------------------------
 sw_meta_output <- maestro_df_clean |> 

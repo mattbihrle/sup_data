@@ -1,0 +1,49 @@
+---
+title: "differential abundances"
+format: html
+---
+
+
+```{r}
+# Run intro scripts
+# source("scripts/01_metadata_import_clean.R") # Run only if changes made to metadata
+source("scripts/02_import_sylph_16s.R")
+```
+
+# Load Required Libraries
+
+```{r}
+library(plotly)
+library(ggalluvial)
+library(ggarrow)
+library(tidyverse)
+library(microeco)
+```
+
+# Create trans_diff object
+
+
+```{r}
+# View sample table 
+view(meco_16s$sample_table)
+t1 <- trans_diff$new(dataset = meco_16s, method = "lefse", group = "strat_season", alpha = 0.1, lefse_subgroup = NULL)
+
+t1$plot_diff_bar(threshold = 4)
+# we show 20 taxa with the highest LDA (log10)
+t1$plot_diff_bar(use_number = 1:30, width = 0.8)
+
+t1 <- trans_diff$new(dataset = meco_16s, method = "lefse", alpha = 0.1, group = "strat_season", lefse_subgroup = NULL)
+
+t1$plot_diff_bar(threshold = 4)
+# we show 20 taxa with the highest LDA (log10)
+t1$plot_diff_bar(use_number = 1:30, width = 0.8)
+
+t1$plot_diff_abund(use_number = 1:20)
+t1$plot_diff_abund(use_number = 1:20, fill = "strat_season", alpha = 0.05, add_sig = F)
+
+
+
+```
+
+"LEfSe scores can be interpreted as the degree of consistent difference in relative abundance between features in the two classes of analyzed microbial communities." - Segata et al 2011
+

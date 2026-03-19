@@ -354,3 +354,10 @@ Loaded maestro data into R. There is bad data at the beginning of the deployment
 Worked a lot today on the maestro data and tried to clean it up. Removed visually obvious outliers. made 24hr averages and added them to the meta data file. Decided on a 1degC temperature difference from the maestro to the closest thermistor to determine whether we could incorporate the maestro data into our analysis. Made my '01_metadata_import_clean.R' easy to just source or I can take the data products from my data folder.
 
 **Outstanding questions:** - How to deal with outliers in oxygen data - Is a 1 degree change close enough for us to assume the water column is mixing? - pH and turbidity data
+
+# March 19, 2026
+
+**TODO:** Figure out differential abundance tests and why to use one over the other
+**Notes:**Cody mentioned looking at the coefficient of variance to check whether things are diurnal or not. I wonder if it would make more sense to just take the average for everything so it is all the same? Maybe I'll go variable by variable
+
+

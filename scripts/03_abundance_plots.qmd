@@ -3,8 +3,9 @@ title: "Abundance Graphs"
 format: html
 ---
 
-# Run introscript
+# Run intro scripts
 ```{r}
+# source("scripts/01_metadata_import_clean.R") # Run only if changes made to metadata
 source("scripts/02_import_sylph_16s.R")
 ```
 
@@ -15,6 +16,7 @@ library(plotly)
 library(ggalluvial)
 library(ggarrow)
 library(tidyverse)
+library(microeco)
 ```
 
 # Abundance Plots
@@ -272,3 +274,5 @@ tb2$plot_ordination(plot_color = "strat_season", plot_shape = "strat_season", NM
   # scale_color_viridis_b() +
   NULL
 ```
+
+

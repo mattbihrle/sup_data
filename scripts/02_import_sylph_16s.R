@@ -1,4 +1,3 @@
-# Introductory Script
 
 # Load Packages ------------------------------
   # For analysis
@@ -174,7 +173,83 @@ meco_16s$cal_alphadiv()
 # Calc Bray Curtis Dissimilarity
 meco_16s$cal_betadiv()
 meco_16s$beta_diversity$bray
-# 
+
+bac_df <- readr::read_tsv("data/gtdb_bin_tax/gtdbtk.bac120.summary.tsv", na = "N/A")
+arc_df <- read_tsv("data/gtdb_bin_tax/gtdbtk.ar53.summary.tsv", na = "N/A")
+
+mag_df <- bind_rows(bac_df, arc_df) |> 
+  mutate(sample = str_remove(user_genome, "MAGScoT_cleanbin_000"))
+  
+
+    # Clean
+
+# Create vectors of column names
+clade_cols <- stringr::str_extract_all(b_df$clade_name[8], "[a-z]{1}(?=_)")
+
+clade_cols <- as.vector(clade_cols[[1]]) %>% print()
+
+site_cols <- 
+  stringr::str_extract(colnames(b_df), "(?<=/).{4}") %>%   
+  na.omit() %>% 
+  print() 
+
+colnames(b_df)[2:ncol(b_df)] <- site_cols
+
+#Spread columns out, clean names
+
+b_df <- b_df %>% tidyr::separate_wider_delim(cols = clade_name, delim = "|", names = clade_cols, too_few = "align_start") %>% 
+  # Drop all rows that don't get down to a taxa 
+  tidyr::drop_na("t") %>%
+  #remove additional characters and make data columns numeric
+  mutate(across(clade_cols, ~ str_remove(., "[a-z]__")))
+
+# Quick check to see if abundances are all still 100 
+colSums(b_df[9:ncol(b_df)])
+
+
+
+#Create long df 
+long_b_df <- b_df %>% pivot_longer(cols = all_of(site_cols), 
+  names_to = "sample", values_to = "abundance")
+
+long_b_df <- long_b_df %>% 
+  mutate(date = sw_meta$date[match(long_b_df$sample, sw_meta$sample)]
+  )
+long_b_df$date <- mdy(long_b_df$date)
+
+# Turn the Sylph data into a microeco object ('mt_sylph')----------------------------------------------------------------------------------
+
+otu_table <- b_df |> 
+    rownames_to_column("otu") |> 
+    select(all_of(site_cols), "otu") |> 
+    column_to_rownames("otu") |> 
+    as.data.frame()
+
+tax_table <- b_df |> 
+    rownames_to_column("otu") |> 
+    select(all_of(clade_cols), "otu") |> 
+    column_to_rownames("otu") |> 
+    as.data.frame()
+
+sample_table <- sw_meta |> 
+    column_to_rownames("sample") |> 
+    as.data.frame()
+
+mt_sylph <-microtable$new(otu_table = otu_table, sample_table = sample_table, tax_table = tax_table)
+
+mt_sylph$tidy_dataset()
+ # Calculations for later
+# Calculate relative abunance
+mt_sylph$cal_abund()
+mt_sylph$taxa_abund$p[1:5,1:5]
+
+# Calc Alpha Diversity
+mt_sylph$cal_alphadiv()
+
+# Calc Bray Curtis Dissimilarity
+mt_sylph$cal_betadiv()
+mt_sylph$beta_diversity$bray
+
 # Remove unneeded data----------------------------------------------------
 rm(names_vec)
 rm(site_cols)
