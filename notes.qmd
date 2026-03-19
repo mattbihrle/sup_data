@@ -358,6 +358,7 @@ Worked a lot today on the maestro data and tried to clean it up. Removed visuall
 # March 19, 2026
 
 **TODO:** Figure out differential abundance tests and why to use one over the other
-**Notes:**Cody mentioned looking at the coefficient of variance to check whether things are diurnal or not. I wonder if it would make more sense to just take the average for everything so it is all the same? Maybe I'll go variable by variable
+  -  Continue to calculate relative abundance 
+**Notes:**Cody mentioned looking at the coefficient of variance to check whether things are diurnal or not. I wonder if it would make more sense to just take the average for everything so it is all the same? Maybe I'll go variable by variable. 
 
 

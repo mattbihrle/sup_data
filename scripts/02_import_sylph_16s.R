@@ -3,7 +3,6 @@
   # For analysis
 library(vegan) 
 library(microeco)
-library(tidyverse)
 # For importing .biom file
 library(phyloseq)
 library(file2meco)
@@ -15,6 +14,7 @@ library(Polychrome)
 library(forcats)
 library(paletteer)
 library(plotly)
+library(tidyverse) #tidyverse last
 
 
 # Import meta data ----------------------------------------------------------
@@ -174,58 +174,108 @@ meco_16s$cal_alphadiv()
 meco_16s$cal_betadiv()
 meco_16s$beta_diversity$bray
 
+# Import MAG data -----------------------------------------------------
 bac_df <- readr::read_tsv("data/gtdb_bin_tax/gtdbtk.bac120.summary.tsv", na = "N/A")
 arc_df <- read_tsv("data/gtdb_bin_tax/gtdbtk.ar53.summary.tsv", na = "N/A")
 
 mag_df <- bind_rows(bac_df, arc_df) |> 
-  mutate(sample = str_remove(user_genome, "MAGScoT_cleanbin_000"))
+  mutate(sample = str_extract(user_genome, "WM.{5}"), .after = user_genome) |> 
+    mutate(user_genome = str_remove(user_genome, "MAGScoT_cleanbin_000")) |> 
+  select(user_genome, sample, classification)
   
+  # Create vectors of column names
+  clade_cols <- stringr::str_extract_all(mag_df$classification[3], "[a-z]{1}(?=_)")
+  
+  clade_cols <- as.vector(clade_cols[[1]]) %>% print()
 
-    # Clean
+# Import coverage/abundance data
+de_coverage <- read_tsv("data/derep_bins/Drep_Bins_coverage.tsv")
+  
+de_coverage$Genome <- str_replace_all(de_coverage$Genome, pattern = "_MAGScoT_cleanbin_000", replacement = "_")
 
-# Create vectors of column names
-clade_cols <- stringr::str_extract_all(b_df$clade_name[8], "[a-z]{1}(?=_)")
+colnames(de_coverage) <- str_remove_all(colnames(de_coverage), "001_val_.{2}fq.gz ")
 
-clade_cols <- as.vector(clade_cols[[1]]) %>% print()
+# Recalculate relative abundances
+   # First extract colnames that we want to keep
+col_keep <- colnames(de_coverage[str_which(colnames(de_coverage), 
+  ".*Relative.*")])
+col_keep
+
+de_coverage <- de_coverage |> 
+  select(Genome, all_of(col_keep))
 
 site_cols <- 
-  stringr::str_extract(colnames(b_df), "(?<=/).{4}") %>%   
+  stringr::str_extract(col_keep, "^.{4}") %>%   
   na.omit() %>% 
+  unique() |> 
   print() 
 
-colnames(b_df)[2:ncol(b_df)] <- site_cols
+for(i in 1:length(site_cols)) {
+  # Extract columns that match the sample name
+  cols <- str_which(colnames(de_coverage), paste0(site_cols[i], ".*"))
+  if(i == 1) {
+    # Create a blank dataframe with same rows as the other
+    de_coverage_new <- de_coverage[,1:19]
+    colnames(de_coverage_new) <- site_cols
+# sum those two columns and put them in a column called "add"
+de_coverage_new <- de_coverage %>%
+rowwise() %>%
+mutate(add = sum(across(starts_with(site_cols[i])), na.rm = T)) |> 
+  select(add) 
+} else {
+    add <- de_coverage %>%
+rowwise() %>%
+mutate(add = sum(across(starts_with(site_cols[i])), na.rm = T)) |> 
+  select(add)
+
+  de_coverage_new[,i] <- add
+    print(sum(de_coverage_new[,i]))
+  }
+}
+
+
+
+# Double check that there are still 19 columns labelled with add.y
+if(sum(str_count(colnames(de_coverage_new), "add.*")) == 19) {
+colnames(de_coverage_new)[str_which(colnames(de_coverage_new), "add.*")] <- site_cols
+  colnames(de_coverage_new)
+}
+de_coverage_new <-
+  bind_cols(de_coverage, de_coverage_new)
+
+# Next steps need to make a relative abundance column
 
 #Spread columns out, clean names
 
-b_df <- b_df %>% tidyr::separate_wider_delim(cols = clade_name, delim = "|", names = clade_cols, too_few = "align_start") %>% 
+mag_df <- mag_df %>% tidyr::separate_wider_delim(cols = clade_name, delim = "|", names = clade_cols, too_few = "align_start") %>% 
   # Drop all rows that don't get down to a taxa 
   tidyr::drop_na("t") %>%
   #remove additional characters and make data columns numeric
   mutate(across(clade_cols, ~ str_remove(., "[a-z]__")))
 
 # Quick check to see if abundances are all still 100 
-colSums(b_df[9:ncol(b_df)])
+colSums(mag_df[9:ncol(mag_df)])
 
 
 
 #Create long df 
-long_b_df <- b_df %>% pivot_longer(cols = all_of(site_cols), 
+long_mag_df <- mag_df %>% pivot_longer(cols = all_of(site_cols), 
   names_to = "sample", values_to = "abundance")
 
-long_b_df <- long_b_df %>% 
-  mutate(date = sw_meta$date[match(long_b_df$sample, sw_meta$sample)]
+long_mag_df <- long_mag_df %>% 
+  mutate(date = sw_meta$date[match(long_mag_df$sample, sw_meta$sample)]
   )
-long_b_df$date <- mdy(long_b_df$date)
+long_mag_df$date <- mdy(long_mag_df$date)
 
 # Turn the Sylph data into a microeco object ('mt_sylph')----------------------------------------------------------------------------------
 
-otu_table <- b_df |> 
+otu_table <- mag_df |> 
     rownames_to_column("otu") |> 
     select(all_of(site_cols), "otu") |> 
     column_to_rownames("otu") |> 
     as.data.frame()
 
-tax_table <- b_df |> 
+tax_table <- mag_df |> 
     rownames_to_column("otu") |> 
     select(all_of(clade_cols), "otu") |> 
     column_to_rownames("otu") |> 
@@ -259,3 +309,4 @@ rm(otu_table)
 rm(sample_table)
 rm(tax_table)
 rm(clade_cols)
+  
