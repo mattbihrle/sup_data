@@ -6,7 +6,7 @@ format: html
 # Run intro scripts
 ```{r}
 # source("scripts/01_metadata_import_clean.R") # Run only if changes made to metadata
-source("scripts/02_import_sylph_16s.R")
+source("scripts/02_import_mag_sylph_16s.R")
 ```
 
 # Load Required Libraries
@@ -23,11 +23,11 @@ library(microeco)
 ```{r}
 
 # Set rank (k, p, c, etc) and number of taxa to include
-rank <- "o"
-n <- 30
+rank <- "s"
+n <- 50
 
 # Create abundance object
-ts1 <- trans_abund$new(mt_sylph, taxrank = rank, ntaxa = n)
+ts1 <- trans_abund$new(mt_mag, taxrank = rank, ntaxa = n)
 
 # Plot abunances
 abund_s <- ts1$plot_bar(others_color = "grey70", xtext_keep = TRUE, legend_text_italic = FALSE, facet = "strat_season") +
@@ -271,6 +271,26 @@ print(tb2$res_manova)
 tb2$plot_ordination(plot_color = "strat_season", plot_shape = "strat_season", NMDS_stress_text_prefix = "",plot_type = c("point", "ellipse"), ellipse_level = 0.95) +
   # geom_arrow_chain(colour = "black") + 
     ggtitle("16s NMDS") +
+  # scale_color_viridis_b() +
+  NULL
+
+  # Microeco NMDS
+
+  tb2 <- trans_beta$new(mt_mag, group = "strat_season", measure = "bray")
+tb2$cal_ordination(method = "NMDS")
+tb2$cal_manova(manova_all = TRUE)
+print(tb2$res_manova)
+
+tb2$plot_ordination(plot_color = "strat_season", plot_shape = "strat_season", plot_type = c("point", "ellipse"), NMDS_stress_text_prefix = "", ellipse_level = 0.95) +
+  #   geom_text(
+  #   data = tb2$dataset$otu_table, # Filter data for the label layer
+  #   aes(label = sample),
+  #   vjust = -1.1, # Adjust vertical position
+  #   hjust = 0.5,  # Adjust horizontal position
+  #   color = "black"
+  # ) +
+  # geom_arrow_chain(colour = "black") + 
+    ggtitle("MAGs NMDS") +
   # scale_color_viridis_b() +
   NULL
 ```

@@ -7,13 +7,13 @@ library(microeco)
 library(phyloseq)
 library(file2meco)
 # Extra packages for plotting
-library(ggalluvial)
-library(ggnested) # Needs to be installed from github not CRAN
-library(ggarrow)
-library(Polychrome) 
-library(forcats)
-library(paletteer)
-library(plotly)
+# library(ggalluvial)
+# library(ggnested) # Needs to be installed from github not CRAN
+# library(ggarrow)
+# library(Polychrome) 
+# library(forcats)
+# library(paletteer)
+# library(plotly)
 library(tidyverse) #tidyverse last
 
 
@@ -179,126 +179,92 @@ bac_df <- readr::read_tsv("data/gtdb_bin_tax/gtdbtk.bac120.summary.tsv", na = "N
 arc_df <- read_tsv("data/gtdb_bin_tax/gtdbtk.ar53.summary.tsv", na = "N/A")
 
 mag_df <- bind_rows(bac_df, arc_df) |> 
-  mutate(sample = str_extract(user_genome, "WM.{5}"), .after = user_genome) |> 
-    mutate(user_genome = str_remove(user_genome, "MAGScoT_cleanbin_000")) |> 
-  select(user_genome, sample, classification)
+  mutate(sample = str_extract(user_genome, "WM.{2}"), .after = user_genome) |> 
+    mutate(genome = str_remove(user_genome, "MAGScoT_cleanbin_000")) |> 
+  select(genome, sample, classification)
   
   # Create vectors of column names
   clade_cols <- stringr::str_extract_all(mag_df$classification[3], "[a-z]{1}(?=_)")
   
   clade_cols <- as.vector(clade_cols[[1]]) %>% print()
 
+#Spread columns out, clean names
+
+mag_df_clean <- mag_df %>% tidyr::separate_wider_delim(
+  cols = classification, delim = ";", names = clade_cols, too_few = "align_start")
+
 # Import coverage/abundance data
 de_coverage <- read_tsv("data/derep_bins/Drep_Bins_coverage.tsv")
   
-de_coverage$Genome <- str_replace_all(de_coverage$Genome, pattern = "_MAGScoT_cleanbin_000", replacement = "_")
+de_coverage$genome <- str_replace_all(de_coverage$Genome, pattern = "_MAGScoT_cleanbin_000", replacement = "_")
 
 colnames(de_coverage) <- str_remove_all(colnames(de_coverage), "001_val_.{2}fq.gz ")
 
 # Recalculate relative abundances
-   # First extract colnames that we want to keep
+   # First extract only forward reads and relative abundance to keep
 col_keep <- colnames(de_coverage[str_which(colnames(de_coverage), 
-  ".*Relative.*")])
+  ".*1_Relative.*")])
 col_keep
+# Remove columns we dont want and the first 'unmapped' row
+de_coverage_clean <- de_coverage |> 
+  select(genome, all_of(col_keep)) |> 
+  slice(-1)
 
-de_coverage <- de_coverage |> 
-  select(Genome, all_of(col_keep))
-
+# Create a vector of sites
 site_cols <- 
   stringr::str_extract(col_keep, "^.{4}") %>%   
   na.omit() %>% 
   unique() |> 
   print() 
 
-for(i in 1:length(site_cols)) {
-  # Extract columns that match the sample name
-  cols <- str_which(colnames(de_coverage), paste0(site_cols[i], ".*"))
-  if(i == 1) {
-    # Create a blank dataframe with same rows as the other
-    de_coverage_new <- de_coverage[,1:19]
-    colnames(de_coverage_new) <- site_cols
-# sum those two columns and put them in a column called "add"
-de_coverage_new <- de_coverage %>%
-rowwise() %>%
-mutate(add = sum(across(starts_with(site_cols[i])), na.rm = T)) |> 
-  select(add) 
-} else {
-    add <- de_coverage %>%
-rowwise() %>%
-mutate(add = sum(across(starts_with(site_cols[i])), na.rm = T)) |> 
-  select(add)
-
-  de_coverage_new[,i] <- add
-    print(sum(de_coverage_new[,i]))
-  }
-}
-
-
-
-# Double check that there are still 19 columns labelled with add.y
-if(sum(str_count(colnames(de_coverage_new), "add.*")) == 19) {
-colnames(de_coverage_new)[str_which(colnames(de_coverage_new), "add.*")] <- site_cols
-  colnames(de_coverage_new)
-}
-de_coverage_new <-
-  bind_cols(de_coverage, de_coverage_new)
-
-# Next steps need to make a relative abundance column
-
-#Spread columns out, clean names
-
-mag_df <- mag_df %>% tidyr::separate_wider_delim(cols = clade_name, delim = "|", names = clade_cols, too_few = "align_start") %>% 
-  # Drop all rows that don't get down to a taxa 
-  tidyr::drop_na("t") %>%
-  #remove additional characters and make data columns numeric
-  mutate(across(clade_cols, ~ str_remove(., "[a-z]__")))
+# Rename long names to match'site_cols'
+de_coverage_clean <- de_coverage_clean |> 
+  rename_with(
+    ~site_cols, 
+    .cols = matches("WM.*")
+  )
+# Calculate relative abundances  
+de_coverage_clean <- de_coverage_clean |> 
+  mutate(across(str_which(colnames(de_coverage_clean), "WM.*"),
+   ~ .x/sum(.x, na.rm = T)*100))
 
 # Quick check to see if abundances are all still 100 
-colSums(mag_df[9:ncol(mag_df)])
+colSums(de_coverage_clean[2:ncol(de_coverage_clean)])
 
 
+# Turn the mag data into a microeco object ('mt_mag')----------------------------------------------------------------------------------
 
-#Create long df 
-long_mag_df <- mag_df %>% pivot_longer(cols = all_of(site_cols), 
-  names_to = "sample", values_to = "abundance")
+  # Use the de_rep coverage data for otus and abundance
+otu_table <- de_coverage_clean |> 
+    column_to_rownames("genome") |> 
+  as.data.frame()
+head(otu_table)
 
-long_mag_df <- long_mag_df %>% 
-  mutate(date = sw_meta$date[match(long_mag_df$sample, sw_meta$sample)]
-  )
-long_mag_df$date <- mdy(long_mag_df$date)
-
-# Turn the Sylph data into a microeco object ('mt_sylph')----------------------------------------------------------------------------------
-
-otu_table <- mag_df |> 
-    rownames_to_column("otu") |> 
-    select(all_of(site_cols), "otu") |> 
-    column_to_rownames("otu") |> 
-    as.data.frame()
-
-tax_table <- mag_df |> 
-    rownames_to_column("otu") |> 
-    select(all_of(clade_cols), "otu") |> 
-    column_to_rownames("otu") |> 
-    as.data.frame()
+tax_table <- mag_df_clean |> 
+    column_to_rownames("genome") |> 
+    as.data.frame() |> 
+  tidy_taxonomy()
+head(tax_table)
 
 sample_table <- sw_meta |> 
     column_to_rownames("sample") |> 
     as.data.frame()
+head(sample_table)
+mt_mag <-microtable$new(otu_table = otu_table, sample_table = sample_table, tax_table = tax_table)
 
-mt_sylph <-microtable$new(otu_table = otu_table, sample_table = sample_table, tax_table = tax_table)
+mt_mag$tidy_dataset()
 
-mt_sylph$tidy_dataset()
  # Calculations for later
 # Calculate relative abunance
-mt_sylph$cal_abund()
-mt_sylph$taxa_abund$p[1:5,1:5]
+mt_mag$cal_abund()
+mt_mag$taxa_abund$p[1:5,1:5]
 
 # Calc Alpha Diversity
-mt_sylph$cal_alphadiv()
+mt_mag$cal_alphadiv()
 
 # Calc Bray Curtis Dissimilarity
-mt_sylph$cal_betadiv()
-mt_sylph$beta_diversity$bray
+mt_mag$cal_betadiv()
+mt_mag$beta_diversity$bray
 
 # Remove unneeded data----------------------------------------------------
 rm(names_vec)
@@ -309,4 +275,13 @@ rm(otu_table)
 rm(sample_table)
 rm(tax_table)
 rm(clade_cols)
-  
+rm(arc_df)
+rm(b_df)
+rm(bac_df)
+rm(de_coverage)
+rm(de_coverage_clean)
+rm(long_b_df)
+rm(col_keep)
+rm(mag_df)
+rm(mag_df_clean)
+
