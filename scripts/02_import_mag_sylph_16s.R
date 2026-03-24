@@ -181,7 +181,7 @@ arc_df <- read_tsv("data/gtdb_bin_tax/gtdbtk.ar53.summary.tsv", na = "N/A")
 mag_df <- bind_rows(bac_df, arc_df) |> 
   mutate(sample = str_extract(user_genome, "WM.{2}"), .after = user_genome) |> 
     mutate(genome = str_remove(user_genome, "MAGScoT_cleanbin_000")) |> 
-  select(genome, sample, classification)
+  select(genome, classification)
   
   # Create vectors of column names
   clade_cols <- stringr::str_extract_all(mag_df$classification[3], "[a-z]{1}(?=_)")

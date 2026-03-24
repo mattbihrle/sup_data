@@ -10,6 +10,8 @@ sw_meta <- read_csv("data/sw_metadata.csv") |>
   mutate(date = mdy(date)) |> 
   select(!day:year)
 sw_meta$strat_season <- factor(sw_meta$strat_season, levels = c("summer", "fall", "winter", "spring"), ordered = T)
+sw_meta <- sw_meta |> 
+  mutate(strat_season_2 = ifelse(strat_season == "fall", "winter", strat_season))
 
 #import temp file ----------------------------------------------------------------------------
 mat_df <- readMat.default(con = "data/metadata/LSEO24h_temp.mat")
@@ -324,14 +326,14 @@ plot
 #   check_outliers(method = "mcd", verbose = T)
 # outliers
 
-maestro_df_clean |> 
-  select(data_vars, dttm) |> 
-  drop_na() |> 
-  mutate(outlier = outliers) |> 
-  pivot_longer(-c(dttm, outlier), names_to = "variable", values_to = "vals") |> 
-  ggplot(aes(dttm, vals, color = outlier)) +
-  geom_point() +
-  facet_wrap(~variable, scales = "free")
+# maestro_df_clean |> 
+#   select(data_vars, dttm) |> 
+#   drop_na() |> 
+#   mutate(outlier = outliers) |> 
+#   pivot_longer(-c(dttm, outlier), names_to = "variable", values_to = "vals") |> 
+#   ggplot(aes(dttm, vals, color = outlier)) +
+#   geom_point() +
+#   facet_wrap(~variable, scales = "free")
 
 ## Average data ------------------------------------------------------------------------------
 maestro_df_clean <- maestro_df_clean |>  
