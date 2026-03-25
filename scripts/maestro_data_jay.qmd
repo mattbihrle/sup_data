@@ -1,3 +1,9 @@
+---
+title: "Explore Maestro - Jay Mtg"
+format: html
+---
+
+```{r, echo = F}
 # For loading .mat file
 library(R.matlab)
 library(tidyverse)
@@ -6,15 +12,23 @@ library(skimr) # For summary stats
 library(plotly) # For interactive plots
  
 # Load metadata-------------------------------------------------------------------------
-sw_meta <- read_csv("data/sw_metadata.csv") |>
+sw_meta <- read_csv("C:/Users/User/Desktop/Grad School/lab_work/sup_data/data/sw_metadata.csv") |>
   mutate(date = mdy(date)) |> 
   select(!day:year)
 sw_meta$strat_season <- factor(sw_meta$strat_season, levels = c("summer", "fall", "winter", "spring"), ordered = T)
 sw_meta <- sw_meta |> 
   mutate(strat_season_2 = ifelse(strat_season == "fall", "winter", strat_season))
 
+  # First create temporary df of sample dates
+  samp_dates <- sw_meta |> 
+    select(sample) |> 
+    mutate(sample_date = as_date(sw_meta$date))
+```
+
+
+```{r}
 #import temp file ----------------------------------------------------------------------------
-mat_df <- readMat.default(con = "data/metadata/LSEO24h_temp.mat")
+mat_df <- readMat.default(con = "C:/Users/User/Desktop/Grad School/lab_work/sup_data/data/metadata/LSEO24h_temp.mat")
 
 # Extract dataframe we want from 'T' for temp and convert matlab time to poxit time
 temp_df <- mat_df$T |> 
@@ -33,13 +47,10 @@ temp_df_long <- temp_df |>
   mutate(temp_c_24h_avg = mean(temp)) |> 
   ungroup()
 
-# First create temporary df of sample dates
-  samp_dates <- sw_meta |> 
-    select(sample) |> 
-    mutate(sample_date = as_date(sw_meta$date))
+
 
 ## Create a 14 day averaged temperature---------------------------------
-  
+
   # Then create 14 day average
 temp_df_long <- temp_df_long |>
   # Force the date column to be a simple Date, dropping any hours/minutes/seconds
@@ -76,23 +87,31 @@ temp_df_long <- temp_df_long |>
   mutate(coeff_var = (sd(temp, na.rm = T)/mean(temp, na.rm = T)) * 100)
 
   # Plot coeff_var only on sample dates
-temp_df_long |> 
+test <- temp_df_long |> 
   filter(sample_date == date, depth == 38) |> 
-  mutate(coeff_test = ifelse(coeff_var > 10, "FALSE", "TRUE")) |> 
-  ggplot(aes(dttm, temp, color = coeff_test)) +
+  mutate(coeff_var_under10 = ifelse(coeff_var > 10, "FALSE", "TRUE")) |> 
+  ggplot(aes(dttm, temp, color = coeff_var_under10)) +
   geom_point() +
-  facet_wrap(~sample_date, scales = "free")
+  facet_wrap(~sample_date, scales = "free") +
+  scale_x_datetime(date_labels = "%H")
+
+test
+plotly::plotly_build(test)
 ### Add averaged temp column to metadata ---------------------
 sw_meta_final <- temp_df_long |> 
   filter(depth == 38) |> 
-  select(date, depth, temp_c_24h_avg) |> 
+  select(date, depth, temp_c_24h_avg, temp_c_14d_avg) |> 
   distinct(date, .keep_all = T) |> 
   right_join(y = sw_meta, by = "date") |> 
   relocate(sample)
+```
 
-# Import maestro data --------------------------------------------------------------------
+
+# Import maestro data 
+
+```{r}
 # Recreate a dttm column
-maestro_df <- readMat.default(con = "data/metadata/lseo_maestro_time.mat") |> 
+maestro_df <- readMat.default(con = "C:/Users/User/Desktop/Grad School/lab_work/sup_data/data/metadata/lseo_maestro_time.mat") |> 
   data.frame() |> 
   mutate(dttm = as_datetime((as.numeric(t) - 719529) * 86400), .before = CDOM) |>
   # Create a date column rounded to nearest whole day for averaging later
@@ -112,20 +131,29 @@ long_maestro_df <- maestro_df |>
   names_to = "variable", values_to = "vals", values_drop_na = T)
 
   # Quick plot
-long_maestro_df |> 
+test <- long_maestro_df |> 
   ggplot(aes(dttm, vals, color = variable)) +
   geom_point()+
   facet_wrap(~variable, scales = "free")
+test
 
+# ggsave("output/plots/maestro_raw.jpg", test)
+```
+
+```{r}
 # Create a vector of data variables to use later
 data_vars <- maestro_df |> 
   select(-c(dttm, date, sample_date, sample, t)) |> 
   colnames() |> 
   as.character()
 data_vars
+```
 
-## Start looking for outliers ---------------------------------------------------------
-### Plot of outliers - multivariate ----------------------------------------------
+## Start looking for outliers
+
+### Plot of outliers - multivariate 
+
+```{r}
 # outliers <- maestro_df |> 
 #   select(data_vars) |>  
 #   drop_na() |> 
@@ -139,10 +167,12 @@ data_vars
 #   ggplot(aes(dttm, vals, color = outlier)) +
 #   geom_point() +
 #   facet_wrap(~variable, scales = "free")
+```
 
-## Set outlier function ------------------------------------------------------------------
+## Set outlier function 
 
-plot_outliers <- function(maestro_df, var, plotly = T) {
+```{r}
+plot_outliers <- function(maestro_df, var, plotly = F) {
   outlier_df <- maestro_df |> 
     select(dttm,  var) |> 
     rename(data = var) |> 
@@ -165,7 +195,12 @@ plot_outliers <- function(maestro_df, var, plotly = T) {
     return(outlier_plot)
     }
   }
-### Outliers in CDOM ------------------------------------------------------------------
+```
+
+
+### Outliers in CDOM 
+
+```{r}
 
 plot <- plot_outliers(maestro_df, "CDOM")
 plot
@@ -181,9 +216,11 @@ plot <- plot_outliers(maestro_df_clean, "CDOM")
 plot
 
 # Looks good moving onto the next
+```
 
-### Outliers in CHL ------------------------------------------------------------------
+### Outliers in CHL 
 
+```{r}
 plot <- plot_outliers(maestro_df, "CHL")
 plot
 
@@ -198,13 +235,17 @@ plot <- plot_outliers(maestro_df_clean, "CHL")
 plot
 
 # Looks better moving on to the next
-### Outliers in CND ------------------------------------------------------------------
+```
+### Outliers in CND
+```{r}
 
 plot <- plot_outliers(maestro_df, "CND")
 plot
 # Conductivity looks good apart from some gaps in the data, moving to the next
+```
 
-### Outliers in DO ------------------------------------------------------------------
+### Outliers in DO 
+```{r}
 
 plot <- plot_outliers(maestro_df, "DO")
 plot
@@ -228,15 +269,16 @@ maestro_df |>
   geom_point()
 
 # The single day does seem to be diurnal. I'll keep this data as is
-
-### Outliers in P ------------------------------------------------------------------
-
+```
+### Outliers in P 
+```{r}
 plot <- plot_outliers(maestro_df, "P")
 plot
 
 # Pressure doesn't seem to have any crazy differences. I'm going to leave it as is
-
-### Outliers in PCO2 ------------------------------------------------------------------
+```
+### Outliers in PCO2 
+```{r}
 
 plot <- plot_outliers(maestro_df, "PCO2")
 plot
@@ -252,8 +294,9 @@ maestro_df_clean <- maestro_df_clean |>
   mutate(PCO2 = ifelse(PCO2 > 0.35, PCO2, as.numeric("NA")))
 
 # PCO2 also seems to be diurnally driven. I'll keep this too
-
-### Outliers in PHYC ------------------------------------------------------------------
+```
+### Outliers in PHYC 
+```{r}
 
 plot <- plot_outliers(maestro_df, "PHYC")
 plot
@@ -275,8 +318,9 @@ plot <- plot_outliers(maestro_df_clean, "PHYC")
 plot
 
 # Looks better moving on to the next
-
-### Outliers in TURB ------------------------------------------------------------------
+```
+### Outliers in TURB 
+```{r}
 
 plot <- plot_outliers(maestro_df, "TURB")
 plot
@@ -307,9 +351,10 @@ plot <- plot_outliers(maestro_df_clean, "TURB")
 plot
 
 # Looks better moving on to the next
+```
 
-### Outliers in pH ------------------------------------------------------------------
-
+### Outliers in pH 
+```{r}
 plot <- plot_outliers(maestro_df, "pH")
 plot
 
@@ -318,8 +363,11 @@ plot
 # I would assume that those aren't true but I will need to do more looking into it. 
 
 # Leaving pH as is for now
+```
 
-## Recalculate multivariate outliers just for fun --------------------------------------
+
+## Recalculate multivariate outliers just for fun 
+```{r}
 # outliers <- maestro_df_clean |> 
 #   select(data_vars) |>  
 #   drop_na() |> 
@@ -334,8 +382,10 @@ plot
 #   ggplot(aes(dttm, vals, color = outlier)) +
 #   geom_point() +
 #   facet_wrap(~variable, scales = "free")
+```
+## Average data 
 
-## Average data ------------------------------------------------------------------------------
+```{r}
 maestro_df_clean <- maestro_df_clean |>  
   group_by(date) |> 
   mutate(cdom_24h_avg = mean(CDOM, na.rm = T),
@@ -370,10 +420,11 @@ clean_long_m_df |>
   scale_color_viridis_c()+
   geom_point() +
   facet_wrap(~sample_date, scales = "free")
+```
 
 
-
-#### Add maestro data to broader metadata file --------------------------------------------------
+#### Add maestro data to broader metadata file 
+```{r}
 sw_meta_output <- maestro_df_clean |> 
   select(!any_of(c(data_vars, "dttm", "sample", "t"))) |> 
   right_join(y = sw_meta_final, by = join_by(date)) |> 
@@ -415,16 +466,18 @@ sw_meta_output <- maestro_df_clean |>
 # pres_plot
 # pres_plotly <- plotly::plotly_build(pres_plot)
 # pres_plotly
+```
 
-
-# Write Files to output ----------------------------------------------------------------
-sw_meta_output <- sw_meta_output |> 
-  write_csv("output/data/metadata_supwinter.csv")
+# Write Files to output 
+```{r}
+# sw_meta_output <- sw_meta_output |> 
+#   write_csv("output/data/metadata_supwinter.csv")
 
 # maestro_df_clean <- maestro_df_clean |> 
 #   write_csv("output/data/maestro_data_clean.csv")
 # # temp_df_long <- temp_df_long |> 
 #   # write_csv("output/data/temp_data_long.csv")
 
-rm(long_maestro_df, maestro_df, samp_dates, sum_stats, sw_meta, sw_meta_final,
-temp_df, data_vars, mat_df, outliers, plot, plot_outliers)
+# rm(long_maestro_df, maestro_df, samp_dates, sum_stats, sw_meta, sw_meta_final,
+# temp_df, data_vars, mat_df, outliers, plot, plot_outliers)
+```

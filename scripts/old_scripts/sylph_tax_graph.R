@@ -5,7 +5,7 @@ library(Polychrome)
 library(forcats)
 
 # Read in the data
-b_df <- readr::read_tsv("Sylph_TaxAbund_out.tsv")
+b_df <- readr::read_tsv("data/superior_sylph/Sylph_TaxAbund_out.tsv")
 
 # Create vectors of column names
 clade_cols <-
@@ -69,7 +69,7 @@ long_b_df %>%
     metaMDS(distance="bray", autotransform=FALSE, binary=FALSE, 
                   noshare=TRUE, zerodist="ignore")
   
-  nmds_scores
+  nmds
   
   # Extract scores
   
@@ -81,7 +81,7 @@ long_b_df %>%
   nmds_basic_plot <- ggplot(nmds_scores, aes(x = NMDS1, y = NMDS2, color = sample)) +
     geom_point(size = 3, alpha = 0.8) +
     labs(title = "NMDS Ordination of WM Data",
-         subtitle = paste("Stress =", round(NMDS$stress, 3)),
+         subtitle = paste("Stress =", round(nmds$stress, 3)),
          x = "NMDS1", 
          y = "NMDS2") +
     theme_minimal()

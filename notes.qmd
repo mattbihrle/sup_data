@@ -2,6 +2,9 @@
 title: "Lab Notebook"
 format: html
 toc: true
+editor: 
+  markdown: 
+    wrap: 72
 ---
 
 # Date
@@ -14,7 +17,23 @@ toc: true
 
 # Feb 05, 2026
 
-Looking at the 16s and sylph data it seems like the general major taxa are all similar however some of the minor taxa are different. **Question:** How sensitive are each method of taxonomy, which do we trust? **Next Steps:** - Split phyla into autotrophs and heterotrophs and mixotrophs - Incorporate env metadata (O2 measurements as measure of respiration and carbon consumed?) - Research into how I should go about sorting through this data - Research into how the 16S data vs the metagenomic data works - Keep working on getting binning data - *Figure out if I need to normalize the data and how?*
+Looking at the 16s and sylph data it seems like the general major taxa
+are all similar however some of the minor taxa are different.
+**Question:** How sensitive are each method of taxonomy, which do we
+trust? **Next Steps:**
+
+-   Split phyla into autotrophs and heterotrophs and mixotrophs
+
+-   Incorporate env metadata (O2 measurements as measure of respiration
+    and carbon consumed?)
+
+-    Research into how I should go about sorting through this data
+
+-    Research into how the 16S data vs the metagenomic data works
+
+-   Keep working on getting binning data
+
+-    *Figure out if I need to normalize the data and how?*
 
 ```{r}
 source("scripts/01_intro_script.R")
@@ -22,28 +41,56 @@ source("scripts/01_intro_script.R")
 
 # Feb 06, 2026
 
-Started looking at top 20 families. Code is in the bottom of "sylph_mircoeco". Also created spreadsheet with names of families and comments about what I could find out about their metabolism or ecology. - Continue this work - Email Jay to get temp data
+Started looking at top 20 families. Code is in the bottom of
+"sylph_mircoeco". Also created spreadsheet with names of families and
+comments about what I could find out about their metabolism or ecology.
+
+-    Continue this work -
+
+-    Email Jay to get temp data
 
 # Feb 10, 2026
 
-**Questions:** Chitinophagaceae diversity at WM03. Is there a way to look into how confident we are about that? What is the metagenome data that I am seeing?
+**Questions:** Chitinophagaceae diversity at WM03. Is there a way to
+look into how confident we are about that? What is the metagenome data
+that I am seeing?
 
-I am seeing a lot of variety within some of these families. I wonder if I should start to filter out some of the smaller taxa?
+I am seeing a lot of variety within some of these families. I wonder if
+I should start to filter out some of the smaller taxa?
 
-Setup a script to isolate families - at the end of sylph_microeco **Chitinophagaceae** - mostly just one genus and species though within the most common genus (sedimini..) there was a ton of diversity at WM03. Maybe points to errors in sequencing?
+Setup a script to isolate families - at the end of sylph_microeco
+**Chitinophagaceae** - mostly just one genus and species though within
+the most common genus (sedimini..) there was a ton of diversity at WM03.
+Maybe points to errors in sequencing?
 
-**Nitrosomonadaceae** - Lots of ammonia oxidizing to nitrate, nitrosomonas more abundant in the spring but nitrosospira abundant in the winter time. Is there functional redundancy here?
+**Nitrosomonadaceae** - Lots of ammonia oxidizing to nitrate,
+nitrosomonas more abundant in the spring but nitrosospira abundant in
+the winter time. Is there functional redundancy here?
 
-**Sphingomonadaceae** - More diversity in species within this family. There is not a ton of information exept some that might suggest they are aerobic and some strains were found in freshwater sediments and drinking water
+**Sphingomonadaceae** - More diversity in species within this family.
+There is not a ton of information exept some that might suggest they are
+aerobic and some strains were found in freshwater sediments and drinking
+water
 
-Plotted abundances and saw a huge drop in abundance from WM16 to WM22 (April to June)
+Plotted abundances and saw a huge drop in abundance from WM16 to WM22
+(April to June)
 
-For next time: https://library.virginia.edu/data/articles/starting-non-metric-multidimensional-scaling-nmds
+For next time:
+https://library.virginia.edu/data/articles/starting-non-metric-multidimensional-scaling-nmds
 
 # Feb 16, 2026
 
--   Imported matlab data to R. Used claude to get intial scripts to import the .mat file into python and then write to csvs. At the bottom of "Intro Scripts" there is a chunk to write all of those to a dataframe in R. Matlab date is since jan 1, 1900 rather than jan 1, 1970.
--   Decided to rewrite the matlab import in R, kept at the bottom of 01_intro_scripts. Updated `sw_meta$strat_season` based on first 40m of temperature. Summer = stratification, fall = post summer isothermal period, winter = reverse stratification, spring = post winter isothermal Found some cool plots that look different based on the temperature but both seem to show seasonal differences.
+-   Imported matlab data to R. Used claude to get intial scripts to
+    import the .mat file into python and then write to csvs. At the
+    bottom of "Intro Scripts" there is a chunk to write all of those to
+    a dataframe in R. Matlab date is since jan 1, 1900 rather than jan
+    1, 1970.
+-   Decided to rewrite the matlab import in R, kept at the bottom of
+    01_intro_scripts. Updated `sw_meta$strat_season` based on first 40m
+    of temperature. Summer = stratification, fall = post summer
+    isothermal period, winter = reverse stratification, spring = post
+    winter isothermal Found some cool plots that look different based on
+    the temperature but both seem to show seasonal differences.
 
 ```{r}
 source("scripts/01_intro_script.R") # if needed
@@ -71,13 +118,33 @@ tb2$plot_ordination(plot_color = "strat_season", plot_shape = "strat_season", pl
 
 # Feb 17, 2026
 
-Added the 24 hour temperature centered on the sampling day. Ended up making the 14 day average. **TODO:** create a couple of figures to show cody the differences in 16s vs sylph data. Plot temperature on these axis, maybe look at PCoA? - Also trim the temperature data to have the same number of days averaged before the first station.
+Added the 24 hour temperature centered on the sampling day. Ended up
+making the 14 day average. **TODO:** create a couple of figures to show
+cody the differences in 16s vs sylph data. Plot temperature on these
+axis, maybe look at PCoA? - Also trim the temperature data to have the
+same number of days averaged before the first station.
 
-\# Feb 18, 2026 Created a couple of abundance plots to show differences between 16s data and sylph data. Moved a bunch of plots scirpts to the 02_plots script. Based on differences in how families change continue to keep writing down my findings. \*\*Created a script to look at graphs of the most abundant families.
+\# Feb 18, 2026 Created a couple of abundance plots to show differences
+between 16s data and sylph data. Moved a bunch of plots scirpts to the
+02_plots script. Based on differences in how families change continue to
+keep writing down my findings. **Created a script to look at graphs of
+the most abundant families.**
 
-**TODO** - How to deal with the difference between the mag data and the 16s data? - Show NDMS graphs - Show temperature determination - Binning script? - missing merged.fasta file - Committee - Jay - Ted - Bill - Formal Thesis Proposal? - Job Stuff.
+**TODO** - How to deal with the difference between the mag data and the
+16s data?
 
-**First work on binning stuff, then lefse, then think about committee things.**
+-   Show NDMS graphs
+
+-   Show temperature determination
+
+-    Binning script?
+
+-    missing merged.fasta file
+
+-    Committee - Jay - Ted - Bill - Formal Thesis Proposal? - Job Stuff.
+
+**First work on binning stuff, then lefse, then think about committee
+things.**
 
 ```{r}
   # Set rank (k, p, c, etc) and number of taxa to include
@@ -264,7 +331,9 @@ meco_16s$alpha_diversity |>
 
 # Interpretation
 
-See a big drop in diversity at WM19 in both 16s and sylph, both are less consistent in the initial months. WM19 is at the end of April beginning of May when the water column is weakly stratified.
+See a big drop in diversity at WM19 in both 16s and sylph, both are less
+consistent in the initial months. WM19 is at the end of April beginning
+of May when the water column is weakly stratified.
 
 # Feb 19, 2026
 
@@ -272,7 +341,10 @@ Looking at MAG families:
 
 ## **Microbacteraceae:**
 
-Decreases summer into fall, increases winter into spring. All the same genus *Rhodoglobus* within actinobacteria. Species of *Rhodoglobus* change from summer into spring. Some other speices cultured from an antarctic lake and able to work at 5degC.
+Decreases summer into fall, increases winter into spring. All the same
+genus *Rhodoglobus* within actinobacteria. Species of *Rhodoglobus*
+change from summer into spring. Some other speices cultured from an
+antarctic lake and able to work at 5degC.
 
 ### Rhodoglobus Plot
 
@@ -310,7 +382,8 @@ t1$plot_bar(facet = "strat_season") +
 
 #### Trends
 
-Drops a lot going into the winter time, doesn't return coming into spring time. QWPN01 dominates at first but then BAIKAL-G1-2R takes over.
+Drops a lot going into the winter time, doesn't return coming into
+spring time. QWPN01 dominates at first but then BAIKAL-G1-2R takes over.
 
 ```{r}
 # Clone dataset
@@ -338,32 +411,59 @@ t1$plot_bar(facet = "strat_season") +
   ggtitle(taxa)
 ```
 
-Scratch that. Talked with Cody today and he said we should be looking at the 16s data as it has a less sensitive cutoff so may be more "accurate" than the sylph data. Updated binning script by checking each part individually, removed the 'environment' option fom the multi binning part, and changed the delimiter in the final contigs file to look for '\_' instead of ':'. Once each one worked, I started the whole binning script and we will see how long it takes.
+Scratch that. Talked with Cody today and he said we should be looking at
+the 16s data as it has a less sensitive cutoff so may be more "accurate"
+than the sylph data. Updated binning script by checking each part
+individually, removed the 'environment' option fom the multi binning
+part, and changed the delimiter in the final contigs file to look for
+'\_' instead of ':'. Once each one worked, I started the whole binning
+script and we will see how long it takes.
 
--   Did some research into lefSE and using that in microeco. The resulting code is at the bottom of 16s analysis. The next thing to do is to look at what taxa are coming out there.
+-   Did some research into lefSE and using that in microeco. The
+    resulting code is at the bottom of 16s analysis. The next thing to
+    do is to look at what taxa are coming out there.
 -   See if I can get some other data from Jay. - CHECK
 -   Start laying out some figures (read a couple of papers)
 -   Email Stormi about outside thesis committee folks - CHECK
 
 # March 6, 2026
 
-Loaded maestro data into R. There is bad data at the beginning of the deployment for the first two days. Then some of the sensors crap out at the end (pCO2). **TODO:** - Figure out how to best deal with outliers in the variables - Average data and add to metadata - Ask Cody about how to best average the environmental data - Reorganize scripts to output the .csvs and load in the rest from excel files - CHECK - Use Bill's script to average the other data -CHECK
+Loaded maestro data into R. There is bad data at the beginning of the
+deployment for the first two days. Then some of the sensors crap out at
+the end (pCO2). **TODO:** - Figure out how to best deal with outliers in
+the variables - Average data and add to metadata - Ask Cody about how to
+best average the environmental data - Reorganize scripts to output the
+.csvs and load in the rest from excel files - CHECK - Use Bill's script
+to average the other data -CHECK
 
 # March 17, 2026
 
-Worked a lot today on the maestro data and tried to clean it up. Removed visually obvious outliers. made 24hr averages and added them to the meta data file. Decided on a 1degC temperature difference from the maestro to the closest thermistor to determine whether we could incorporate the maestro data into our analysis. Made my '01_metadata_import_clean.R' easy to just source or I can take the data products from my data folder.
+Worked a lot today on the maestro data and tried to clean it up. Removed
+visually obvious outliers. made 24hr averages and added them to the meta
+data file. Decided on a 1degC temperature difference from the maestro to
+the closest thermistor to determine whether we could incorporate the
+maestro data into our analysis. Made my '01_metadata_import_clean.R'
+easy to just source or I can take the data products from my data folder.
 
-**Outstanding questions:** - How to deal with outliers in oxygen data - Is a 1 degree change close enough for us to assume the water column is mixing? - pH and turbidity data
+**Outstanding questions:** - How to deal with outliers in oxygen data -
+Is a 1 degree change close enough for us to assume the water column is
+mixing? - pH and turbidity data
 
 # March 19, 2026
 
-**TODO:** Figure out differential abundance tests and why to use one over the other
-  -  Continue to calculate relative abundance 
-**Notes:**Cody mentioned looking at the coefficient of variance to check whether things are diurnal or not. I wonder if it would make more sense to just take the average for everything so it is all the same? Maybe I'll go variable by variable. 
+**TODO:** Figure out differential abundance tests and why to use one
+over the other - Continue to calculate relative abundance **Notes:**Cody
+mentioned looking at the coefficient of variance to check whether things
+are diurnal or not. I wonder if it would make more sense to just take
+the average for everything so it is all the same? Maybe I'll go variable
+by variable.
 
 # March 24, 2026
-I got the mag data into a microtable, ran a LEfSe on it but nothing came up significant. I also looked at collinearity of the evironmental data .
-The JACTMZ01, sediminibacterium, and UBA10103 genuses were all the largest differences. 
+
+I got the mag data into a microtable, ran a LEfSe on it but nothing came
+up significant. I also looked at collinearity of the evironmental data .
+The JACTMZ01, sediminibacterium, and UBA10103 genuses were all the
+largest differences.
 
 ```{r}
 # View sample table 
@@ -415,12 +515,8 @@ tb2$plot_ordination(plot_color = "strat_season", plot_shape = "strat_season", pl
   # scale_color_viridis_b() +
   NULL
 
-  ```
+```
 
-**TODO:**
-  -  Bug Cody about the metabolic data
-  -  Look more into how the taxa change
-  -  Plot PCA and update the NMDS to have the arrows
-  -  Figure out all the statistics I should be doing
-  
-
+**TODO:** - Bug Cody about the metabolic data - Look more into how the
+taxa change - Plot PCA and update the NMDS to have the arrows - Figure
+out all the statistics I should be doing

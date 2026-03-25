@@ -1,0 +1,43 @@
+---
+title: "05_environmental_data"
+format: html
+---
+
+# Load Libraries
+```{r}
+library(microeco)
+library(tidyverse)
+```
+
+# Run previous scripts to load in microtable objects
+
+```{r}
+source("scripts/02_import_mag_sylph_16s.R")
+```
+
+
+# Create environmental object
+
+```{r}
+t1 <- trans_env$new(dataset = mt_mag, env_cols = c(6:18), standardize = F, complete_na = T)
+t1$data_env
+t1$data_env$chla_24h_avg[1] <- t1$data_env |> 
+    filter()
+# Calculate differences between variables at different sampling dates
+t1$cal_diff(group = "strat_season", method = "anova")
+view(t1$res_diff)
+
+# Calculate RDA plot
+t1$cal_ordination(method = "dbRDA", use_measure = "bray")
+t1$trans_ordination()
+t1$plot_ordination(plot_color = "strat_season")
+# the main results of RDA are related with the projection and angles between arrows
+# adjust the length of the arrows to show them better
+t1$trans_ordination(adjust_arrow_length = TRUE, max_perc_env = 1.5)
+# t1$res_rda_trans is the transformed result for plotting
+t1$plot_ordination(plot_color = "strat_season")
+# Calculate correlation matrix
+t1$cal_autocor(group = "strat_season")
+
+
+```
