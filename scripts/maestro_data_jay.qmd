@@ -172,6 +172,8 @@ data_vars
 ## Set outlier function 
 
 ```{r}
+# Function that takes a data frame and variable, checks outliers using a
+# absolute deviation around the median (MAD score). Outputs a plot or interactive plotly plot
 plot_outliers <- function(maestro_df, var, plotly = F) {
   outlier_df <- maestro_df |> 
     select(dttm,  var) |> 
@@ -179,7 +181,7 @@ plot_outliers <- function(maestro_df, var, plotly = F) {
     drop_na()
   # Create a new column
   outlier_df <- outlier_df |> 
-    mutate(outlier = check_outliers(outlier_df, method = c("zscore", "iqr")))
+    mutate(outlier = check_outliers(outlier_df, method = "zscore_robust"))
 
   # Make a plot of outliers
   outlier_plot <- 

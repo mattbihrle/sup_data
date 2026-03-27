@@ -520,3 +520,16 @@ tb2$plot_ordination(plot_color = "strat_season", plot_shape = "strat_season", pl
 **TODO:** - Bug Cody about the metabolic data - Look more into how the
 taxa change - Plot PCA and update the NMDS to have the arrows - Figure
 out all the statistics I should be doing
+
+# March 27, 2026
+
+  -  Working through a book to figure out the stats
+  https://uw.pressbooks.pub/appliedmultivariatestatistics/chapter/relativizations/
+      - Currently trying to figure out which normalization to do on the 
+      abundance data. 
+    "Gower and X^2 distances perform better than other measures in revealing the relationships among the samples along an environmental gradient even under low sequencing depth and the presence of noise in simulating abundance vectors The Jaccard dissimilarity measure was shown to perform well in revealing the cluster relationships when such relationships were prominent, but not very well for subtle clusters. The χ 2 distance was shown to perform well in revealing environmental gradients, but only moderately well in revealing underlying clusters." - 
+          - Statistical Analysis of micrbiome data (pg 84)
+  
+  It's hard for me to tell from this which to use. This doesn't seem to be quite the right answer.
+
+  - As reccomended by the 'performance' package documentation, I called outliers based on MAD (median absolute deviation) instead of the mean in the environmental data. 
