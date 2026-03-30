@@ -76,7 +76,10 @@ tax_table <- b_df |>
 sample_table <- sw_meta |> 
     column_to_rownames("sample") |> 
     as.data.frame()
-
+# Add sample back as a column
+sample_table <- sample_table |> 
+  mutate(sample = rownames(sample_table))
+# Create mt object
 mt_sylph <-microtable$new(otu_table = otu_table, sample_table = sample_table, tax_table = tax_table)
 
 mt_sylph$tidy_dataset()
@@ -89,7 +92,7 @@ mt_sylph$taxa_abund$p[1:5,1:5]
 mt_sylph$cal_alphadiv()
 
 # Calc Bray Curtis Dissimilarity
-mt_sylph$cal_betadiv()
+mt_sylph$cal_betadiv(method = c("bray","aitchison","robust.aitchison"))
 mt_sylph$beta_diversity$bray
 
 # Import 16S data----------------------------------------------------------------------------
@@ -171,7 +174,7 @@ meco_16s$taxa_abund$p[1:5,1:5]
 meco_16s$cal_alphadiv()
 
 # Calc Bray Curtis Dissimilarity
-meco_16s$cal_betadiv()
+meco_16s$cal_betadiv(method = c("bray","aitchison","robust.aitchison"))
 meco_16s$beta_diversity$bray
 
 # Import MAG data -----------------------------------------------------
@@ -246,25 +249,26 @@ tax_table <- mag_df_clean |>
   tidy_taxonomy()
 head(tax_table)
 
-sample_table <- sw_meta |> 
-    column_to_rownames("sample") |> 
-    as.data.frame()
+# Use sample table from above here
+
 head(sample_table)
 mt_mag <-microtable$new(otu_table = otu_table, sample_table = sample_table, tax_table = tax_table)
-
+# mt_mag <- trans_norm$new(mt_mag)
+# mt_mag <- mt_mag$norm(method = "rclr")
 mt_mag$tidy_dataset()
 
  # Calculations for later
 # Calculate relative abunance
 mt_mag$cal_abund()
-mt_mag$taxa_abund$p[1:5,1:5]
+mt_mag$taxa_abund
 
 # Calc Alpha Diversity
 mt_mag$cal_alphadiv()
 
 # Calc Bray Curtis Dissimilarity
-mt_mag$cal_betadiv()
-mt_mag$beta_diversity$bray
+mt_mag$cal_betadiv(method = c("bray","aitchison","robust.aitchison"), unifrac = T)
+head(mt_mag$beta_diversity)
+
 
 # Remove unneeded data----------------------------------------------------
 rm(names_vec)
