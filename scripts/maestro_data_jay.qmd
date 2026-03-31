@@ -292,6 +292,11 @@ maestro_df |>
   ggplot(aes(dttm, PCO2, color = morning)) +
   geom_point()
 
+maestro_df |> 
+  filter(date(dttm) > "2025-06-10" & date(dttm) < "2025-06-17") |> 
+  mutate(morning = as.logical(ifelse(hour(dttm) < 12, "TRUE", "FALSE"))) |> 
+  ggplot(aes(dttm, PCO2, color = morning)) +
+  geom_point()
 maestro_df_clean <- maestro_df_clean |> 
   mutate(PCO2 = ifelse(PCO2 > 0.35, PCO2, as.numeric("NA")))
 

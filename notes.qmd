@@ -607,3 +607,51 @@ Looks like the Diamond (2019) soil paper used weighted unifraq for distance meas
   - See if LefSE is the best option or not to look for interesting classes
   - Metabolic data from Cody
   - Import trees for unifrac stuff
+
+
+# March 31, 2026
+
+Meeting with Jay - Maestro Data
+Probably just trim off the last month of data, 
+DO umol/L about 12 mg/L typically, check to see what reasonble values are, compare DO to thermocline. Take a look at whether high values are above the thermocline or not. Look at saturation.
+
+Period tends to be about 17 hours, near-initial velocity.
+PCO2  looks diurnal starting in May. Convection from heating make surface water higher than 4c and sinks. 
+Dan Sanborne - pCO2 paper - neural network based estimate of 
+pC02 - ppm (uatm)
+CHLa seeing photobleaching in the diurnal signal. 
+
+Temperature Data
+01 - Below thermocline, stable temp
+02 - Below thermocline, stable temp
+03 - Below thermocline, stable temp
+04 - Below thermocline, stable temp
+05 - Mostly below thermocline, couple big spikes after noon but noon temp would work
+11 - isothermal, noon temp
+12 - isothermal, noon temp
+13 - isothermal, noon temp
+14 - isothermal, noon temp
+15 - isothermal, noon temp
+16 - isothermal, noon temp
+17 - isothermal, noon temp
+18 - isothermal, noon temp
+19 - isothermal, noon temp
+20 - isothermal, noon temp
+21 - isothermal, noon temp
+22 - isothermal, noon temp
+23 - isothermal, noon temp
+24 - light thermocline, below thermocline stable temp
+
+Based on temperature graphs it seems like I should just do the median value because there might be some variations in temperature especially in the March months when we have convective cooling and the community in those areas would be a reflection of that fluctuation in temperature. 
+
+Spent most of the day going through the environmental stuff. I feel pretty good about it so far. 
+**Next Steps:** Finish looking at pH. Check out the end of the deployment and the periodicity of it.
+  - Look at values from Minor to see what is normal
+  - Look at oxygen values and how they fluctuate with temperature. I might need to get rid of some of the values before averaging them so I am only measuring below the thermocline
+  
+
+
+
+
+
+

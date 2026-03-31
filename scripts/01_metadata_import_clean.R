@@ -4,6 +4,8 @@ library(tidyverse)
 library(performance) # for outlier checks
 library(skimr) # For summary stats
 library(plotly) # For interactive plots
+library(LakeMetabolizer) # For oxygen data
+library(respR) # For working with oxygen data
  
 # Load metadata-------------------------------------------------------------------------
 sw_meta <- read_csv("data/sw_metadata.csv") |>
@@ -22,15 +24,28 @@ temp_df <- mat_df$T |>
 # Set colnames and rownames
 colnames(temp_df) <- mat_df$dep  
 rownames(temp_df) <- mat_df$t 
+
+# Create date column 
+temp_df <- temp_df |> 
+    rownames_to_column(var = "dttm") |>
+  mutate(dttm = as_datetime((as.numeric(dttm) - 719529) * 86400)) |> 
+    # round to nearest hour to make things easier
+  mutate(dttm = round_date(dttm, unit = "hour")) |> 
+    # Select only columns less than 50m
+  select(which(as.numeric(colnames(temp_df)) <= 50))
 # move dttm column out, convert to datetime and pivot long
 temp_df_long <- temp_df |> 
-  rownames_to_column(var = "dttm") |>
-  mutate(dttm = as_datetime((as.numeric(dttm) - 719529) * 86400)) |> 
-  pivot_longer(cols = !dttm, names_to = "depth", values_to = "temp") |> 
+  # rownames_to_column(var = "dttm") |>
+  # mutate(dttm = as_datetime((as.numeric(dttm) - 719529) * 86400)) |> 
+  # # round to nearest hour to make things easier
+  # mutate(dttm = round_date(dttm, unit = "hour")) |> 
+  pivot_longer(cols = !dttm, names_to = "depth", values_to = "temp") |>
+  # Create variable of local time
+  mutate(dttm_local = with_tz(dttm, tzone = "US/Central")) |> 
 # Add averaged temperature column
-  mutate(date = round_date(dttm, unit = "day")) |> 
+  mutate(date = floor_date(dttm_local, unit = "day")) |> 
   group_by(date, depth) |> 
-  mutate(temp_c_24h_avg = mean(temp)) |> 
+  mutate(temp_c_24h_med = median(temp)) |> 
   ungroup()
 
 # First create temporary df of sample dates
@@ -79,13 +94,32 @@ temp_df_long <- temp_df_long |>
 temp_df_long |> 
   filter(sample_date == date, depth == 38) |> 
   mutate(coeff_test = ifelse(coeff_var > 10, "FALSE", "TRUE")) |> 
-  ggplot(aes(dttm, temp, color = coeff_test)) +
+  ggplot(aes(dttm_local, temp, color = coeff_test)) +
   geom_point() +
-  facet_wrap(~sample_date, scales = "free")
+  facet_wrap(~sample_date, scales = "free") +
+  scale_x_datetime(date_labels = "%H")
+
+
+
+# Plot temperature profiles on each sampling date
+  # First only keep synoptic hours
+hours_keep = c(00, 06, 12, 18)
+# The create the plot
+temp_df_long |> 
+  filter(sample_date == date, minute(dttm_local) == 0, hour(dttm_local) %in% hours_keep) |> 
+  ggplot(aes(x = temp, y = as.numeric(depth), color = as.character(hour(dttm_local)))) + 
+  geom_point() + 
+  scale_color_discrete() +
+  scale_y_reverse() +
+  facet_wrap(~ sample_date, scales = "free") +
+  geom_hline(yintercept = 38) +
+  NULL
+  
+
 ### Add averaged temp column to metadata ---------------------
 sw_meta_final <- temp_df_long |> 
   filter(depth == 38) |> 
-  select(date, depth, temp_c_24h_avg) |> 
+  select(date, depth, temp_c_24h_med) |> 
   distinct(date, .keep_all = T) |> 
   right_join(y = sw_meta, by = "date") |> 
   relocate(sample)
@@ -95,8 +129,12 @@ sw_meta_final <- temp_df_long |>
 maestro_df <- readMat.default(con = "data/metadata/lseo_maestro_time.mat") |> 
   data.frame() |> 
   mutate(dttm = as_datetime((as.numeric(t) - 719529) * 86400), .before = CDOM) |>
+  # round dttm to nearest minute
+  mutate(dttm = round_date(dttm, unit = "minute")) |> 
+  # Create a local dttm
+  mutate(dttm_local = with_tz(dttm, tzone = "US/Central")) |> 
   # Create a date column rounded to nearest whole day for averaging later
-  mutate(date = as_date(round_date(dttm, unit = "day"))) |> 
+  mutate(date = as_date(round_date(dttm_local, unit = "day"))) |> 
   # filter out the beginning of the deployment where pressure is less than 20m 
   filter(P > 20) |> 
   # add a sample date column for future averaging
@@ -108,24 +146,25 @@ sum_stats
 
   # Create long df for plotting
 long_maestro_df <- maestro_df |> 
-  pivot_longer(cols = -c(dttm, date, sample, sample_date),
+  pivot_longer(cols = -c(dttm, date, sample, sample_date, dttm_local),
   names_to = "variable", values_to = "vals", values_drop_na = T)
 
   # Quick plot
 long_maestro_df |> 
-  ggplot(aes(dttm, vals, color = variable)) +
+  ggplot(aes(dttm_local, vals, color = variable)) +
   geom_point()+
   facet_wrap(~variable, scales = "free")
 
+
 # Create a vector of data variables to use later
 data_vars <- maestro_df |> 
-  select(-c(dttm, date, sample_date, sample, t)) |> 
+  select(-c(dttm, date, sample_date, sample, t, dttm_local)) |> 
   colnames() |> 
   as.character()
 data_vars
 
 ## Start looking for outliers ---------------------------------------------------------
-### Plot of outliers - multivariate ----------------------------------------------
+## Plot of outliers - multivariate ----------------------------------------------
 # outliers <- maestro_df |> 
 #   select(data_vars) |>  
 #   drop_na() |> 
@@ -134,17 +173,25 @@ data_vars
 
 # # Make a lil plot
 # maestro_df |> 
+#   select(c("dttm_local", data_vars)) |> 
+#   drop_na() |> 
 #   mutate(outlier = outliers) |> 
-#   pivot_longer(-c(dttm, outlier), names_to = "variable", values_to = "vals") |> 
-#   ggplot(aes(dttm, vals, color = outlier)) +
+#   pivot_longer(-c(outlier, dttm_local), names_to = "variable", values_to = "vals") |> 
+#   ggplot(aes(dttm_local, vals, color = outlier)) +
 #   geom_point() +
 #   facet_wrap(~variable, scales = "free")
 
-## Set outlier function ------------------------------------------------------------------
+# Based on looking at the individual variables (below) and conversations with Jay, I am going
+# to remove all data after 2025-06-21 00:30:00
+
+maestro_df <- maestro_df |> 
+  filter(dttm_local < "2025-06-21 00:30:00")
+
+##  Create otlier function ------------------------------------------------------------------
 
 plot_outliers <- function(maestro_df, var, plotly = T) {
   outlier_df <- maestro_df |> 
-    select(dttm,  var) |> 
+    select(dttm_local,  var) |> 
     rename(data = var) |> 
     drop_na()
   # Create a new column
@@ -154,7 +201,7 @@ plot_outliers <- function(maestro_df, var, plotly = T) {
   # Make a plot of outliers
   outlier_plot <- 
   outlier_df |> 
-  ggplot(aes(dttm, data, color = outlier)) + 
+  ggplot(aes(dttm_local, data, color = outlier)) + 
   geom_point() +
   ggtitle(paste( var, "outliers"))
   
@@ -165,24 +212,19 @@ plot_outliers <- function(maestro_df, var, plotly = T) {
     return(outlier_plot)
     }
   }
-### Outliers in CDOM ------------------------------------------------------------------
+### Clean CDOM ------------------------------------------------------------------
 
 plot <- plot_outliers(maestro_df, "CDOM")
 plot
 
-# Based on the plot above the outliers at the beginning of the data seem to fit the trend. The outliers at the end however do not
-# Remove all CDOM outliers at the end of the data
-
-maestro_df_clean <- maestro_df |> 
-  mutate(CDOM = ifelse(CDOM > 4.46e-02, CDOM, as.numeric("NA")))
-
+maestro_df_clean <- maestro_df
 #Try outliers plot again
 plot <- plot_outliers(maestro_df_clean, "CDOM")
 plot
 
 # Looks good moving onto the next
 
-### Outliers in CHL ------------------------------------------------------------------
+### Clean CHL ------------------------------------------------------------------
 
 plot <- plot_outliers(maestro_df, "CHL")
 plot
@@ -191,20 +233,21 @@ plot
 # Removing those
 
 maestro_df_clean <- maestro_df_clean |> 
-  mutate(CHL = ifelse(CHL > 0.35, CHL, as.numeric("NA")))
+  mutate(CHL = ifelse(CHL > 0.5, CHL, as.numeric("NA")))
 
 #Try outliers plot again
 plot <- plot_outliers(maestro_df_clean, "CHL")
 plot
 
 # Looks better moving on to the next
-### Outliers in CND ------------------------------------------------------------------
+
+### Clean CND ------------------------------------------------------------------
 
 plot <- plot_outliers(maestro_df, "CND")
 plot
-# Conductivity looks good apart from some gaps in the data, moving to the next
+# Conductivity looks good
 
-### Outliers in DO ------------------------------------------------------------------
+### Clean DO ------------------------------------------------------------------
 
 plot <- plot_outliers(maestro_df, "DO")
 plot
@@ -215,28 +258,51 @@ plot
 # Plot just the beginning
 
 maestro_df |> 
-  filter(dttm < "2024-09-15") |> 
-  mutate(morning = as.logical(ifelse(hour(dttm) < 5 | hour(dttm) > 17, "TRUE", "FALSE"))) |> 
-  ggplot(aes(dttm, DO, color = morning)) +
+  filter(dttm_local < "2024-09-15") |> 
+  mutate(day = as.logical(ifelse(hour(dttm_local) >= 7 & hour(dttm_local) <= 19, "TRUE", "FALSE"))) |> 
+  ggplot(aes(dttm_local, DO, color = day)) +
   geom_point()
 
-# Plot just a single day
+# Plot 3 days
 maestro_df |> 
-  filter(date(dttm) == "2024-09-16") |> 
-  mutate(morning = as.logical(ifelse(hour(dttm) < 12, "TRUE", "FALSE"))) |> 
-  ggplot(aes(dttm, DO, color = morning)) +
-  geom_point()
+  filter(date(dttm_local) >= "2024-09-16" & date(dttm_local) <= "2024-09-20") |> 
+  mutate(morning = as.logical(ifelse(hour(dttm) >= 12 & hour(dttm) <= 23, "TRUE", "FALSE"))) |> 
+  ggplot(aes(dttm, DO)) +
+  geom_line()
 
-# The single day does seem to be diurnal. I'll keep this data as is
+# No obvious pattern, going to calculate % saturation and compare with temp
+maestro_df <- maestro_df |> 
+  mutate(do_mgl = convert_DO(maestro_df$DO, from = "umol/L", to = "mg/L"))
 
-### Outliers in P ------------------------------------------------------------------
+  # Pull out a small df to use with lakemetabolizer do.sat function
+do_df <- maestro_df |> 
+  select(dttm_local, T) |> 
+  rename("datetime" = dttm_local, "wtr" = T)
+
+# Create another intermediate dataframe
+do_sat <- o2.at.sat(ts.data = do_df, altitude = 183, salinity = 0) |> 
+  mutate(o2_sat_percent = maestro_df$do_mgl/do.sat*100)
+
+# Add the original column back into the maestro_df
+maestro_df <- maestro_df |> 
+  mutate(do_sat_percent = do_sat$o2_sat_percent)
+
+# Plot o2 saturation
+
+plot <- plot_outliers(maestro_df, "do_sat_percent")
+plot
+
+# Data look pretty good at this depth? Maybe later can get a better sense of trends
+
+
+### Clean P ------------------------------------------------------------------
 
 plot <- plot_outliers(maestro_df, "P")
 plot
 
 # Pressure doesn't seem to have any crazy differences. I'm going to leave it as is
 
-### Outliers in PCO2 ------------------------------------------------------------------
+### Clean PCO2 ------------------------------------------------------------------
 
 plot <- plot_outliers(maestro_df, "PCO2")
 plot
@@ -244,31 +310,42 @@ plot
 # pco2 goes fricking crazzzzy at the end of the deployment, plot a single day to see wahat is up
 maestro_df |> 
   filter(date(dttm) > "2025-05-17" & date(dttm) < "2025-06-17") |> 
-  mutate(morning = as.logical(ifelse(hour(dttm) < 12, "TRUE", "FALSE"))) |> 
+  mutate(morning = as.logical(ifelse(hour(dttm) >= 12 & hour(dttm) <= 23, "TRUE", "FALSE"))) |> 
   ggplot(aes(dttm, PCO2, color = morning)) +
   geom_point()
 
+# Look at pco2 past april 
+maestro_df |> 
+  filter(date(dttm_local) > "2025-04-01")|> 
+  mutate(morning = as.logical(ifelse(hour(dttm_local) >= 12 & hour(dttm_local) <= 23, "TRUE", "FALSE"))) |> 
+  ggplot(aes(dttm_local, PCO2, color = morning)) +
+  geom_point()
+
+# Looks like there's some big shift around May. I may just remove everything since
 maestro_df_clean <- maestro_df_clean |> 
-  mutate(PCO2 = ifelse(PCO2 > 0.35, PCO2, as.numeric("NA")))
+  mutate(PCO2 = ifelse(date(dttm_local) <= "2025-05-01" , PCO2, as.numeric("NA")))
 
-# PCO2 also seems to be diurnally driven. I'll keep this too
+plot <- plot_outliers(maestro_df_clean, "PCO2")
+plot
 
-### Outliers in PHYC ------------------------------------------------------------------
+# Looks okay but still there's a huge drop in late april
+plot <- maestro_df |> 
+  filter(date(dttm_local) > "2025-04-01")|> 
+  mutate(morning = as.logical(ifelse(hour(dttm_local) >= 12 & hour(dttm_local) <= 23, "TRUE", "FALSE"))) |> 
+  ggplot(aes(dttm_local, PCO2)) +
+  geom_line()
+plotly_build(plot)
+
+# It seems like there's not a clear cut-off. I think I'll keep it as is
+
+### Clean PHYC ------------------------------------------------------------------
 
 plot <- plot_outliers(maestro_df, "PHYC")
 plot
 
-# Phycoerythrin goes way high and way low at the end of the deployment, going to zoom in on those
-maestro_df |> 
-  filter(date(dttm) > "2025-07-11") |> 
-  mutate(morning = as.logical(ifelse(hour(dttm) < 12, "TRUE", "FALSE"))) |> 
-  ggplot(aes(dttm, PHYC, color = morning)) +
-  geom_point()
+# Phycocyanin stays relatively normal and dull. I'm going to leave it as is. 
 
-# It looks the the data is consistently bad after July 13, removing the data at the end
 
-maestro_df_clean <- maestro_df_clean |> 
-  mutate(PHYC = as.numeric(ifelse(date(dttm) >= "2025-07-13", "NA", PHYC)))
 
 #Try outliers plot again
 plot <- plot_outliers(maestro_df_clean, "PHYC")
@@ -276,31 +353,13 @@ plot
 
 # Looks better moving on to the next
 
-### Outliers in TURB ------------------------------------------------------------------
+### Clean TURB ------------------------------------------------------------------
 
 plot <- plot_outliers(maestro_df, "TURB")
 plot
 
-# Some pretty high turbidity levels in the middle but should keep those for now. Removing negative
-# values
-# Phycoerythrin goes way high and way low at the end of the deployment, going to zoom in on those
-maestro_df |> 
-  filter(date(dttm) > "2025-07-01") |> 
-  mutate(morning = as.logical(ifelse(hour(dttm) < 12, "TRUE", "FALSE"))) |> 
-  ggplot(aes(dttm, TURB, color = morning)) +
-  geom_point()
-
- plot <- maestro_df |> 
-  filter(date(dttm) > "2025-07-08") |> 
-  mutate(morning = as.logical(ifelse(hour(dttm) < 12, "TRUE", "FALSE"))) |> 
-  ggplot(aes(dttm, TURB, color = morning)) +
-  geom_point()
- plot <- plotly_build(plot)
-  plot
-# It looks like the cutoff is around noon on july 09. Going to remove the data afterwards
-
-maestro_df_clean <- maestro_df_clean |> 
-  mutate(TURB = ifelse(dttm <= as_datetime("2025-07-09 12:00:00"), maestro_df$TURB, as.numeric("NA")))
+# Some pretty high turbidity levels in the middle but should keep those for now. Plus Turbidity
+# isn't very interesting
 
 #Try outliers plot again
 plot <- plot_outliers(maestro_df_clean, "TURB")
@@ -308,14 +367,19 @@ plot
 
 # Looks better moving on to the next
 
-### Outliers in pH ------------------------------------------------------------------
+### Clean pH ------------------------------------------------------------------
 
 plot <- plot_outliers(maestro_df, "pH")
 plot
 
+
+plot <- plot_outliers(maestro_df_clean, "pH")
+plot
+
 # pH has some outliers but they all seem to follow the trend. There is one instance of an acidic 
 # pH which feels weird. The pH also goes pretty haywire at the end getting reall basic.
-# I would assume that those aren't true but I will need to do more looking into it. 
+# I would assume that those aren't true but I will need to do more looking into it. It does seem like that 
+# occures when pCO2 is highest which makes me think it could be a real-ish value. 
 
 # Leaving pH as is for now
 
