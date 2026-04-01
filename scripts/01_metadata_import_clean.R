@@ -372,6 +372,15 @@ plot
 plot <- plot_outliers(maestro_df, "pH")
 plot
 
+test <- maestro_df_clean |> 
+  select(dttm_local, pH) |> 
+  filter(dttm_local > "2024-12-01" & dttm_local < "2025-01-18") |>
+  mutate(round_time = round_date(dttm_local, unit = "hour")) |> 
+  group_by(round_time) |> 
+  mutate(ph_mean = mean(pH)) |> 
+  ungroup()
+
+plot_outliers(test, "ph_mean")
 
 plot <- plot_outliers(maestro_df_clean, "pH")
 plot
@@ -381,7 +390,57 @@ plot
 # I would assume that those aren't true but I will need to do more looking into it. It does seem like that 
 # occures when pCO2 is highest which makes me think it could be a real-ish value. 
 
-# Leaving pH as is for now
+# Based on some literature, it looks like it would be unreasonable for it to be a real value.
+# I am going to remove the data on 2024-12-08 which is a sampling date unfortunately. That one will have 
+# to go without pH data. 
+maestro_df_clean <- maestro_df_clean |> 
+  mutate(pH = ifelse(date(dttm_local) == "2024-12-08", as.numeric("NA"), pH))
+
+# Replot pH
+plot <- plot_outliers(maestro_df_clean, "pH")
+plot
+# Looks better with that day removed, now check out the end of the data
+
+test <- maestro_df_clean |> 
+  filter(date(dttm_local) > "2025-01-31") |>
+  # Create an hourly average
+    mutate(round_time = round_date(dttm_local, unit = "hour")) |> 
+  group_by(round_time) |> 
+  mutate(ph_mean = mean(pH)) |> 
+  ungroup() |> 
+  # Plot
+  ggplot(aes(dttm_local, ph_mean)) +
+  geom_line()
+maestro_df_clean <- maestro_df_clean |>
+  # Find the date after jan 1 where pH is first 8.6 (the previous max)
+  # Then turn all pH after that date to "NA"
+  mutate(pH = ifelse(dttm_local > maestro_df_clean$dttm_local[min(which(maestro_df_clean$dttm_local > "2025-01-01"
+  & maestro_df_clean$pH > 8.6))], as.numeric('NA'), pH)) 
+plot_outliers(maestro_df_clean, "pH")
+
+# # Look at correlations
+test <- maestro_df_clean |> 
+  select(all_of(data_vars)) |> 
+  select(-c(CND, CDOM, TURB, T2, PHYC))
+colnames(test)
+GGally::ggpairs(test)
+test
+
+# pH looks better after removing that data at then end. It is hard to tell exactly where things go wonky but
+# I might just have to deal with it for now. 
+# There is an interesting PCO2 and pH correlation
+
+test <- maestro_df_clean |> 
+  # filter(dttm_local > "2025-01-01" & dttm_local < "2025-05-15") |> 
+  ggplot(aes(pH, T, color = dttm_local)) +
+  geom_point() +
+  scale_color_viridis_c()
+plotly_build(test)
+stop()
+
+# It looks like it's not correlated with temperature at the end which seems like its not a temperature failue
+# But I could possibly use the differing patterns to see when stuff changed in the future.
+
 
 ## Recalculate multivariate outliers just for fun --------------------------------------
 # outliers <- maestro_df_clean |> 
