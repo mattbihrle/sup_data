@@ -7,7 +7,10 @@ format: html
 ```{r}
 # Run intro scripts
 # source("scripts/01_metadata_import_clean.R") # Run only if changes made to metadata
-source("scripts/02_import_mag_sylph_16s.R")
+# source("scripts/02_import_mag_sylph_16s.R")
+    load("output/data/mt_16s.RData")
+    load("output/data/mt_mag.RData")
+    load("output/data/mt_sylph.RData")
 ```
 
 # Load Required Libraries
@@ -18,6 +21,9 @@ library(ggalluvial)
 library(ggarrow)
 library(tidyverse)
 library(microeco)
+library(tidytree)
+BiocManager::install("ggtree")
+library(ggtree)
 ```
 
 # Create trans_diff object
@@ -28,7 +34,7 @@ library(microeco)
 # view(mt_mag$sample_table)
 t1 <- trans_diff$new(dataset = mt_mag, method = "lefse", group = "strat_season", alpha = 0.05, taxa_level = 'all', lefse_subgroup = NULL)
 view(t1$res_diff)
-
+t1$plot_diff_cladogram()
 t1$plot_diff_bar(threshold = 4.5)
 # we show 20 taxa with the highest LDA (log10)
 t1$plot_diff_bar(use_number = 1:30, width = 0.8, add_sig = T)
@@ -42,7 +48,7 @@ t1$plot_diff_bar(threshold = 4.5)
 t1$plot_diff_bar(use_number = 1:30, width = 0.8, add_sig = T)
 
 
-t1 <- trans_diff$new(dataset = meco_16s, method = "lefse", alpha = 0.1, group = "strat_season", lefse_subgroup = '')
+t1 <- trans_diff$new(dataset = mt_16s, method = "lefse", alpha = 0.1, group = "strat_season", lefse_subgroup = '')
 
 t1$plot_diff_bar(threshold = 4)
 # we show 20 taxa with the highest LDA (log10)
@@ -51,7 +57,7 @@ t1$plot_diff_bar(use_number = 1:30, width = 0.8)
 t1$plot_diff_abund(use_number = 1:20)
 t1$plot_diff_abund(use_number = 1:20, fill = "strat_season", alpha = 0.05, add_sig = F)
 
-
+t1$plot_diff_cladogram()
 
 
 ```

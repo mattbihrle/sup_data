@@ -6,6 +6,8 @@ library(microeco)
 # For importing .biom file
 library(phyloseq)
 library(file2meco)
+library(ape) # for reading in tree data
+library(GUniFrac) # for unifrac diversity
 # Extra packages for plotting
 # library(ggalluvial)
 # library(ggnested) # Needs to be installed from github not CRAN
@@ -102,40 +104,40 @@ mt_sylph$beta_diversity$bray
 
 
   # Load microeco object
-    meco_16s <- phyloseq::import_biom("data/16s/lotus3_out/OTU.biom") |> 
+    mt_16s <- phyloseq::import_biom("data/16s/lotus3_out/OTU.biom") |> 
         phyloseq2meco()
       # Rename columns
-      meco_16s$otu_table <- meco_16s$otu_table |> 
+      mt_16s$otu_table <- mt_16s$otu_table |> 
         rename(any_of(names_vec))
       # Reorder columns
-      meco_16s$otu_table <- meco_16s$otu_table |> 
-       select(order(colnames(meco_16s$otu_table)))
-      colnames(meco_16s$otu_table)
+      mt_16s$otu_table <- mt_16s$otu_table |> 
+       select(order(colnames(mt_16s$otu_table)))
+      colnames(mt_16s$otu_table)
       # rename rows
-    meco_16s$sample_table <- meco_16s$sample_table |> 
+    mt_16s$sample_table <- mt_16s$sample_table |> 
       rownames_to_column("sample") |> 
       dplyr::left_join(names_df, by = join_by(sample == SampleID)) |> 
       column_to_rownames("RealNames") 
     # Create a column of sample names for later metadata
-    meco_16s$sample_table <- meco_16s$sample_table|> 
-      mutate(sample = str_extract(rownames(meco_16s$sample_table), ".{4}"))
+    mt_16s$sample_table <- mt_16s$sample_table|> 
+      mutate(sample = str_extract(rownames(mt_16s$sample_table), ".{4}"))
       # Reorder rows alphabetically
-      meco_16s$sample_table <- meco_16s$sample_table |> 
-        slice(order(rownames(meco_16s$sample_table)))
-    print(rownames(meco_16s$sample_table))
+      mt_16s$sample_table <- mt_16s$sample_table |> 
+        slice(order(rownames(mt_16s$sample_table)))
+    print(rownames(mt_16s$sample_table))
     # Rename Taxa
-    taxa_names <- setNames( c("k", "p", "c", "o", "f", "g", "s"), colnames(meco_16s$tax_table))
-    colnames(meco_16s$tax_table) <- taxa_names
-    colnames(meco_16s$tax_table) 
+    taxa_names <- setNames( c("k", "p", "c", "o", "f", "g", "s"), colnames(mt_16s$tax_table))
+    colnames(mt_16s$tax_table) <- taxa_names
+    colnames(mt_16s$tax_table) 
   # Replace question marks with 'unknown'
-    meco_16s |> tidy_taxonomy(pattern = "\\?", replacement = "unknown")
-    meco_16s$tax_table[1:5,]
+    mt_16s |> tidy_taxonomy(pattern = "\\?", replacement = "unknown")
+    mt_16s$tax_table[1:5,]
     
 # Clean unneeded data
   # Remove 'Syn Mock' sample 
-  meco_16s$sample_table <- meco_16s$sample_table |> 
+  mt_16s$sample_table <- mt_16s$sample_table |> 
     slice(
-    str_which(meco_16s$sample_table$fastqFile, "Syn.*", negate = T)
+    str_which(mt_16s$sample_table$fastqFile, "Syn.*", negate = T)
       ) |> 
     rownames_to_column(var = "rownames") |> 
       # Add in the other metadata
@@ -143,39 +145,42 @@ mt_sylph$beta_diversity$bray
       # move rownames back
     column_to_rownames(var = "rownames")
 
-  nrow(meco_16s$sample_table)
+  nrow(mt_16s$sample_table)
 # Remove anything not Archaea or Bactera
-   meco_16s$tax_table <- meco_16s$tax_table |> 
+   mt_16s$tax_table <- mt_16s$tax_table |> 
     dplyr::slice(
-    stringr::str_which(meco_16s$tax_table$k, ".*Bacteria|.*Archaea")
+    stringr::str_which(mt_16s$tax_table$k, ".*Bacteria|.*Archaea")
    )
 # Check to be sure we removed them
-    meco_16s$tax_table$k |> 
+    mt_16s$tax_table$k |> 
       unique()
   # Remove mitochondria and chloroplasts
   print("removing mitochontria and chloroplast")
-  meco_16s
-  meco_16s$filter_pollution(taxa = c("mitochondria", "chloroplast", "metagenome"))
-  meco_16s      
+  mt_16s
+  mt_16s$filter_pollution(taxa = c("mitochondria", "chloroplast", "metagenome"))
+  mt_16s      
 
   # Tidy dataset
   print("Tidying dataset")
-  meco_16s
-  meco_16s$tidy_dataset()
-  meco_16s
+  mt_16s
+  mt_16s$tidy_dataset()
+  mt_16s
 
-
+mt_16s$sample_table$strat_season <- factor(mt_16s$sample_table$strat_season, 
+  levels = c("summer", "fall", "winter", "spring"), 
+  labels = c("Summer", "Fall", "Winter", "Spring"),
+   ordered = T)
 ## Calculate relative abunance-------------------------------------------------------------------------------------
 
-meco_16s$cal_abund()
-meco_16s$taxa_abund$p[1:5,1:5]
+mt_16s$cal_abund()
+mt_16s$taxa_abund$p[1:5,1:5]
 
 # Calc Alpha Diversity
-meco_16s$cal_alphadiv()
+mt_16s$cal_alphadiv()
 
 # Calc Bray Curtis Dissimilarity
-meco_16s$cal_betadiv(method = c("bray","aitchison","robust.aitchison"))
-meco_16s$beta_diversity$bray
+mt_16s$cal_betadiv(method = c("bray","aitchison","robust.aitchison"))
+mt_16s$beta_diversity$bray
 
 # Import MAG data -----------------------------------------------------
 bac_df <- readr::read_tsv("data/gtdb_bin_tax/gtdbtk.bac120.summary.tsv", na = "N/A")
@@ -226,15 +231,22 @@ de_coverage_clean <- de_coverage_clean |>
     ~site_cols, 
     .cols = matches("WM.*")
   )
-# Calculate relative abundances  
-de_coverage_clean <- de_coverage_clean |> 
-  mutate(across(str_which(colnames(de_coverage_clean), "WM.*"),
-   ~ .x/sum(.x, na.rm = T)*100))
+# # Calculate relative abundances  
+# de_coverage_clean <- de_coverage_clean |> 
+#   mutate(across(str_which(colnames(de_coverage_clean), "WM.*"),
+#    ~ .x/sum(.x, na.rm = T)*100))
 
 # Quick check to see if abundances are all still 100 
 colSums(de_coverage_clean[2:ncol(de_coverage_clean)])
 
+# import tree data
+tree_files <- list.files("data/gtdb_bin_tax/classify/", pattern = ".tree$", full.names = T) 
+tree <- read.tree(tree_files[9])
 
+# Update tree tip labels
+tree$tip.label <- tree$tip.label |> 
+  str_remove("MAGScoT_cleanbin_000")
+# plot(tree[[1]])
 # Turn the mag data into a microeco object ('mt_mag')----------------------------------------------------------------------------------
 
   # Use the de_rep coverage data for otus and abundance
@@ -252,7 +264,8 @@ head(tax_table)
 # Use sample table from above here
 
 head(sample_table)
-mt_mag <-microtable$new(otu_table = otu_table, sample_table = sample_table, tax_table = tax_table)
+mt_mag <-microtable$new(otu_table = otu_table, sample_table = sample_table, 
+                        tax_table = tax_table, phylo_tree = tree)
 # mt_mag <- trans_norm$new(mt_mag)
 # mt_mag <- mt_mag$norm(method = "rclr")
 mt_mag$tidy_dataset()
@@ -269,23 +282,15 @@ mt_mag$cal_alphadiv()
 mt_mag$cal_betadiv(method = c("bray","aitchison","robust.aitchison"), unifrac = T)
 head(mt_mag$beta_diversity)
 
+# Save the tables we care about
 
-# Remove unneeded data----------------------------------------------------
-rm(names_vec)
-rm(site_cols)
-rm(taxa_names)
-rm(names_df)
-rm(otu_table)
-rm(sample_table)
-rm(tax_table)
-rm(clade_cols)
-rm(arc_df)
-rm(b_df)
-rm(bac_df)
-rm(de_coverage)
-rm(de_coverage_clean)
-rm(long_b_df)
-rm(col_keep)
-rm(mag_df)
-rm(mag_df_clean)
+save(mt_mag, file = "output/data/mt_mag.RData")
+save(mt_sylph, file = "output/data/mt_sylph.RData")
+save(mt_16s, file = "output/data/mt_16s.RData")
+# # Remove unneeded data----------------------------------------------------
+# remove <- ls() |> 
+#   str_subset("mt_.*", negate = T)
 
+# rm(list = remove)
+
+# rm(remove)

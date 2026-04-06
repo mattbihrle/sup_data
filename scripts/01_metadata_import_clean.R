@@ -11,13 +11,20 @@ library(respR) # For working with oxygen data
 sw_meta <- read_csv("data/sw_metadata.csv") |>
   mutate(date = mdy(date)) |> 
   select(!day:year)
+
 # Create secondary stratification season based on combining fall and winter toegether
 sw_meta <- sw_meta |> 
   mutate(strat_season_2 = ifelse(strat_season == "fall", "winter", strat_season))
 sw_meta$strat_season <- factor(sw_meta$strat_season, levels = c("summer", "fall", "winter", "spring"), ordered = T)
 
 sw_meta$strat_season_2 <- factor(sw_meta$strat_season_2, levels = c("summer", "winter", "spring"), ordered = T)
+# Create another stratification based on the equinox
 
+sw_meta <- sw_meta |> 
+  mutate(solar_season = ifelse(date < "2024-12-21", "summer", "winter")) |> 
+  mutate(solar_season = ifelse(solar_season == "summer" & date >= "2024-09-22", "fall", solar_season)) |> 
+  mutate(solar_season = ifelse(solar_season == "winter" & date >= "2025-03-20", "spring", solar_season)) |> 
+  mutate(solar_season = ifelse(date > "2025-06-20", "summer", solar_season))
 #import temp file ----------------------------------------------------------------------------
 mat_df <- readMat.default(con = "data/metadata/LSEO24h_temp.mat")
 
@@ -596,5 +603,7 @@ sw_meta_output <- sw_meta_output |>
 # # temp_df_long <- temp_df_long |> 
 #   # write_csv("output/data/temp_data_long.csv")
 
-rm(long_maestro_df, maestro_df, samp_dates, sum_stats, sw_meta, sw_meta_final,
-temp_df, data_vars, mat_df, outliers, plot, plot_outliers)
+obs <- ls()
+
+rm(list = obs)
+rm(obs)

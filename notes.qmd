@@ -545,7 +545,7 @@ quite the right answer.
     outliers based on MAD (median absolute deviation) instead of the
     mean in the environmental data.
 
-\# March 30, 2026
+# March 30, 2026
 
 Continuing to work on stats and figuring out the right ones. Should look
 into **UniFrac** to see if that makes the most sense.
@@ -653,6 +653,12 @@ Spent most of the day going through the environmental stuff. I feel pretty good 
 # April 2, 2026
 
 Talked with Liz about pH data. Look at Minor et al 2019, Urban, Ask MTU person about carbon in the lake (who may be on the guardian?). 
+
+# April 6, 2026
+
+Finished with most of the environmental data. Added a tree and unifrac distances into the MAGs data. 
+
+
 
 
 
