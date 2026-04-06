@@ -420,5 +420,7 @@ plot <- tb2$plot_ordination(plot_color = "strat_season", plot_type = c("point", 
     )
   plot
 
+stressplot(tb2$res_ordination$model)
+screeplot(tb2$res_ordination$model)
 
 ```

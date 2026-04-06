@@ -658,6 +658,14 @@ Talked with Liz about pH data. Look at Minor et al 2019, Urban, Ask MTU person a
 
 Finished with most of the environmental data. Added a tree and unifrac distances into the MAGs data. 
 
+  -  Created a nice plot of the 16s data to show how the communities change. Used the robust aitchison with an NMDS
+
+  **TO DO:**
+  - Output a nice looking table of significance for stratification season
+  - Check and see if other things like not stratification season are different
+  - Oooohhh maybe see if I can do a little overlapping of layers to show how the nmds is built?
+  
+
 
 
 
