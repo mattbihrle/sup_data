@@ -650,7 +650,9 @@ Spent most of the day going through the environmental stuff. I feel pretty good 
   - Look at oxygen values and how they fluctuate with temperature. I might need to get rid of some of the values before averaging them so I am only measuring below the thermocline
   
 
+# April 2, 2026
 
+Talked with Liz about pH data. Look at Minor et al 2019, Urban, Ask MTU person about carbon in the lake (who may be on the guardian?). 
 
 
 

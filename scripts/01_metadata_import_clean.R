@@ -11,9 +11,12 @@ library(respR) # For working with oxygen data
 sw_meta <- read_csv("data/sw_metadata.csv") |>
   mutate(date = mdy(date)) |> 
   select(!day:year)
-sw_meta$strat_season <- factor(sw_meta$strat_season, levels = c("summer", "fall", "winter", "spring"), ordered = T)
+# Create secondary stratification season based on combining fall and winter toegether
 sw_meta <- sw_meta |> 
   mutate(strat_season_2 = ifelse(strat_season == "fall", "winter", strat_season))
+sw_meta$strat_season <- factor(sw_meta$strat_season, levels = c("summer", "fall", "winter", "spring"), ordered = T)
+
+sw_meta$strat_season_2 <- factor(sw_meta$strat_season_2, levels = c("summer", "winter", "spring"), ordered = T)
 
 #import temp file ----------------------------------------------------------------------------
 mat_df <- readMat.default(con = "data/metadata/LSEO24h_temp.mat")
@@ -426,7 +429,11 @@ colnames(test)
 GGally::ggpairs(test)
 test
 
-# pH looks better after removing that data at then end. It is hard to tell exactly where things go wonky but
+
+plot_outliers(maestro_df_clean, "pH")
+plot_outliers(maestro_df, "pH")
+# pH looks better after removing that data at then end. It is hard to tell exactly where 
+# things go wonky but
 # I might just have to deal with it for now. 
 # There is an interesting PCO2 and pH correlation
 
@@ -436,28 +443,66 @@ test <- maestro_df_clean |>
   geom_point() +
   scale_color_viridis_c()
 plotly_build(test)
-stop()
 
 # It looks like it's not correlated with temperature at the end which seems like its not a temperature failue
-# But I could possibly use the differing patterns to see when stuff changed in the future.
+# But I could possibly use the differing patterns to see when stuff changed in the future. For 
+# now I will just leave it as is
 
 
 ## Recalculate multivariate outliers just for fun --------------------------------------
-# outliers <- maestro_df_clean |> 
-#   select(data_vars) |>  
-#   drop_na() |> 
-#   check_outliers(method = "mcd", verbose = T)
-# outliers
+outliers <- maestro_df_clean |> 
+  select(data_vars) |>  
+  drop_na() |> 
+  check_outliers(method = "mcd", verbose = T)
+outliers
 
-# maestro_df_clean |> 
-#   select(data_vars, dttm) |> 
-#   drop_na() |> 
-#   mutate(outlier = outliers) |> 
-#   pivot_longer(-c(dttm, outlier), names_to = "variable", values_to = "vals") |> 
-#   ggplot(aes(dttm, vals, color = outlier)) +
-#   geom_point() +
-#   facet_wrap(~variable, scales = "free")
+maestro_df_clean |> 
+  select(data_vars, dttm) |> 
+  drop_na() |> 
+  mutate(outlier = outliers) |> 
+  pivot_longer(-c(dttm, outlier), names_to = "variable", values_to = "vals") |> 
+  ggplot(aes(dttm, vals, color = outlier)) +
+  geom_point() +
+  facet_wrap(~variable, scales = "free")
 
+
+# Plot each variable looking specifically at the sampling dates
+plot_samples <- function(maestro_df, var, plotly = T) {
+  sample_df <- maestro_df |> 
+    filter(date == sample_date) |> 
+    select(dttm_local,  var, sample_date) |> 
+    rename(data = var) |> 
+    drop_na()
+  # Create a new column
+  sample_df <- sample_df |> 
+    group_by(sample_date) |> 
+    mutate(coeff_var = sd(data)/mean(data)*100) |>
+    ungroup()
+
+  # Make a plot of samples
+  sample_plot <- 
+  sample_df |> 
+  ggplot(aes(dttm_local, data, color = coeff_var)) + 
+  geom_point() +
+  ggtitle(paste( var, "samples")) +
+    facet_wrap(~sample_date, scales = "free")
+  
+  sample_plotly <- plotly_build(sample_plot)
+    if(plotly) {
+    return(sample_plotly)
+    } else {
+    return(sample_plot)
+    }
+  }
+
+
+for(i in 1:length(data_vars)) {
+  plot <- plot_samples(maestro_df_clean, data_vars[i], plotly = F)
+  print(plot)
+}
+
+ # Looking at all these plots it seems like turbidity is the only one with a crazy coefficient of variance.
+ # I'm just going to take the mean value. 
 ## Average data ------------------------------------------------------------------------------
 maestro_df_clean <- maestro_df_clean |>  
   group_by(date) |> 
@@ -485,20 +530,23 @@ clean_long_m_df <- maestro_df_clean |>
   ungroup()
 
 
-  # Plot coeff_var only on sample dates
-clean_long_m_df |> 
-  mutate(coeff_test = ifelse(coeff_var > 20, "FALSE", "TRUE")) |> 
-  filter(sample_date == date, variable == "CHL") |> 
-  ggplot(aes(dttm, vals, color = coeff_var)) +
-  scale_color_viridis_c()+
-  geom_point() +
-  facet_wrap(~sample_date, scales = "free")
+#   # Plot coeff_var only on sample dates
+# clean_long_m_df |> 
+#   mutate(coeff_test = ifelse(coeff_var > 20, "FALSE", "TRUE")) |> 
+#   filter(sample_date == date, variable == "CHL") |> 
+#   ggplot(aes(dttm, vals, color = coeff_var)) +
+#   scale_color_viridis_c()+
+#   geom_point() +
+#   facet_wrap(~sample_date, scales = "free")
 
 
 
 #### Add maestro data to broader metadata file --------------------------------------------------
 sw_meta_output <- maestro_df_clean |> 
-  select(!any_of(c(data_vars, "dttm", "sample", "t"))) |> 
+  # Filter so rounded date is equal to the sample date (the 24 hrs prior to 'sample_date' are 
+  # averaged)
+  filter(date == sample_date) |> 
+  select(!any_of(c(data_vars, "dttm", "sample", "t", "dttm_local"))) |> 
   right_join(y = sw_meta_final, by = join_by(date)) |> 
 # Relocate columns to make more sense
     select(sample, date, depth, strat_season, everything()) |> 
@@ -507,9 +555,8 @@ sw_meta_output <- maestro_df_clean |>
   distinct() |> 
   # Add a column for when maestro temp is within 1 deg of thermistor temp
   mutate(use_maestro = as.logical(ifelse(
-    abs(mtemp_c_24h_avg - temp_c_24h_avg) < 1, "TRUE", "FALSE")),
+    abs(mtemp_c_24h_avg - temp_c_24h_med) < 1, "TRUE", "FALSE")),
      .after = strat_season)
-
 
 # maestro_df <- maestro_df |> 
 #   left_join(avg_df, by = "date")
