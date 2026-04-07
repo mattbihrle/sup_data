@@ -8,8 +8,8 @@ format: html
 # source("scripts/01_metadata_import_clean.R") # Run only if changes made to metadata
 # source("scripts/02_import_mag_sylph_16s.R")
 
-list.files("output/data", ".RData", full.names = T) |> 
-  load()
+load("output/data/mt_16s.RData")
+load("output/data/mt_mag.RData")
 ```
 
 # Load Required Libraries
@@ -27,23 +27,29 @@ library(ggrepel)
 ```{r}
 
 # Set rank (k, p, c, etc) and number of taxa to include
-rank <- "s"
-n <- 50
+rank <- "p"
+n <- 30
 
 # Create abundance object
 ts1 <- trans_abund$new(mt_mag, taxrank = rank, ntaxa = n)
-
+ts1$sample_table$strat_season <- factor(ts1$sample_table$strat_season, 
+  levels = c("summer", "fall", "winter", "spring"), 
+  labels = c("Summer", "Fall", "Winter", "Spring"),
+   ordered = T)
 # Plot abunances
 abund_s <- ts1$plot_bar(others_color = "grey70", xtext_keep = TRUE, legend_text_italic = FALSE, facet = "strat_season") +
   theme(axis.text.x = element_text(angle = 45, hjust = 1, vjust = 1, size=9)) +
-  ggtitle("Sylph Data", subtitle = paste(n, "most abundant", rank))
+  ggtitle("MAGs Data", subtitle = paste(n, "most abundant", rank))
 abund_s
 
 plotly_build(abund_s)
 
 # Do the same but for 16s data
 ts1 <- trans_abund$new(mt_16s, taxrank = rank, ntaxa = n)
-
+ts1$sample_table$strat_season <- factor(ts1$sample_table$strat_season, 
+  levels = c("summer", "fall", "winter", "spring"), 
+  labels = c("Summer", "Fall", "Winter", "Spring"),
+   ordered = T)
 # Plot abunances
 abund_16 <- ts1$plot_bar(others_color = "grey70", xtext_keep = TRUE, legend_text_italic = FALSE, facet = "strat_season") +
   theme(axis.text.x = element_text(angle = 45, hjust = 1, vjust = 1, size=9)) +

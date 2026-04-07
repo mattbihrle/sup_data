@@ -13,6 +13,7 @@ library(tidyverse)
 
 ```{r}
 source("scripts/02_import_mag_sylph_16s.R")
+load("output/data/temp_df_long.RData")
 ```
 
 
@@ -40,4 +41,173 @@ t1$plot_ordination(plot_color = "strat_season")
 t1$cal_autocor(group = "strat_season")
 
 
+```
+
+# Temp plot
+
+```{r}
+# Import temp data
+load("output/data/temp_df_long.RData")
+temp_df_long <- temp_df_long |> 
+    ungroup()
+```
+
+```{r}
+# Create longer temp object
+
+# For loading .mat file
+library(R.matlab)
+library(tidyverse)
+
+ 
+# Load metadata-------------------------------------------------------------------------
+sw_meta <- read_csv("data/sw_metadata.csv") |>
+  mutate(date = mdy(date)) |> 
+  select(!day:year)
+
+# Create secondary stratification season based on combining fall and winter toegether
+sw_meta <- sw_meta |> 
+  mutate(strat_season_2 = ifelse(strat_season == "fall", "winter", strat_season))
+sw_meta$strat_season <- factor(sw_meta$strat_season, levels = c("summer", "fall", "winter", "spring"), ordered = T)
+
+sw_meta$strat_season_2 <- factor(sw_meta$strat_season_2, levels = c("summer", "winter", "spring"), ordered = T)
+# Create another stratification based on the equinox
+
+sw_meta <- sw_meta |> 
+  mutate(solar_season = ifelse(date < "2024-12-21", "summer", "winter")) |> 
+  mutate(solar_season = ifelse(solar_season == "summer" & date >= "2024-09-22", "fall", solar_season)) |> 
+  mutate(solar_season = ifelse(solar_season == "winter" & date >= "2025-03-20", "spring", solar_season)) |> 
+  mutate(solar_season = ifelse(date > "2025-06-20", "summer", solar_season))
+#import temp file ----------------------------------------------------------------------------
+mat_df <- readMat.default(con = "data/metadata/LSEO24h_temp.mat")
+
+# Extract dataframe we want from 'T' for temp and convert matlab time to poxit time
+temp_df <- mat_df$T |> 
+  as.data.frame()
+# Set colnames and rownames
+colnames(temp_df) <- mat_df$dep  
+rownames(temp_df) <- mat_df$t 
+
+# Create date column 
+temp_df <- temp_df |> 
+    rownames_to_column(var = "dttm") |>
+  mutate(dttm = as_datetime((as.numeric(dttm) - 719529) * 86400)) |> 
+    # round to nearest hour to make things easier
+  mutate(dttm = round_date(dttm, unit = "hour"))
+  #   # Select only columns less than 50m
+  # select(which(as.numeric(colnames(temp_df)) <= 50))
+# move dttm column out, convert to datetime and pivot long
+temp_df_long <- temp_df |> 
+  # rownames_to_column(var = "dttm") |>
+  # mutate(dttm = as_datetime((as.numeric(dttm) - 719529) * 86400)) |> 
+  # # round to nearest hour to make things easier
+  # mutate(dttm = round_date(dttm, unit = "hour")) |> 
+  pivot_longer(cols = !dttm, names_to = "depth", values_to = "temp") |>
+  # Create variable of local time
+  mutate(dttm_local = with_tz(dttm, tzone = "US/Central")) |> 
+# Add averaged temperature column
+  mutate(date = floor_date(dttm_local, unit = "day")) |> 
+  group_by(date, depth) |> 
+  mutate(temp_c_24h_med = median(temp)) |> 
+  ungroup()
+
+# First create temporary df of sample dates
+  samp_dates <- sw_meta |> 
+    select(sample) |> 
+    mutate(sample_date = as_date(sw_meta$date))
+
+## Create a 14 day averaged temperature---------------------------------
+  
+  # Then create 14 day average
+temp_df_long <- temp_df_long |>
+  # Force the date column to be a simple Date, dropping any hours/minutes/seconds
+  mutate(date = as_date(date)) |>
+  # Match every temp date to the upcoming sample date
+  left_join(samp_dates, join_by(closest(date <= sample_date))) |>
+  # Test to see how far apart sampling dates are
+  mutate(test = as.numeric(sample_date - date)) |> 
+  # NEW STEP: Force a strict 14-day window!
+  # Keep only the rows where the temp date is within 14 days of the sample date
+  filter(test <= 14) |>
+  # Calculate the bin average
+  group_by(sample_date, depth) |> 
+  mutate(temp_c_14d_avg = mean(temp, na.rm = TRUE)) |> 
+  ungroup()
+
+# OLD VERSION
+# locs <- seaprocess::find_near(vec = as_date(temp_df_long$date), vals = as_date(sw_meta$date))
+# dates <- as_date(rep(NA, nrow(temp_df_long)))
+# for(i in length(locs):1) {
+# dates[1:locs[i]] <- as_date(sw_meta$date[i])
+# }
+# rm(i)
+# # Add the 14ish day average
+# temp_df_long<-temp_df_long |>
+#   mutate(sample_date = dates) |> 
+#   group_by(sample_date, depth) |> 
+#   mutate(temp_c_14d_avg = mean(temp)) |> 
+#   ungroup()
+# Create a coefficient of variation to see if we should average or not
+
+temp_df_long <- temp_df_long |> 
+  group_by(date) |> 
+  mutate(coeff_var = (sd(temp, na.rm = T)/mean(temp, na.rm = T)) * 100) |> 
+  ungroup()
+
+```
+```{r}
+
+# #Interpolate/grid data first
+
+# install.packages("interp")
+# library(interp)
+# gridded_data <- temp_df_long |>
+#     ungroup() |> 
+#     select(dttm, depth, temp) |> 
+#     drop_na() |> 
+#     interp(x = temp_df_long$dttm, 
+#                        y = temp_df_long$depth, 
+#                        z = temp_df_long$temp)
+
+temp_df_long |> 
+    ungroup() |> 
+    # select(dttm, depth, temp) |> 
+    drop_na() |> 
+    mutate(depth = as.numeric(depth)) |> 
+        select(date, depth, temp, sample_date) |> 
+        drop_na() |> 
+        distinct() |> 
+    ggplot(aes(x = date, y = depth, z = temp)) +
+      geom_contour_filled() +
+        # scale_fill_brewer(palette = "RdBu", direction = -1) +
+        scale_fill_viridis_d(option = "turbo") +
+  labs(x = "Date", y = "Depth (m)", fill = "Temperature (°C)") +
+    theme_classic() +
+    theme(
+      text = element_text(size = 15),
+      panel.border = element_rect(colour = "black", fill = "red", linewidth = 3)
+    ) +
+  scale_y_reverse(expand = c(0,0)) +
+  scale_x_date(expand = c(0,0)) +
+    guides(fill = guide_legend(ncol = 1, reverse = T)) +
+    geom_point(aes(x = samp_dates$sample_date, y = 38), color = 'white') +
+    NULL
+
+```
+
+
+
+```{r}
+# Maestro Plot
+
+load("output/data/maestro_df_clean.RData")
+load("output/data/clean_long_m_df.RData")
+
+clean_long_m_df |> 
+    filter(variable != "T2", variable != "P") |> 
+    ggplot(aes(date, vals, color = variable)) +
+    geom_point() +
+    facet_wrap(~variable, scales = "free") +
+    theme_minimal() +
+    labs(color = "Variable", x = "Date", y = NULL)
 ```

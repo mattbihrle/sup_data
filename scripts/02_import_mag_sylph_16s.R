@@ -83,7 +83,11 @@ sample_table <- sample_table |>
   mutate(sample = rownames(sample_table))
 # Create mt object
 mt_sylph <-microtable$new(otu_table = otu_table, sample_table = sample_table, tax_table = tax_table)
-
+# Reorder factors of stratification
+mt_sylph$sample_table$strat_season <- factor(mt_sylph$sample_table$strat_season, 
+  levels = c("summer", "fall", "winter", "spring"), 
+  labels = c("Summer", "Fall", "Winter", "Spring"),
+   ordered = T)
 mt_sylph$tidy_dataset()
  # Calculations for later
 # Calculate relative abunance
@@ -268,6 +272,11 @@ mt_mag <-microtable$new(otu_table = otu_table, sample_table = sample_table,
                         tax_table = tax_table, phylo_tree = tree)
 # mt_mag <- trans_norm$new(mt_mag)
 # mt_mag <- mt_mag$norm(method = "rclr")
+
+mt_mag$sample_table$strat_season <- factor(mt_mag$sample_table$strat_season, 
+  levels = c("summer", "fall", "winter", "spring"), 
+  labels = c("Summer", "Fall", "Winter", "Spring"),
+   ordered = T)
 mt_mag$tidy_dataset()
 
  # Calculations for later

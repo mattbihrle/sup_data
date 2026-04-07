@@ -41,8 +41,8 @@ temp_df <- temp_df |>
   mutate(dttm = as_datetime((as.numeric(dttm) - 719529) * 86400)) |> 
     # round to nearest hour to make things easier
   mutate(dttm = round_date(dttm, unit = "hour")) |> 
-    # Select only columns less than 50m
-  select(which(as.numeric(colnames(temp_df)) <= 50))
+  #   # Select only columns less than 50m
+  # select(which(as.numeric(colnames(temp_df)) <= 50))
 # move dttm column out, convert to datetime and pivot long
 temp_df_long <- temp_df |> 
   # rownames_to_column(var = "dttm") |>
@@ -597,7 +597,9 @@ sw_meta_output <- maestro_df_clean |>
 # Write Files to output ----------------------------------------------------------------
 sw_meta_output <- sw_meta_output |> 
   write_csv("output/data/metadata_supwinter.csv")
-
+save(file = "output/data/maestro_df_clean.RData", maestro_df_clean)
+save(file = "output/data/clean_long_m_df.RData", clean_long_m_df)
+save(file = "output/data/temp_df_long.RData", temp_df_long)
 # maestro_df_clean <- maestro_df_clean |> 
 #   write_csv("output/data/maestro_data_clean.csv")
 # # temp_df_long <- temp_df_long |> 
