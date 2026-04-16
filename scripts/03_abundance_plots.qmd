@@ -27,8 +27,8 @@ library(ggrepel)
 ```{r}
 
 # Set rank (k, p, c, etc) and number of taxa to include
-rank <- "p"
-n <- 30
+rank <- "c"
+n <- 20
 
 # Create abundance object
 ts1 <- trans_abund$new(mt_mag, taxrank = rank, ntaxa = n)
@@ -43,7 +43,10 @@ abund_s <- ts1$plot_bar(others_color = "grey70", xtext_keep = TRUE, legend_text_
 abund_s
 
 plotly_build(abund_s)
-
+mt_16s$sample_table$strat_season <- factor(mt_16s$sample_table$strat_season, 
+  levels = c("summer", "fall", "winter", "spring"), 
+  labels = c("Summer", "Fall", "Winter", "Spring"),
+   ordered = T)
 # Do the same but for 16s data
 ts1 <- trans_abund$new(mt_16s, taxrank = rank, ntaxa = n)
 ts1$sample_table$strat_season <- factor(ts1$sample_table$strat_season, 
@@ -255,6 +258,9 @@ mt_sylph$alpha_diversity |>
 # Beta Diversity
 
 ```{r}
+#Add in quantiles?
+mt_sylph$sample_table <- mt_sylph$sample_table |> 
+  mutate(temp_quant = cut_number(temp_c_24h_med, n = 4))
 tb2 <- trans_beta$new(mt_sylph, group = "strat_season", measure = "bray")
 tb2$cal_ordination(method = "NMDS")
 tb2$cal_manova(manova_all = TRUE)
@@ -368,19 +374,72 @@ tb2$cal_manova(manova_all = TRUE)
 print(tb2$res_manova)
 ```
 
+## Beta Diversity but with temperature quantile
+
+```{r}
+
+#Add in quantiles?
+mt_sylph$sample_table <- mt_sylph$sample_table |> 
+  mutate(temp_quant = cut_number(temp_c_24h_med, n = 4))
+tb2 <- trans_beta$new(mt_sylph, group = "temp_quant", measure = "bray")
+tb2$cal_ordination(method = "NMDS")
+tb2$cal_manova(manova_all = TRUE)
+print(tb2$res_manova)
+
+tb2$plot_ordination(plot_color = "strat_season", plot_shape = "temp_quant", plot_type = c("point", "ellipse"), NMDS_stress_text_prefix = "", ellipse_level = 0.95) +
+  #   geom_text(
+  #   data = tb2$dataset$otu_table, # Filter data for the label layer
+  #   aes(label = sample),
+  #   vjust = -1.1, # Adjust vertical position
+  #   hjust = 0.5,  # Adjust horizontal position
+  #   color = "black"
+  # ) +
+  # geom_arrow_chain(colour = "black") + 
+    ggtitle("Sylph NMDS") +
+  # scale_color_viridis_b() +
+  NULL
+```
+
+Try the same thing with 16s data
+
+
+```{r}
+
+#Add in quantiles?
+mt_16s$sample_table <- mt_16s$sample_table |> 
+  mutate(temp_quant = cut_number(temp_c_24h_med, n = 4))
+tb2 <- trans_beta$new(mt_16s, group = "temp_quant", measure = "bray")
+tb2$cal_ordination(method = "NMDS")
+tb2$cal_manova(manova_all = TRUE)
+print(tb2$res_manova)
+
+tb2$plot_ordination(plot_color = "strat_season", plot_shape = "temp_quant", plot_type = c("point", "ellipse"), NMDS_stress_text_prefix = "", ellipse_level = 0.95) +
+  #   geom_text(
+  #   data = tb2$dataset$otu_table, # Filter data for the label layer
+  #   aes(label = sample),
+  #   vjust = -1.1, # Adjust vertical position
+  #   hjust = 0.5,  # Adjust horizontal position
+  #   color = "black"
+  # ) +
+  # geom_arrow_chain(colour = "black") + 
+    ggtitle("Sylph NMDS") +
+  # scale_color_viridis_b() +
+  NULL
+```
 
 ## 16s Beta Diversity
 
 ```{r}
 
-tb2 <- trans_beta$new(mt_16s, group = "strat_season", measure = "robust.aitchison")
+tb2 <- trans_beta$new(mt_16s, group = "temp_quant", measure = "robust.aitchison")
 tb2$cal_ordination(method = "NMDS")
 tb2$cal_manova(manova_all = TRUE)
 print(tb2$res_manova)
 
-plot <- tb2$plot_ordination(plot_color = "strat_season", NMDS_stress_text_prefix = "Stress: ", plot_type = c("point", "ellipse"), ellipse_level = 0.95, add_sample_label = "sample") +
+plot <- tb2$plot_ordination(plot_color = "temp_quant", plot_shape = "strat_season", NMDS_stress_text_prefix = "Stress: ", plot_type = c("point", "ellipse"), ellipse_level = 0.95, add_sample_label = "sample") +
   geom_arrow_chain(colour = "black") + 
     ggtitle("16s NMDS")
+  plot
 
 plot + labs(color = "Season", shape = "test")
   class(plot)

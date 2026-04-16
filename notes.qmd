@@ -22,18 +22,18 @@ are all similar however some of the minor taxa are different.
 **Question:** How sensitive are each method of taxonomy, which do we
 trust? **Next Steps:**
 
--   Split phyla into autotrophs and heterotrophs and mixotrophs
+- Split phyla into autotrophs and heterotrophs and mixotrophs
 
--   Incorporate env metadata (O2 measurements as measure of respiration
-    and carbon consumed?)
+- Incorporate env metadata (O2 measurements as measure of respiration
+  and carbon consumed?)
 
--   Research into how I should go about sorting through this data
+- Research into how I should go about sorting through this data
 
--   Research into how the 16S data vs the metagenomic data works
+- Research into how the 16S data vs the metagenomic data works
 
--   Keep working on getting binning data
+- Keep working on getting binning data
 
--   *Figure out if I need to normalize the data and how?*
+- *Figure out if I need to normalize the data and how?*
 
 ```{r}
 source("scripts/01_intro_script.R")
@@ -45,9 +45,9 @@ Started looking at top 20 families. Code is in the bottom of
 "sylph_mircoeco". Also created spreadsheet with names of families and
 comments about what I could find out about their metabolism or ecology.
 
--   Continue this work -
+- Continue this work -
 
--   Email Jay to get temp data
+- Email Jay to get temp data
 
 # Feb 10, 2026
 
@@ -80,17 +80,16 @@ https://library.virginia.edu/data/articles/starting-non-metric-multidimensional-
 
 # Feb 16, 2026
 
--   Imported matlab data to R. Used claude to get intial scripts to
-    import the .mat file into python and then write to csvs. At the
-    bottom of "Intro Scripts" there is a chunk to write all of those to
-    a dataframe in R. Matlab date is since jan 1, 1900 rather than jan
-    1, 1970.
--   Decided to rewrite the matlab import in R, kept at the bottom of
-    01_intro_scripts. Updated `sw_meta$strat_season` based on first 40m
-    of temperature. Summer = stratification, fall = post summer
-    isothermal period, winter = reverse stratification, spring = post
-    winter isothermal Found some cool plots that look different based on
-    the temperature but both seem to show seasonal differences.
+- Imported matlab data to R. Used claude to get intial scripts to import
+  the .mat file into python and then write to csvs. At the bottom of
+  "Intro Scripts" there is a chunk to write all of those to a dataframe
+  in R. Matlab date is since jan 1, 1900 rather than jan 1, 1970.
+- Decided to rewrite the matlab import in R, kept at the bottom of
+  01_intro_scripts. Updated `sw_meta$strat_season` based on first 40m of
+  temperature. Summer = stratification, fall = post summer isothermal
+  period, winter = reverse stratification, spring = post winter
+  isothermal Found some cool plots that look different based on the
+  temperature but both seem to show seasonal differences.
 
 ```{r}
 source("scripts/01_intro_script.R") # if needed
@@ -133,15 +132,15 @@ the most abundant families.**
 **TODO** - How to deal with the difference between the mag data and the
 16s data?
 
--   Show NDMS graphs
+- Show NDMS graphs
 
--   Show temperature determination
+- Show temperature determination
 
--   Binning script?
+- Binning script?
 
--   missing merged.fasta file
+- missing merged.fasta file
 
--   Committee - Jay - Ted - Bill - Formal Thesis Proposal? - Job Stuff.
+- Committee - Jay - Ted - Bill - Formal Thesis Proposal? - Job Stuff.
 
 **First work on binning stuff, then lefse, then think about committee
 things.**
@@ -419,12 +418,12 @@ part, and changed the delimiter in the final contigs file to look for
 '\_' instead of ':'. Once each one worked, I started the whole binning
 script and we will see how long it takes.
 
--   Did some research into lefSE and using that in microeco. The
-    resulting code is at the bottom of 16s analysis. The next thing to
-    do is to look at what taxa are coming out there.
--   See if I can get some other data from Jay. - CHECK
--   Start laying out some figures (read a couple of papers)
--   Email Stormi about outside thesis committee folks - CHECK
+- Did some research into lefSE and using that in microeco. The resulting
+  code is at the bottom of 16s analysis. The next thing to do is to look
+  at what taxa are coming out there.
+- See if I can get some other data from Jay. - CHECK
+- Start laying out some figures (read a couple of papers)
+- Email Stormi about outside thesis committee folks - CHECK
 
 # March 6, 2026
 
@@ -523,27 +522,26 @@ out all the statistics I should be doing
 
 # March 27, 2026
 
--   Working through a book to figure out the stats
-    https://uw.pressbooks.pub/appliedmultivariatestatistics/chapter/relativizations/
-    -   Currently trying to figure out which normalization to do on the
-        abundance data. "Gower and X\^2 distances perform better than
-        other measures in revealing the relationships among the samples
-        along an environmental gradient even under low sequencing depth
-        and the presence of noise in simulating abundance vectors The
-        Jaccard dissimilarity measure was shown to perform well in
-        revealing the cluster relationships when such relationships were
-        prominent, but not very well for subtle clusters. The χ 2
-        distance was shown to perform well in revealing environmental
-        gradients, but only moderately well in revealing underlying
-        clusters." -
-        -   Statistical Analysis of micrbiome data (pg 84)
+- Working through a book to figure out the stats
+  https://uw.pressbooks.pub/appliedmultivariatestatistics/chapter/relativizations/
+  - Currently trying to figure out which normalization to do on the
+    abundance data. "Gower and X\^2 distances perform better than other
+    measures in revealing the relationships among the samples along an
+    environmental gradient even under low sequencing depth and the
+    presence of noise in simulating abundance vectors The Jaccard
+    dissimilarity measure was shown to perform well in revealing the
+    cluster relationships when such relationships were prominent, but
+    not very well for subtle clusters. The χ 2 distance was shown to
+    perform well in revealing environmental gradients, but only
+    moderately well in revealing underlying clusters." -
+    - Statistical Analysis of micrbiome data (pg 84)
 
 It's hard for me to tell from this which to use. This doesn't seem to be
 quite the right answer.
 
--   As reccomended by the 'performance' package documentation, I called
-    outliers based on MAD (median absolute deviation) instead of the
-    mean in the environmental data.
+- As reccomended by the 'performance' package documentation, I called
+  outliers based on MAD (median absolute deviation) instead of the mean
+  in the environmental data.
 
 # March 30, 2026
 
@@ -573,9 +571,8 @@ on github.
 
 Based on information from: Borman et al., (2026), and Datta and Guha
 (2022 pdf), it seems like I should use a clr or rclr transformation and
-then Aitchison distantances rather than Bray-Curtis. Did that to
-calculate Aitchison distances and then did a PCA based in information
-from...
+then Aitchison distances rather than Bray-Curtis. Did that to calculate
+Aitchison distances and then did a PCA based in information from...
 
 ```{r}
     tb2 <- trans_beta$new(mt_mag, group = "strat_season", measure = "aitchison")
@@ -597,77 +594,104 @@ tb2$plot_ordination(plot_color = "strat_season", plot_shape = "strat_season", pl
   NULL
 ```
 
-Right now have all the data sets with three dissimilarity tests: Bray, Aitchison, and robust Aitchison. All three show significance for the MANOVA but the plots look slightly different. The sylph/bray data has the nicest arrows pointing around. 
-PCoA explain about 50% of the variation which is pretty cool. 
+Right now have all the data sets with three dissimilarity tests: Bray,
+Aitchison, and robust Aitchison. All three show significance for the
+MANOVA but the plots look slightly different. The sylph/bray data has
+the nicest arrows pointing around. PCoA explain about 50% of the
+variation which is pretty cool.
 
-Looks like the Diamond (2019) soil paper used weighted unifraq for distance measurements. 
+Looks like the Diamond (2019) soil paper used weighted unifraq for
+distance measurements.
 
-**TODO:**
-  - Look at what variables explain most of the data
-  - See if LefSE is the best option or not to look for interesting classes
-  - Metabolic data from Cody
-  - Import trees for unifrac stuff
-
+**TODO:** - Look at what variables explain most of the data - See if
+LefSE is the best option or not to look for interesting classes -
+Metabolic data from Cody - Import trees for unifrac stuff
 
 # March 31, 2026
 
-Meeting with Jay - Maestro Data
-Probably just trim off the last month of data, 
-DO umol/L about 12 mg/L typically, check to see what reasonble values are, compare DO to thermocline. Take a look at whether high values are above the thermocline or not. Look at saturation.
+Meeting with Jay - Maestro Data Probably just trim off the last month of
+data, DO umol/L about 12 mg/L typically, check to see what reasonble
+values are, compare DO to thermocline. Take a look at whether high
+values are above the thermocline or not. Look at saturation.
 
-Period tends to be about 17 hours, near-initial velocity.
-PCO2  looks diurnal starting in May. Convection from heating make surface water higher than 4c and sinks. 
-Dan Sanborne - pCO2 paper - neural network based estimate of 
-pC02 - ppm (uatm)
-CHLa seeing photobleaching in the diurnal signal. 
+Period tends to be about 17 hours, near-initial velocity. PCO2 looks
+diurnal starting in May. Convection from heating make surface water
+higher than 4c and sinks. Dan Sanborne - pCO2 paper - neural network
+based estimate of pC02 - ppm (uatm) CHLa seeing photobleaching in the
+diurnal signal.
 
-Temperature Data
-01 - Below thermocline, stable temp
-02 - Below thermocline, stable temp
-03 - Below thermocline, stable temp
-04 - Below thermocline, stable temp
-05 - Mostly below thermocline, couple big spikes after noon but noon temp would work
-11 - isothermal, noon temp
-12 - isothermal, noon temp
-13 - isothermal, noon temp
-14 - isothermal, noon temp
-15 - isothermal, noon temp
-16 - isothermal, noon temp
-17 - isothermal, noon temp
-18 - isothermal, noon temp
-19 - isothermal, noon temp
-20 - isothermal, noon temp
-21 - isothermal, noon temp
-22 - isothermal, noon temp
-23 - isothermal, noon temp
-24 - light thermocline, below thermocline stable temp
+Temperature Data 01 - Below thermocline, stable temp 02 - Below
+thermocline, stable temp 03 - Below thermocline, stable temp 04 - Below
+thermocline, stable temp 05 - Mostly below thermocline, couple big
+spikes after noon but noon temp would work 11 - isothermal, noon temp
+12 - isothermal, noon temp 13 - isothermal, noon temp 14 - isothermal,
+noon temp 15 - isothermal, noon temp 16 - isothermal, noon temp 17 -
+isothermal, noon temp 18 - isothermal, noon temp 19 - isothermal, noon
+temp 20 - isothermal, noon temp 21 - isothermal, noon temp 22 -
+isothermal, noon temp 23 - isothermal, noon temp 24 - light thermocline,
+below thermocline stable temp
 
-Based on temperature graphs it seems like I should just do the median value because there might be some variations in temperature especially in the March months when we have convective cooling and the community in those areas would be a reflection of that fluctuation in temperature. 
+Based on temperature graphs it seems like I should just do the median
+value because there might be some variations in temperature especially
+in the March months when we have convective cooling and the community in
+those areas would be a reflection of that fluctuation in temperature.
 
-Spent most of the day going through the environmental stuff. I feel pretty good about it so far. 
-**Next Steps:** Finish looking at pH. Check out the end of the deployment and the periodicity of it.
-  - Look at values from Minor to see what is normal
-  - Look at oxygen values and how they fluctuate with temperature. I might need to get rid of some of the values before averaging them so I am only measuring below the thermocline
-  
+Spent most of the day going through the environmental stuff. I feel
+pretty good about it so far. **Next Steps:** Finish looking at pH. Check
+out the end of the deployment and the periodicity of it. - Look at
+values from Minor to see what is normal - Look at oxygen values and how
+they fluctuate with temperature. I might need to get rid of some of the
+values before averaging them so I am only measuring below the
+thermocline
 
 # April 2, 2026
 
-Talked with Liz about pH data. Look at Minor et al 2019, Urban, Ask MTU person about carbon in the lake (who may be on the guardian?). 
+Talked with Liz about pH data. Look at Minor et al 2019, Urban, Ask MTU
+person about carbon in the lake (who may be on the guardian?).
 
 # April 6, 2026
 
-Finished with most of the environmental data. Added a tree and unifrac distances into the MAGs data. 
+Finished with most of the environmental data. Added a tree and unifrac
+distances into the MAGs data.
 
-  -  Created a nice plot of the 16s data to show how the communities change. Used the robust aitchison with an NMDS
+- Created a nice plot of the 16s data to show how the communities
+  change. Used the robust aitchison with an NMDS
 
-  **TO DO:**
-  - Output a nice looking table of significance for stratification season
-  - Check and see if other things like not stratification season are different
-  - Oooohhh maybe see if I can do a little overlapping of layers to show how the nmds is built?
-  
+**TO DO:** - Output a nice looking table of significance for
+stratification season - Check and see if other things like not
+stratification season are different - Oooohhh maybe see if I can do a
+little overlapping of layers to show how the nmds is built?
 
+# April 7, 2026 Made some nicer looking plots for my data
 
+# April 8, 2026 Questions for Cody:
 
+- how do I deal with tree data?
+- metabolic stuff?
+- any other way to define the groupings?
 
+**ToDo:** - Make a nice PCoA figure with 16s data and environmental
+data - Look at the UBA taxa in the winter - Look at figures from other
+papers - Look at/do permanova - Group OTUs into phototrophs/autotrophs -
+Look at the figures on Cody's poster for how to list what number of
+genomes we extracted
 
+![Showing craziness when we look at temperature alone, seasonal
+succession is important](output/plots\16s_nmds_tempquant.png)
 
+Looked at temperature and saw that the temperature of the mooring
+actually rises throughout the year at specific points. Looking at an
+NMDS based on temperature, the temperature alone is not the predictor of
+grouping
+
+![Based on this graph, I'm going to update my stratification
+designation](output/plots\temp_stratification.png)
+
+# April 16, 2026
+
+Finally finished running the metacerberus on all the assembled bins.
+Trying to interpret the outputs. KOFam - KEGG Ortholog (KO) database of
+genes that have identity and function. Basically just another database.
+The KEGG number is the identifier for the protein.
+
+![](output/plots\temp_data_alldepths_station.png){width="635"}

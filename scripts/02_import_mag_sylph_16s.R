@@ -297,9 +297,9 @@ save(mt_mag, file = "output/data/mt_mag.RData")
 save(mt_sylph, file = "output/data/mt_sylph.RData")
 save(mt_16s, file = "output/data/mt_16s.RData")
 # # Remove unneeded data----------------------------------------------------
-# remove <- ls() |> 
-#   str_subset("mt_.*", negate = T)
+remove <- ls() |> 
+  str_subset("mt_.*", negate = T)
 
-# rm(list = remove)
+rm(list = remove)
 
-# rm(remove)
+rm(remove)

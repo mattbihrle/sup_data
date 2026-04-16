@@ -7,6 +7,7 @@ format: html
 ```{r}
 library(microeco)
 library(tidyverse)
+library(leaflet) # for custom color mapping
 ```
 
 # Run previous scripts to load in microtable objects
@@ -174,11 +175,12 @@ temp_df_long |>
     # select(dttm, depth, temp) |> 
     drop_na() |> 
     mutate(depth = as.numeric(depth)) |> 
+    # filter(depth < 50) |> 
         select(date, depth, temp, sample_date) |> 
         drop_na() |> 
         distinct() |> 
     ggplot(aes(x = date, y = depth, z = temp)) +
-      geom_contour_filled() +
+      geom_contour_filled(binwidth = 0.5) +
         # scale_fill_brewer(palette = "RdBu", direction = -1) +
         scale_fill_viridis_d(option = "turbo") +
   labs(x = "Date", y = "Depth (m)", fill = "Temperature (°C)") +
@@ -190,9 +192,16 @@ temp_df_long |>
   scale_y_reverse(expand = c(0,0)) +
   scale_x_date(expand = c(0,0)) +
     guides(fill = guide_legend(ncol = 1, reverse = T)) +
-    geom_point(aes(x = samp_dates$sample_date, y = 38), color = 'white') +
+    geom_point(data = samp_dates, aes(x = sample_date, y = 38, z = NULL), color = 'white') +
+    geom_point(data = samp_dates, aes(x = sample_date, y = 22, z = NULL), color = 'white') +
+    geom_vline(xintercept = sw_meta$date[which(sw_meta$strat_season == "summer")], color = "red") +
+    # geom_vline(xintercept = sw_meta$date[which(sw_meta$strat_season == "fall")]) +
+    geom_vline(xintercept = sw_meta$date[which(sw_meta$strat_season == "winter")], , color = "red") +
+    # geom_vline(xintercept = sw_meta$date[which(sw_meta$strat_season == "spring")]) +
     NULL
+ sw_meta$date[which(sw_meta$strat_season == "summer")]
 
+ quantile(mt_mag$sample_table$temp_c_24h_med)
 ```
 
 

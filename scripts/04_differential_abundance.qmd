@@ -22,7 +22,7 @@ library(ggarrow)
 library(tidyverse)
 library(microeco)
 library(tidytree)
-BiocManager::install("ggtree")
+# BiocManager::install("ggtree")
 library(ggtree)
 ```
 
@@ -39,6 +39,18 @@ t1$plot_diff_bar(threshold = 4.5)
 # we show 20 taxa with the highest LDA (log10)
 t1$plot_diff_bar(use_number = 1:30, width = 0.8, add_sig = T)
 
+```
+
+## Interpretation
+It looks like the UBA2100 family is super prevalent during the winter. 
+Sediminibacterium is around a lot during the fall season?
+
+```{r}
+# Quick plot of temperature at our site
+
+
+```
+```{r}
 t1 <- trans_diff$new(dataset = mt_16s, method = "lefse", group = "strat_season", alpha = 0.05, taxa_level = 'all', lefse_subgroup = NULL)
 view(t1$res_diff)
 t1$plot_diff_cladogram()
