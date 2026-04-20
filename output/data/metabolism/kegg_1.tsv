@@ -1,0 +1,1905 @@
+bin	name	count
+WM01_S1_002	Metabolism	1432
+WM01_S1_002	Human Diseases	267
+WM01_S1_002	Brite Hierarchies	1674
+WM01_S1_002	Not Included in Pathway or Brite	382
+WM01_S1_002	Environmental Information Processing	337
+WM01_S1_002	Organismal Systems	142
+WM01_S1_002	Cellular Processes	208
+WM01_S1_002	Genetic Information Processing	187
+WM01_S1_004	Metabolism	1043
+WM01_S1_004	Organismal Systems	84
+WM01_S1_004	Environmental Information Processing	155
+WM01_S1_004	Brite Hierarchies	1241
+WM01_S1_004	Human Diseases	235
+WM01_S1_004	Not Included in Pathway or Brite	272
+WM01_S1_004	Cellular Processes	200
+WM01_S1_004	Genetic Information Processing	172
+WM01_S1_006	Metabolism	1190
+WM01_S1_006	Environmental Information Processing	232
+WM01_S1_006	Organismal Systems	144
+WM01_S1_006	Cellular Processes	190
+WM01_S1_006	Human Diseases	332
+WM01_S1_006	Brite Hierarchies	1587
+WM01_S1_006	Not Included in Pathway or Brite	384
+WM01_S1_006	Genetic Information Processing	240
+WM01_S1_007	Metabolism	1415
+WM01_S1_007	Environmental Information Processing	263
+WM01_S1_007	Cellular Processes	154
+WM01_S1_007	Human Diseases	268
+WM01_S1_007	Brite Hierarchies	1553
+WM01_S1_007	Not Included in Pathway or Brite	354
+WM01_S1_007	Organismal Systems	95
+WM01_S1_007	Genetic Information Processing	174
+WM01_S1_012	Metabolism	1147
+WM01_S1_012	Environmental Information Processing	144
+WM01_S1_012	Cellular Processes	111
+WM01_S1_012	Human Diseases	156
+WM01_S1_012	Brite Hierarchies	1169
+WM01_S1_012	Not Included in Pathway or Brite	288
+WM01_S1_012	Organismal Systems	72
+WM01_S1_012	Genetic Information Processing	162
+WM01_S1_016	Metabolism	1000
+WM01_S1_016	Organismal Systems	37
+WM01_S1_016	Human Diseases	50
+WM01_S1_016	Brite Hierarchies	666
+WM01_S1_016	Not Included in Pathway or Brite	206
+WM01_S1_016	Environmental Information Processing	83
+WM01_S1_016	Cellular Processes	54
+WM01_S1_016	Genetic Information Processing	113
+WM01_S1_017	Metabolism	311
+WM01_S1_017	Brite Hierarchies	392
+WM01_S1_017	Organismal Systems	17
+WM01_S1_017	Not Included in Pathway or Brite	130
+WM01_S1_017	Environmental Information Processing	49
+WM01_S1_017	Cellular Processes	32
+WM01_S1_017	Human Diseases	14
+WM01_S1_017	Genetic Information Processing	67
+WM01_S1_023	Metabolism	496
+WM01_S1_023	Brite Hierarchies	464
+WM01_S1_023	Environmental Information Processing	63
+WM01_S1_023	Human Diseases	25
+WM01_S1_023	Genetic Information Processing	66
+WM01_S1_023	Not Included in Pathway or Brite	118
+WM01_S1_023	Cellular Processes	46
+WM01_S1_023	Organismal Systems	9
+WM01_S1_025	Metabolism	1504
+WM01_S1_025	Brite Hierarchies	2129
+WM01_S1_025	Environmental Information Processing	330
+WM01_S1_025	Organismal Systems	120
+WM01_S1_025	Human Diseases	298
+WM01_S1_025	Not Included in Pathway or Brite	531
+WM01_S1_025	Cellular Processes	306
+WM01_S1_025	Genetic Information Processing	184
+WM01_S1_033	Metabolism	392
+WM01_S1_033	Brite Hierarchies	536
+WM01_S1_033	Not Included in Pathway or Brite	117
+WM01_S1_033	Genetic Information Processing	47
+WM01_S1_033	Environmental Information Processing	102
+WM01_S1_033	Organismal Systems	26
+WM01_S1_033	Cellular Processes	84
+WM01_S1_033	Human Diseases	37
+WM01_S1_034	Metabolism	127
+WM01_S1_034	Human Diseases	29
+WM01_S1_034	Brite Hierarchies	372
+WM01_S1_034	Environmental Information Processing	27
+WM01_S1_034	Genetic Information Processing	127
+WM01_S1_034	Not Included in Pathway or Brite	44
+WM01_S1_034	Cellular Processes	17
+WM01_S1_034	Organismal Systems	6
+WM01_S1_036	Metabolism	236
+WM01_S1_036	Not Included in Pathway or Brite	84
+WM01_S1_036	Brite Hierarchies	312
+WM01_S1_036	Environmental Information Processing	65
+WM01_S1_036	Human Diseases	38
+WM01_S1_036	Cellular Processes	59
+WM01_S1_036	Organismal Systems	9
+WM01_S1_036	Genetic Information Processing	24
+WM01_S1_039	Metabolism	518
+WM01_S1_039	Human Diseases	65
+WM01_S1_039	Brite Hierarchies	496
+WM01_S1_039	Environmental Information Processing	73
+WM01_S1_039	Organismal Systems	30
+WM01_S1_039	Not Included in Pathway or Brite	100
+WM01_S1_039	Genetic Information Processing	91
+WM01_S1_039	Cellular Processes	44
+WM01_S1_043	Metabolism	597
+WM01_S1_043	Brite Hierarchies	609
+WM01_S1_043	Not Included in Pathway or Brite	137
+WM01_S1_043	Organismal Systems	55
+WM01_S1_043	Human Diseases	95
+WM01_S1_043	Environmental Information Processing	165
+WM01_S1_043	Cellular Processes	122
+WM01_S1_043	Genetic Information Processing	65
+WM02_S2_002	Metabolism	1141
+WM02_S2_002	Environmental Information Processing	226
+WM02_S2_002	Organismal Systems	131
+WM02_S2_002	Cellular Processes	120
+WM02_S2_002	Human Diseases	176
+WM02_S2_002	Brite Hierarchies	1484
+WM02_S2_002	Not Included in Pathway or Brite	339
+WM02_S2_002	Genetic Information Processing	187
+WM02_S2_005	Metabolism	900
+WM02_S2_005	Environmental Information Processing	199
+WM02_S2_005	Organismal Systems	71
+WM02_S2_005	Human Diseases	217
+WM02_S2_005	Brite Hierarchies	1361
+WM02_S2_005	Cellular Processes	182
+WM02_S2_005	Not Included in Pathway or Brite	240
+WM02_S2_005	Genetic Information Processing	198
+WM02_S2_010	Metabolism	1042
+WM02_S2_010	Environmental Information Processing	225
+WM02_S2_010	Human Diseases	154
+WM02_S2_010	Brite Hierarchies	1306
+WM02_S2_010	Not Included in Pathway or Brite	317
+WM02_S2_010	Organismal Systems	50
+WM02_S2_010	Genetic Information Processing	159
+WM02_S2_010	Cellular Processes	176
+WM02_S2_012	Metabolism	195
+WM02_S2_012	Brite Hierarchies	212
+WM02_S2_012	Not Included in Pathway or Brite	52
+WM02_S2_012	Organismal Systems	7
+WM02_S2_012	Human Diseases	10
+WM02_S2_012	Cellular Processes	19
+WM02_S2_012	Environmental Information Processing	37
+WM02_S2_012	Genetic Information Processing	21
+WM02_S2_014	Metabolism	842
+WM02_S2_014	Cellular Processes	121
+WM02_S2_014	Human Diseases	97
+WM02_S2_014	Brite Hierarchies	1072
+WM02_S2_014	Not Included in Pathway or Brite	245
+WM02_S2_014	Environmental Information Processing	192
+WM02_S2_014	Organismal Systems	35
+WM02_S2_014	Genetic Information Processing	79
+WM02_S2_017	Metabolism	1701
+WM02_S2_017	Cellular Processes	164
+WM02_S2_017	Human Diseases	159
+WM02_S2_017	Brite Hierarchies	1619
+WM02_S2_017	Not Included in Pathway or Brite	484
+WM02_S2_017	Environmental Information Processing	231
+WM02_S2_017	Organismal Systems	71
+WM02_S2_017	Genetic Information Processing	185
+WM02_S2_019	Metabolism	348
+WM02_S2_019	Environmental Information Processing	105
+WM02_S2_019	Brite Hierarchies	468
+WM02_S2_019	Organismal Systems	16
+WM02_S2_019	Human Diseases	115
+WM02_S2_019	Not Included in Pathway or Brite	118
+WM02_S2_019	Cellular Processes	92
+WM02_S2_019	Genetic Information Processing	40
+WM02_S2_020	Metabolism	1156
+WM02_S2_020	Human Diseases	150
+WM02_S2_020	Brite Hierarchies	1407
+WM02_S2_020	Not Included in Pathway or Brite	379
+WM02_S2_020	Environmental Information Processing	268
+WM02_S2_020	Organismal Systems	75
+WM02_S2_020	Cellular Processes	251
+WM02_S2_020	Genetic Information Processing	125
+WM02_S2_022	Metabolism	256
+WM02_S2_022	Environmental Information Processing	55
+WM02_S2_022	Brite Hierarchies	294
+WM02_S2_022	Not Included in Pathway or Brite	76
+WM02_S2_022	Human Diseases	30
+WM02_S2_022	Cellular Processes	50
+WM02_S2_022	Organismal Systems	10
+WM02_S2_022	Genetic Information Processing	19
+WM02_S2_024	Metabolism	193
+WM02_S2_024	Brite Hierarchies	339
+WM02_S2_024	Not Included in Pathway or Brite	64
+WM02_S2_024	Environmental Information Processing	65
+WM02_S2_024	Human Diseases	39
+WM02_S2_024	Organismal Systems	23
+WM02_S2_024	Cellular Processes	53
+WM02_S2_024	Genetic Information Processing	21
+WM02_S2_026	Metabolism	1027
+WM02_S2_026	Environmental Information Processing	154
+WM02_S2_026	Cellular Processes	83
+WM02_S2_026	Human Diseases	135
+WM02_S2_026	Brite Hierarchies	1064
+WM02_S2_026	Not Included in Pathway or Brite	257
+WM02_S2_026	Organismal Systems	60
+WM02_S2_026	Genetic Information Processing	145
+WM02_S2_030	Metabolism	613
+WM02_S2_030	Environmental Information Processing	104
+WM02_S2_030	Organismal Systems	19
+WM02_S2_030	Human Diseases	84
+WM02_S2_030	Brite Hierarchies	854
+WM02_S2_030	Not Included in Pathway or Brite	174
+WM02_S2_030	Cellular Processes	77
+WM02_S2_030	Genetic Information Processing	90
+WM02_S2_033	Metabolism	362
+WM02_S2_033	Human Diseases	44
+WM02_S2_033	Brite Hierarchies	395
+WM02_S2_033	Environmental Information Processing	59
+WM02_S2_033	Organismal Systems	15
+WM02_S2_033	Not Included in Pathway or Brite	118
+WM02_S2_033	Genetic Information Processing	47
+WM02_S2_033	Cellular Processes	56
+WM02_S2_034	Metabolism	1121
+WM02_S2_034	Environmental Information Processing	155
+WM02_S2_034	Cellular Processes	189
+WM02_S2_034	Human Diseases	335
+WM02_S2_034	Brite Hierarchies	1070
+WM02_S2_034	Not Included in Pathway or Brite	266
+WM02_S2_034	Organismal Systems	92
+WM02_S2_034	Genetic Information Processing	115
+WM02_S2_036	Metabolism	1008
+WM02_S2_036	Organismal Systems	41
+WM02_S2_036	Human Diseases	55
+WM02_S2_036	Brite Hierarchies	683
+WM02_S2_036	Environmental Information Processing	90
+WM02_S2_036	Not Included in Pathway or Brite	195
+WM02_S2_036	Cellular Processes	81
+WM02_S2_036	Genetic Information Processing	159
+WM02_S2_040	Metabolism	288
+WM02_S2_040	Human Diseases	41
+WM02_S2_040	Brite Hierarchies	428
+WM02_S2_040	Environmental Information Processing	33
+WM02_S2_040	Not Included in Pathway or Brite	57
+WM02_S2_040	Genetic Information Processing	134
+WM02_S2_040	Organismal Systems	10
+WM02_S2_040	Cellular Processes	24
+WM02_S2_041	Metabolism	866
+WM02_S2_041	Environmental Information Processing	258
+WM02_S2_041	Organismal Systems	60
+WM02_S2_041	Not Included in Pathway or Brite	359
+WM02_S2_041	Brite Hierarchies	1287
+WM02_S2_041	Human Diseases	179
+WM02_S2_041	Cellular Processes	236
+WM02_S2_041	Genetic Information Processing	128
+WM02_S2_043	Metabolism	291
+WM02_S2_043	Environmental Information Processing	50
+WM02_S2_043	Organismal Systems	32
+WM02_S2_043	Brite Hierarchies	548
+WM02_S2_043	Human Diseases	129
+WM02_S2_043	Not Included in Pathway or Brite	85
+WM02_S2_043	Genetic Information Processing	113
+WM02_S2_043	Cellular Processes	53
+WM02_S2_044	Metabolism	775
+WM02_S2_044	Cellular Processes	146
+WM02_S2_044	Human Diseases	128
+WM02_S2_044	Brite Hierarchies	982
+WM02_S2_044	Environmental Information Processing	191
+WM02_S2_044	Not Included in Pathway or Brite	204
+WM02_S2_044	Organismal Systems	30
+WM02_S2_044	Genetic Information Processing	113
+WM02_S2_047	Metabolism	1052
+WM02_S2_047	Cellular Processes	235
+WM02_S2_047	Human Diseases	175
+WM02_S2_047	Brite Hierarchies	1027
+WM02_S2_047	Organismal Systems	81
+WM02_S2_047	Not Included in Pathway or Brite	231
+WM02_S2_047	Environmental Information Processing	253
+WM02_S2_047	Genetic Information Processing	121
+WM02_S2_049	Metabolism	978
+WM02_S2_049	Environmental Information Processing	111
+WM02_S2_049	Brite Hierarchies	769
+WM02_S2_049	Not Included in Pathway or Brite	246
+WM02_S2_049	Human Diseases	73
+WM02_S2_049	Organismal Systems	77
+WM02_S2_049	Genetic Information Processing	126
+WM02_S2_049	Cellular Processes	72
+WM02_S2_050	Metabolism	662
+WM02_S2_050	Environmental Information Processing	106
+WM02_S2_050	Organismal Systems	42
+WM02_S2_050	Human Diseases	66
+WM02_S2_050	Brite Hierarchies	725
+WM02_S2_050	Cellular Processes	100
+WM02_S2_050	Genetic Information Processing	102
+WM02_S2_050	Not Included in Pathway or Brite	129
+WM02_S2_052	Metabolism	810
+WM02_S2_052	Environmental Information Processing	125
+WM02_S2_052	Brite Hierarchies	860
+WM02_S2_052	Organismal Systems	33
+WM02_S2_052	Human Diseases	68
+WM02_S2_052	Not Included in Pathway or Brite	178
+WM02_S2_052	Cellular Processes	147
+WM02_S2_052	Genetic Information Processing	93
+WM03_S3_001	Metabolism	1698
+WM03_S3_001	Environmental Information Processing	404
+WM03_S3_001	Human Diseases	219
+WM03_S3_001	Brite Hierarchies	1941
+WM03_S3_001	Not Included in Pathway or Brite	478
+WM03_S3_001	Organismal Systems	96
+WM03_S3_001	Cellular Processes	225
+WM03_S3_001	Genetic Information Processing	150
+WM03_S3_002	Metabolism	1208
+WM03_S3_002	Environmental Information Processing	136
+WM03_S3_002	Cellular Processes	106
+WM03_S3_002	Human Diseases	150
+WM03_S3_002	Brite Hierarchies	1082
+WM03_S3_002	Not Included in Pathway or Brite	301
+WM03_S3_002	Organismal Systems	63
+WM03_S3_002	Genetic Information Processing	162
+WM03_S3_003	Metabolism	707
+WM03_S3_003	Brite Hierarchies	1065
+WM03_S3_003	Environmental Information Processing	262
+WM03_S3_003	Human Diseases	103
+WM03_S3_003	Organismal Systems	38
+WM03_S3_003	Not Included in Pathway or Brite	232
+WM03_S3_003	Genetic Information Processing	107
+WM03_S3_003	Cellular Processes	195
+WM03_S3_007	Metabolism	967
+WM03_S3_007	Environmental Information Processing	97
+WM03_S3_007	Cellular Processes	77
+WM03_S3_007	Human Diseases	115
+WM03_S3_007	Brite Hierarchies	961
+WM03_S3_007	Not Included in Pathway or Brite	192
+WM03_S3_007	Organismal Systems	57
+WM03_S3_007	Genetic Information Processing	181
+WM03_S3_008	Metabolism	961
+WM03_S3_008	Cellular Processes	162
+WM03_S3_008	Human Diseases	191
+WM03_S3_008	Brite Hierarchies	1104
+WM03_S3_008	Not Included in Pathway or Brite	302
+WM03_S3_008	Environmental Information Processing	172
+WM03_S3_008	Organismal Systems	91
+WM03_S3_008	Genetic Information Processing	85
+WM03_S3_010	Metabolism	1378
+WM03_S3_010	Environmental Information Processing	129
+WM03_S3_010	Brite Hierarchies	1222
+WM03_S3_010	Not Included in Pathway or Brite	346
+WM03_S3_010	Human Diseases	126
+WM03_S3_010	Organismal Systems	83
+WM03_S3_010	Cellular Processes	126
+WM03_S3_010	Genetic Information Processing	173
+WM03_S3_014	Metabolism	679
+WM03_S3_014	Organismal Systems	43
+WM03_S3_014	Human Diseases	125
+WM03_S3_014	Brite Hierarchies	977
+WM03_S3_014	Not Included in Pathway or Brite	241
+WM03_S3_014	Environmental Information Processing	156
+WM03_S3_014	Cellular Processes	194
+WM03_S3_014	Genetic Information Processing	91
+WM03_S3_015	Metabolism	1307
+WM03_S3_015	Organismal Systems	60
+WM03_S3_015	Cellular Processes	216
+WM03_S3_015	Human Diseases	162
+WM03_S3_015	Brite Hierarchies	1420
+WM03_S3_015	Not Included in Pathway or Brite	386
+WM03_S3_015	Environmental Information Processing	202
+WM03_S3_015	Genetic Information Processing	178
+WM03_S3_017	Metabolism	1458
+WM03_S3_017	Environmental Information Processing	277
+WM03_S3_017	Cellular Processes	165
+WM03_S3_017	Human Diseases	196
+WM03_S3_017	Brite Hierarchies	1579
+WM03_S3_017	Not Included in Pathway or Brite	403
+WM03_S3_017	Organismal Systems	84
+WM03_S3_017	Genetic Information Processing	171
+WM03_S3_018	Metabolism	2133
+WM03_S3_018	Environmental Information Processing	550
+WM03_S3_018	Human Diseases	259
+WM03_S3_018	Brite Hierarchies	2753
+WM03_S3_018	Not Included in Pathway or Brite	647
+WM03_S3_018	Organismal Systems	116
+WM03_S3_018	Cellular Processes	224
+WM03_S3_018	Genetic Information Processing	174
+WM03_S3_019	Metabolism	827
+WM03_S3_019	Environmental Information Processing	80
+WM03_S3_019	Cellular Processes	55
+WM03_S3_019	Human Diseases	94
+WM03_S3_019	Brite Hierarchies	845
+WM03_S3_019	Not Included in Pathway or Brite	153
+WM03_S3_019	Organismal Systems	37
+WM03_S3_019	Genetic Information Processing	160
+WM03_S3_020	Metabolism	1351
+WM03_S3_020	Environmental Information Processing	162
+WM03_S3_020	Cellular Processes	119
+WM03_S3_020	Human Diseases	146
+WM03_S3_020	Brite Hierarchies	1328
+WM03_S3_020	Not Included in Pathway or Brite	378
+WM03_S3_020	Organismal Systems	83
+WM03_S3_020	Genetic Information Processing	170
+WM03_S3_023	Metabolism	524
+WM03_S3_023	Environmental Information Processing	74
+WM03_S3_023	Organismal Systems	27
+WM03_S3_023	Human Diseases	41
+WM03_S3_023	Brite Hierarchies	513
+WM03_S3_023	Cellular Processes	84
+WM03_S3_023	Not Included in Pathway or Brite	130
+WM03_S3_023	Genetic Information Processing	78
+WM03_S3_024	Metabolism	638
+WM03_S3_024	Brite Hierarchies	588
+WM03_S3_024	Environmental Information Processing	130
+WM03_S3_024	Human Diseases	88
+WM03_S3_024	Organismal Systems	23
+WM03_S3_024	Not Included in Pathway or Brite	109
+WM03_S3_024	Genetic Information Processing	66
+WM03_S3_024	Cellular Processes	73
+WM03_S3_026	Metabolism	897
+WM03_S3_026	Environmental Information Processing	261
+WM03_S3_026	Brite Hierarchies	961
+WM03_S3_026	Organismal Systems	54
+WM03_S3_026	Human Diseases	177
+WM03_S3_026	Not Included in Pathway or Brite	242
+WM03_S3_026	Genetic Information Processing	87
+WM03_S3_026	Cellular Processes	238
+WM03_S3_028	Metabolism	1238
+WM03_S3_028	Environmental Information Processing	134
+WM03_S3_028	Brite Hierarchies	1000
+WM03_S3_028	Not Included in Pathway or Brite	299
+WM03_S3_028	Human Diseases	95
+WM03_S3_028	Organismal Systems	53
+WM03_S3_028	Cellular Processes	141
+WM03_S3_028	Genetic Information Processing	166
+WM03_S3_029	Metabolism	672
+WM03_S3_029	Human Diseases	88
+WM03_S3_029	Brite Hierarchies	856
+WM03_S3_029	Not Included in Pathway or Brite	169
+WM03_S3_029	Environmental Information Processing	142
+WM03_S3_029	Organismal Systems	34
+WM03_S3_029	Genetic Information Processing	114
+WM03_S3_029	Cellular Processes	156
+WM03_S3_030	Metabolism	312
+WM03_S3_030	Organismal Systems	19
+WM03_S3_030	Brite Hierarchies	278
+WM03_S3_030	Human Diseases	19
+WM03_S3_030	Environmental Information Processing	42
+WM03_S3_030	Genetic Information Processing	50
+WM03_S3_030	Not Included in Pathway or Brite	59
+WM03_S3_030	Cellular Processes	33
+WM03_S3_032	Metabolism	887
+WM03_S3_032	Cellular Processes	77
+WM03_S3_032	Human Diseases	111
+WM03_S3_032	Brite Hierarchies	1012
+WM03_S3_032	Not Included in Pathway or Brite	222
+WM03_S3_032	Environmental Information Processing	114
+WM03_S3_032	Organismal Systems	42
+WM03_S3_032	Genetic Information Processing	143
+WM03_S3_033	Metabolism	934
+WM03_S3_033	Environmental Information Processing	122
+WM03_S3_033	Cellular Processes	73
+WM03_S3_033	Human Diseases	138
+WM03_S3_033	Brite Hierarchies	1014
+WM03_S3_033	Not Included in Pathway or Brite	207
+WM03_S3_033	Organismal Systems	56
+WM03_S3_033	Genetic Information Processing	157
+WM03_S3_035	Metabolism	1048
+WM03_S3_035	Environmental Information Processing	84
+WM03_S3_035	Cellular Processes	91
+WM03_S3_035	Human Diseases	108
+WM03_S3_035	Brite Hierarchies	849
+WM03_S3_035	Not Included in Pathway or Brite	190
+WM03_S3_035	Organismal Systems	57
+WM03_S3_035	Genetic Information Processing	134
+WM03_S3_036	Metabolism	302
+WM03_S3_036	Brite Hierarchies	500
+WM03_S3_036	Not Included in Pathway or Brite	98
+WM03_S3_036	Genetic Information Processing	25
+WM03_S3_036	Cellular Processes	123
+WM03_S3_036	Organismal Systems	16
+WM03_S3_036	Human Diseases	27
+WM03_S3_036	Environmental Information Processing	130
+WM03_S3_038	Metabolism	359
+WM03_S3_038	Brite Hierarchies	318
+WM03_S3_038	Human Diseases	45
+WM03_S3_038	Environmental Information Processing	44
+WM03_S3_038	Genetic Information Processing	34
+WM03_S3_038	Not Included in Pathway or Brite	85
+WM03_S3_038	Cellular Processes	35
+WM03_S3_038	Organismal Systems	13
+WM03_S3_041	Metabolism	532
+WM03_S3_041	Human Diseases	93
+WM03_S3_041	Brite Hierarchies	588
+WM03_S3_041	Environmental Information Processing	75
+WM03_S3_041	Organismal Systems	24
+WM03_S3_041	Not Included in Pathway or Brite	162
+WM03_S3_041	Genetic Information Processing	61
+WM03_S3_041	Cellular Processes	72
+WM03_S3_045	Metabolism	408
+WM03_S3_045	Human Diseases	112
+WM03_S3_045	Brite Hierarchies	455
+WM03_S3_045	Environmental Information Processing	43
+WM03_S3_045	Organismal Systems	23
+WM03_S3_045	Not Included in Pathway or Brite	55
+WM03_S3_045	Genetic Information Processing	111
+WM03_S3_045	Cellular Processes	31
+WM03_S3_046	Metabolism	1269
+WM03_S3_046	Environmental Information Processing	340
+WM03_S3_046	Human Diseases	164
+WM03_S3_046	Brite Hierarchies	1279
+WM03_S3_046	Not Included in Pathway or Brite	217
+WM03_S3_046	Organismal Systems	68
+WM03_S3_046	Cellular Processes	283
+WM03_S3_046	Genetic Information Processing	151
+WM03_S3_048	Metabolism	723
+WM03_S3_048	Organismal Systems	35
+WM03_S3_048	Human Diseases	75
+WM03_S3_048	Brite Hierarchies	805
+WM03_S3_048	Not Included in Pathway or Brite	182
+WM03_S3_048	Environmental Information Processing	145
+WM03_S3_048	Genetic Information Processing	116
+WM03_S3_048	Cellular Processes	141
+WM03_S3_049	Metabolism	510
+WM03_S3_049	Brite Hierarchies	456
+WM03_S3_049	Environmental Information Processing	69
+WM03_S3_049	Human Diseases	170
+WM03_S3_049	Organismal Systems	40
+WM03_S3_049	Not Included in Pathway or Brite	71
+WM03_S3_049	Genetic Information Processing	130
+WM03_S3_049	Cellular Processes	51
+WM03_S3_051	Metabolism	735
+WM03_S3_051	Cellular Processes	92
+WM03_S3_051	Human Diseases	71
+WM03_S3_051	Brite Hierarchies	775
+WM03_S3_051	Not Included in Pathway or Brite	158
+WM03_S3_051	Environmental Information Processing	107
+WM03_S3_051	Organismal Systems	27
+WM03_S3_051	Genetic Information Processing	140
+WM03_S3_052	Metabolism	887
+WM03_S3_052	Environmental Information Processing	85
+WM03_S3_052	Organismal Systems	58
+WM03_S3_052	Cellular Processes	64
+WM03_S3_052	Human Diseases	138
+WM03_S3_052	Brite Hierarchies	788
+WM03_S3_052	Not Included in Pathway or Brite	158
+WM03_S3_052	Genetic Information Processing	116
+WM04_S4_001	Metabolism	810
+WM04_S4_001	Environmental Information Processing	192
+WM04_S4_001	Brite Hierarchies	1160
+WM04_S4_001	Not Included in Pathway or Brite	227
+WM04_S4_001	Human Diseases	131
+WM04_S4_001	Organismal Systems	64
+WM04_S4_001	Cellular Processes	101
+WM04_S4_001	Genetic Information Processing	145
+WM04_S4_002	Metabolism	1205
+WM04_S4_002	Environmental Information Processing	306
+WM04_S4_002	Organismal Systems	166
+WM04_S4_002	Cellular Processes	164
+WM04_S4_002	Human Diseases	281
+WM04_S4_002	Brite Hierarchies	1683
+WM04_S4_002	Not Included in Pathway or Brite	325
+WM04_S4_002	Genetic Information Processing	170
+WM04_S4_005	Metabolism	1061
+WM04_S4_005	Environmental Information Processing	162
+WM04_S4_005	Organismal Systems	80
+WM04_S4_005	Human Diseases	235
+WM04_S4_005	Brite Hierarchies	1282
+WM04_S4_005	Not Included in Pathway or Brite	278
+WM04_S4_005	Cellular Processes	214
+WM04_S4_005	Genetic Information Processing	194
+WM04_S4_006	Metabolism	777
+WM04_S4_006	Brite Hierarchies	799
+WM04_S4_006	Not Included in Pathway or Brite	216
+WM04_S4_006	Organismal Systems	37
+WM04_S4_006	Human Diseases	143
+WM04_S4_006	Environmental Information Processing	171
+WM04_S4_006	Genetic Information Processing	64
+WM04_S4_006	Cellular Processes	125
+WM04_S4_009	Metabolism	1066
+WM04_S4_009	Environmental Information Processing	160
+WM04_S4_009	Cellular Processes	116
+WM04_S4_009	Human Diseases	148
+WM04_S4_009	Brite Hierarchies	1213
+WM04_S4_009	Not Included in Pathway or Brite	275
+WM04_S4_009	Organismal Systems	60
+WM04_S4_009	Genetic Information Processing	194
+WM04_S4_014	Metabolism	1201
+WM04_S4_014	Organismal Systems	156
+WM04_S4_014	Environmental Information Processing	337
+WM04_S4_014	Cellular Processes	229
+WM04_S4_014	Human Diseases	201
+WM04_S4_014	Brite Hierarchies	1640
+WM04_S4_014	Not Included in Pathway or Brite	351
+WM04_S4_014	Genetic Information Processing	200
+WM04_S4_016	Metabolism	1870
+WM04_S4_016	Environmental Information Processing	281
+WM04_S4_016	Organismal Systems	127
+WM04_S4_016	Cellular Processes	188
+WM04_S4_016	Human Diseases	185
+WM04_S4_016	Brite Hierarchies	1739
+WM04_S4_016	Not Included in Pathway or Brite	498
+WM04_S4_016	Genetic Information Processing	195
+WM04_S4_017	Metabolism	658
+WM04_S4_017	Environmental Information Processing	157
+WM04_S4_017	Organismal Systems	41
+WM04_S4_017	Human Diseases	84
+WM04_S4_017	Brite Hierarchies	858
+WM04_S4_017	Not Included in Pathway or Brite	173
+WM04_S4_017	Genetic Information Processing	88
+WM04_S4_017	Cellular Processes	158
+WM04_S4_019	Metabolism	880
+WM04_S4_019	Brite Hierarchies	918
+WM04_S4_019	Environmental Information Processing	136
+WM04_S4_019	Organismal Systems	47
+WM04_S4_019	Human Diseases	158
+WM04_S4_019	Not Included in Pathway or Brite	219
+WM04_S4_019	Cellular Processes	168
+WM04_S4_019	Genetic Information Processing	101
+WM04_S4_022	Metabolism	1257
+WM04_S4_022	Brite Hierarchies	1203
+WM04_S4_022	Environmental Information Processing	155
+WM04_S4_022	Human Diseases	251
+WM04_S4_022	Not Included in Pathway or Brite	356
+WM04_S4_022	Organismal Systems	90
+WM04_S4_022	Genetic Information Processing	147
+WM04_S4_022	Cellular Processes	190
+WM04_S4_025	Metabolism	490
+WM04_S4_025	Human Diseases	19
+WM04_S4_025	Brite Hierarchies	467
+WM04_S4_025	Not Included in Pathway or Brite	155
+WM04_S4_025	Organismal Systems	21
+WM04_S4_025	Environmental Information Processing	76
+WM04_S4_025	Genetic Information Processing	70
+WM04_S4_025	Cellular Processes	84
+WM04_S4_027	Metabolism	1238
+WM04_S4_027	Environmental Information Processing	212
+WM04_S4_027	Organismal Systems	104
+WM04_S4_027	Human Diseases	197
+WM04_S4_027	Brite Hierarchies	1393
+WM04_S4_027	Not Included in Pathway or Brite	356
+WM04_S4_027	Cellular Processes	156
+WM04_S4_027	Genetic Information Processing	142
+WM04_S4_028	Metabolism	651
+WM04_S4_028	Environmental Information Processing	116
+WM04_S4_028	Brite Hierarchies	672
+WM04_S4_028	Human Diseases	63
+WM04_S4_028	Organismal Systems	31
+WM04_S4_028	Not Included in Pathway or Brite	147
+WM04_S4_028	Genetic Information Processing	105
+WM04_S4_028	Cellular Processes	107
+WM04_S4_032	Metabolism	164
+WM04_S4_032	Brite Hierarchies	141
+WM04_S4_032	Environmental Information Processing	20
+WM04_S4_032	Human Diseases	14
+WM04_S4_032	Not Included in Pathway or Brite	62
+WM04_S4_032	Organismal Systems	5
+WM04_S4_032	Cellular Processes	15
+WM04_S4_032	Genetic Information Processing	15
+WM04_S4_033	Metabolism	365
+WM04_S4_033	Brite Hierarchies	428
+WM04_S4_033	Not Included in Pathway or Brite	84
+WM04_S4_033	Environmental Information Processing	119
+WM04_S4_033	Organismal Systems	15
+WM04_S4_033	Human Diseases	22
+WM04_S4_033	Cellular Processes	76
+WM04_S4_033	Genetic Information Processing	48
+WM04_S4_036	Metabolism	1166
+WM04_S4_036	Environmental Information Processing	148
+WM04_S4_036	Organismal Systems	61
+WM04_S4_036	Human Diseases	114
+WM04_S4_036	Brite Hierarchies	1020
+WM04_S4_036	Not Included in Pathway or Brite	238
+WM04_S4_036	Cellular Processes	163
+WM04_S4_036	Genetic Information Processing	156
+WM04_S4_040	Metabolism	1101
+WM04_S4_040	Environmental Information Processing	158
+WM04_S4_040	Organismal Systems	54
+WM04_S4_040	Human Diseases	109
+WM04_S4_040	Brite Hierarchies	1104
+WM04_S4_040	Not Included in Pathway or Brite	265
+WM04_S4_040	Cellular Processes	130
+WM04_S4_040	Genetic Information Processing	152
+WM04_S4_047	Metabolism	681
+WM04_S4_047	Cellular Processes	51
+WM04_S4_047	Human Diseases	43
+WM04_S4_047	Brite Hierarchies	573
+WM04_S4_047	Environmental Information Processing	83
+WM04_S4_047	Not Included in Pathway or Brite	98
+WM04_S4_047	Genetic Information Processing	144
+WM04_S4_047	Organismal Systems	17
+WM04_S4_048	Metabolism	244
+WM04_S4_048	Environmental Information Processing	36
+WM04_S4_048	Brite Hierarchies	518
+WM04_S4_048	Human Diseases	54
+WM04_S4_048	Not Included in Pathway or Brite	68
+WM04_S4_048	Genetic Information Processing	161
+WM04_S4_048	Cellular Processes	24
+WM04_S4_048	Organismal Systems	13
+WM04_S4_049	Metabolism	450
+WM04_S4_049	Human Diseases	38
+WM04_S4_049	Brite Hierarchies	483
+WM04_S4_049	Not Included in Pathway or Brite	118
+WM04_S4_049	Genetic Information Processing	71
+WM04_S4_049	Environmental Information Processing	89
+WM04_S4_049	Organismal Systems	17
+WM04_S4_049	Cellular Processes	69
+WM04_S4_050	Metabolism	206
+WM04_S4_050	Environmental Information Processing	34
+WM04_S4_050	Human Diseases	44
+WM04_S4_050	Brite Hierarchies	463
+WM04_S4_050	Not Included in Pathway or Brite	65
+WM04_S4_050	Genetic Information Processing	129
+WM04_S4_050	Organismal Systems	10
+WM04_S4_050	Cellular Processes	24
+WM04_S4_060	Metabolism	670
+WM04_S4_060	Human Diseases	74
+WM04_S4_060	Brite Hierarchies	929
+WM04_S4_060	Not Included in Pathway or Brite	223
+WM04_S4_060	Environmental Information Processing	195
+WM04_S4_060	Organismal Systems	36
+WM04_S4_060	Cellular Processes	195
+WM04_S4_060	Genetic Information Processing	94
+WM05_S5_002	Metabolism	1627
+WM05_S5_002	Environmental Information Processing	298
+WM05_S5_002	Cellular Processes	168
+WM05_S5_002	Human Diseases	184
+WM05_S5_002	Brite Hierarchies	1736
+WM05_S5_002	Not Included in Pathway or Brite	438
+WM05_S5_002	Organismal Systems	91
+WM05_S5_002	Genetic Information Processing	180
+WM05_S5_004	Metabolism	1231
+WM05_S5_004	Environmental Information Processing	187
+WM05_S5_004	Cellular Processes	141
+WM05_S5_004	Human Diseases	156
+WM05_S5_004	Brite Hierarchies	1319
+WM05_S5_004	Not Included in Pathway or Brite	296
+WM05_S5_004	Organismal Systems	83
+WM05_S5_004	Genetic Information Processing	180
+WM05_S5_011	Metabolism	392
+WM05_S5_011	Human Diseases	47
+WM05_S5_011	Brite Hierarchies	458
+WM05_S5_011	Organismal Systems	8
+WM05_S5_011	Not Included in Pathway or Brite	110
+WM05_S5_011	Environmental Information Processing	96
+WM05_S5_011	Cellular Processes	110
+WM05_S5_011	Genetic Information Processing	44
+WM05_S5_013	Metabolism	262
+WM05_S5_013	Organismal Systems	5
+WM05_S5_013	Brite Hierarchies	256
+WM05_S5_013	Environmental Information Processing	46
+WM05_S5_013	Not Included in Pathway or Brite	98
+WM05_S5_013	Human Diseases	14
+WM05_S5_013	Cellular Processes	24
+WM05_S5_013	Genetic Information Processing	35
+WM05_S5_015	Metabolism	1711
+WM05_S5_015	Environmental Information Processing	366
+WM05_S5_015	Cellular Processes	197
+WM05_S5_015	Human Diseases	198
+WM05_S5_015	Brite Hierarchies	1895
+WM05_S5_015	Not Included in Pathway or Brite	520
+WM05_S5_015	Organismal Systems	93
+WM05_S5_015	Genetic Information Processing	203
+WM05_S5_023	Metabolism	1195
+WM05_S5_023	Environmental Information Processing	271
+WM05_S5_023	Organismal Systems	59
+WM05_S5_023	Human Diseases	219
+WM05_S5_023	Brite Hierarchies	1794
+WM05_S5_023	Not Included in Pathway or Brite	412
+WM05_S5_023	Cellular Processes	232
+WM05_S5_023	Genetic Information Processing	177
+WM05_S5_037	Metabolism	955
+WM05_S5_037	Environmental Information Processing	119
+WM05_S5_037	Cellular Processes	84
+WM05_S5_037	Human Diseases	67
+WM05_S5_037	Brite Hierarchies	744
+WM05_S5_037	Not Included in Pathway or Brite	140
+WM05_S5_037	Genetic Information Processing	134
+WM05_S5_037	Organismal Systems	27
+WM05_S5_038	Metabolism	866
+WM05_S5_038	Environmental Information Processing	168
+WM05_S5_038	Cellular Processes	93
+WM05_S5_038	Human Diseases	130
+WM05_S5_038	Brite Hierarchies	1140
+WM05_S5_038	Organismal Systems	58
+WM05_S5_038	Not Included in Pathway or Brite	258
+WM05_S5_038	Genetic Information Processing	137
+WM05_S5_040	Metabolism	368
+WM05_S5_040	Organismal Systems	8
+WM05_S5_040	Brite Hierarchies	348
+WM05_S5_040	Environmental Information Processing	47
+WM05_S5_040	Human Diseases	17
+WM05_S5_040	Not Included in Pathway or Brite	77
+WM05_S5_040	Cellular Processes	32
+WM05_S5_040	Genetic Information Processing	68
+WM05_S5_047	Metabolism	1283
+WM05_S5_047	Human Diseases	145
+WM05_S5_047	Brite Hierarchies	1378
+WM05_S5_047	Not Included in Pathway or Brite	396
+WM05_S5_047	Environmental Information Processing	243
+WM05_S5_047	Organismal Systems	74
+WM05_S5_047	Cellular Processes	97
+WM05_S5_047	Genetic Information Processing	125
+WM11_S6_009	Metabolism	446
+WM11_S6_009	Human Diseases	107
+WM11_S6_009	Brite Hierarchies	465
+WM11_S6_009	Not Included in Pathway or Brite	154
+WM11_S6_009	Organismal Systems	20
+WM11_S6_009	Environmental Information Processing	82
+WM11_S6_009	Cellular Processes	78
+WM11_S6_009	Genetic Information Processing	26
+WM11_S6_018	Metabolism	1098
+WM11_S6_018	Environmental Information Processing	141
+WM11_S6_018	Cellular Processes	89
+WM11_S6_018	Human Diseases	68
+WM11_S6_018	Brite Hierarchies	945
+WM11_S6_018	Not Included in Pathway or Brite	175
+WM11_S6_018	Genetic Information Processing	190
+WM11_S6_018	Organismal Systems	30
+WM11_S6_023	Metabolism	824
+WM11_S6_023	Not Included in Pathway or Brite	294
+WM11_S6_023	Brite Hierarchies	918
+WM11_S6_023	Environmental Information Processing	247
+WM11_S6_023	Organismal Systems	57
+WM11_S6_023	Human Diseases	199
+WM11_S6_023	Cellular Processes	238
+WM11_S6_023	Genetic Information Processing	89
+WM11_S6_032	Metabolism	623
+WM11_S6_032	Environmental Information Processing	91
+WM11_S6_032	Brite Hierarchies	654
+WM11_S6_032	Human Diseases	57
+WM11_S6_032	Organismal Systems	26
+WM11_S6_032	Cellular Processes	63
+WM11_S6_032	Not Included in Pathway or Brite	127
+WM11_S6_032	Genetic Information Processing	104
+WM11_S6_035	Metabolism	173
+WM11_S6_035	Environmental Information Processing	23
+WM11_S6_035	Human Diseases	43
+WM11_S6_035	Brite Hierarchies	367
+WM11_S6_035	Not Included in Pathway or Brite	45
+WM11_S6_035	Genetic Information Processing	115
+WM11_S6_035	Organismal Systems	9
+WM11_S6_035	Cellular Processes	19
+WM11_S6_037	Metabolism	899
+WM11_S6_037	Human Diseases	90
+WM11_S6_037	Brite Hierarchies	890
+WM11_S6_037	Not Included in Pathway or Brite	169
+WM11_S6_037	Environmental Information Processing	122
+WM11_S6_037	Cellular Processes	137
+WM11_S6_037	Genetic Information Processing	170
+WM11_S6_037	Organismal Systems	57
+WM11_S6_038	Metabolism	102
+WM11_S6_038	Organismal Systems	5
+WM11_S6_038	Brite Hierarchies	144
+WM11_S6_038	Human Diseases	8
+WM11_S6_038	Genetic Information Processing	19
+WM11_S6_038	Cellular Processes	12
+WM11_S6_038	Environmental Information Processing	18
+WM11_S6_038	Not Included in Pathway or Brite	36
+WM12_S7_001	Metabolism	1118
+WM12_S7_001	Environmental Information Processing	165
+WM12_S7_001	Organismal Systems	65
+WM12_S7_001	Cellular Processes	106
+WM12_S7_001	Human Diseases	139
+WM12_S7_001	Brite Hierarchies	1346
+WM12_S7_001	Not Included in Pathway or Brite	301
+WM12_S7_001	Genetic Information Processing	168
+WM12_S7_004	Metabolism	976
+WM12_S7_004	Environmental Information Processing	128
+WM12_S7_004	Cellular Processes	82
+WM12_S7_004	Human Diseases	128
+WM12_S7_004	Brite Hierarchies	1157
+WM12_S7_004	Not Included in Pathway or Brite	268
+WM12_S7_004	Organismal Systems	59
+WM12_S7_004	Genetic Information Processing	185
+WM12_S7_008	Metabolism	791
+WM12_S7_008	Environmental Information Processing	168
+WM12_S7_008	Organismal Systems	77
+WM12_S7_008	Brite Hierarchies	1112
+WM12_S7_008	Human Diseases	181
+WM12_S7_008	Not Included in Pathway or Brite	197
+WM12_S7_008	Genetic Information Processing	165
+WM12_S7_008	Cellular Processes	156
+WM12_S7_010	Metabolism	1057
+WM12_S7_010	Environmental Information Processing	140
+WM12_S7_010	Cellular Processes	84
+WM12_S7_010	Human Diseases	132
+WM12_S7_010	Brite Hierarchies	1182
+WM12_S7_010	Not Included in Pathway or Brite	252
+WM12_S7_010	Organismal Systems	63
+WM12_S7_010	Genetic Information Processing	183
+WM12_S7_013	Metabolism	1237
+WM12_S7_013	Environmental Information Processing	168
+WM12_S7_013	Organismal Systems	64
+WM12_S7_013	Cellular Processes	110
+WM12_S7_013	Human Diseases	157
+WM12_S7_013	Brite Hierarchies	1535
+WM12_S7_013	Not Included in Pathway or Brite	355
+WM12_S7_013	Genetic Information Processing	206
+WM12_S7_014	Metabolism	431
+WM12_S7_014	Human Diseases	63
+WM12_S7_014	Brite Hierarchies	464
+WM12_S7_014	Not Included in Pathway or Brite	101
+WM12_S7_014	Environmental Information Processing	100
+WM12_S7_014	Organismal Systems	14
+WM12_S7_014	Cellular Processes	88
+WM12_S7_014	Genetic Information Processing	24
+WM12_S7_015	Metabolism	1268
+WM12_S7_015	Environmental Information Processing	226
+WM12_S7_015	Human Diseases	278
+WM12_S7_015	Brite Hierarchies	1239
+WM12_S7_015	Organismal Systems	77
+WM12_S7_015	Not Included in Pathway or Brite	285
+WM12_S7_015	Cellular Processes	174
+WM12_S7_015	Genetic Information Processing	157
+WM12_S7_020	Metabolism	944
+WM12_S7_020	Environmental Information Processing	120
+WM12_S7_020	Cellular Processes	85
+WM12_S7_020	Human Diseases	127
+WM12_S7_020	Brite Hierarchies	953
+WM12_S7_020	Not Included in Pathway or Brite	246
+WM12_S7_020	Organismal Systems	52
+WM12_S7_020	Genetic Information Processing	157
+WM12_S7_027	Metabolism	652
+WM12_S7_027	Brite Hierarchies	486
+WM12_S7_027	Human Diseases	120
+WM12_S7_027	Environmental Information Processing	46
+WM12_S7_027	Not Included in Pathway or Brite	110
+WM12_S7_027	Organismal Systems	25
+WM12_S7_027	Genetic Information Processing	164
+WM12_S7_027	Cellular Processes	33
+WM12_S7_029	Metabolism	547
+WM12_S7_029	Organismal Systems	24
+WM12_S7_029	Brite Hierarchies	646
+WM12_S7_029	Environmental Information Processing	102
+WM12_S7_029	Human Diseases	100
+WM12_S7_029	Not Included in Pathway or Brite	195
+WM12_S7_029	Cellular Processes	109
+WM12_S7_029	Genetic Information Processing	108
+WM12_S7_037	Metabolism	455
+WM12_S7_037	Environmental Information Processing	89
+WM12_S7_037	Organismal Systems	16
+WM12_S7_037	Brite Hierarchies	470
+WM12_S7_037	Human Diseases	28
+WM12_S7_037	Not Included in Pathway or Brite	119
+WM12_S7_037	Cellular Processes	56
+WM12_S7_037	Genetic Information Processing	68
+WM12_S7_039	Metabolism	230
+WM12_S7_039	Brite Hierarchies	226
+WM12_S7_039	Not Included in Pathway or Brite	84
+WM12_S7_039	Cellular Processes	26
+WM12_S7_039	Organismal Systems	11
+WM12_S7_039	Genetic Information Processing	18
+WM12_S7_039	Environmental Information Processing	42
+WM12_S7_039	Human Diseases	15
+WM12_S7_040	Metabolism	210
+WM12_S7_040	Environmental Information Processing	35
+WM12_S7_040	Brite Hierarchies	378
+WM12_S7_040	Human Diseases	53
+WM12_S7_040	Organismal Systems	12
+WM12_S7_040	Genetic Information Processing	95
+WM12_S7_040	Not Included in Pathway or Brite	58
+WM12_S7_040	Cellular Processes	21
+WM12_S7_042	Metabolism	1683
+WM12_S7_042	Environmental Information Processing	386
+WM12_S7_042	Human Diseases	208
+WM12_S7_042	Brite Hierarchies	2161
+WM12_S7_042	Not Included in Pathway or Brite	488
+WM12_S7_042	Cellular Processes	269
+WM12_S7_042	Organismal Systems	90
+WM12_S7_042	Genetic Information Processing	139
+WM12_S7_043	Metabolism	314
+WM12_S7_043	Organismal Systems	18
+WM12_S7_043	Brite Hierarchies	467
+WM12_S7_043	Not Included in Pathway or Brite	95
+WM12_S7_043	Environmental Information Processing	76
+WM12_S7_043	Human Diseases	32
+WM12_S7_043	Cellular Processes	78
+WM12_S7_043	Genetic Information Processing	50
+WM12_S7_044	Metabolism	150
+WM12_S7_044	Human Diseases	36
+WM12_S7_044	Brite Hierarchies	454
+WM12_S7_044	Environmental Information Processing	44
+WM12_S7_044	Genetic Information Processing	153
+WM12_S7_044	Not Included in Pathway or Brite	62
+WM12_S7_044	Organismal Systems	12
+WM12_S7_044	Cellular Processes	41
+WM13_S8_005	Metabolism	1056
+WM13_S8_005	Organismal Systems	75
+WM13_S8_005	Human Diseases	231
+WM13_S8_005	Brite Hierarchies	1178
+WM13_S8_005	Not Included in Pathway or Brite	243
+WM13_S8_005	Environmental Information Processing	203
+WM13_S8_005	Genetic Information Processing	146
+WM13_S8_005	Cellular Processes	210
+WM13_S8_006	Metabolism	1338
+WM13_S8_006	Brite Hierarchies	1228
+WM13_S8_006	Not Included in Pathway or Brite	278
+WM13_S8_006	Environmental Information Processing	159
+WM13_S8_006	Human Diseases	148
+WM13_S8_006	Organismal Systems	77
+WM13_S8_006	Cellular Processes	145
+WM13_S8_006	Genetic Information Processing	160
+WM13_S8_007	Metabolism	1718
+WM13_S8_007	Organismal Systems	143
+WM13_S8_007	Environmental Information Processing	502
+WM13_S8_007	Human Diseases	302
+WM13_S8_007	Brite Hierarchies	2601
+WM13_S8_007	Not Included in Pathway or Brite	562
+WM13_S8_007	Cellular Processes	466
+WM13_S8_007	Genetic Information Processing	191
+WM13_S8_026	Metabolism	272
+WM13_S8_026	Environmental Information Processing	53
+WM13_S8_026	Organismal Systems	46
+WM13_S8_026	Human Diseases	70
+WM13_S8_026	Brite Hierarchies	521
+WM13_S8_026	Cellular Processes	31
+WM13_S8_026	Not Included in Pathway or Brite	95
+WM13_S8_026	Genetic Information Processing	134
+WM13_S8_034	Metabolism	308
+WM13_S8_034	Not Included in Pathway or Brite	96
+WM13_S8_034	Brite Hierarchies	482
+WM13_S8_034	Environmental Information Processing	129
+WM13_S8_034	Organismal Systems	50
+WM13_S8_034	Human Diseases	63
+WM13_S8_034	Cellular Processes	122
+WM13_S8_034	Genetic Information Processing	42
+WM13_S8_038	Metabolism	964
+WM13_S8_038	Brite Hierarchies	956
+WM13_S8_038	Environmental Information Processing	141
+WM13_S8_038	Human Diseases	141
+WM13_S8_038	Organismal Systems	93
+WM13_S8_038	Not Included in Pathway or Brite	220
+WM13_S8_038	Cellular Processes	95
+WM13_S8_038	Genetic Information Processing	137
+WM14_S9_004	Metabolism	1034
+WM14_S9_004	Environmental Information Processing	165
+WM14_S9_004	Organismal Systems	47
+WM14_S9_004	Cellular Processes	86
+WM14_S9_004	Human Diseases	105
+WM14_S9_004	Brite Hierarchies	1231
+WM14_S9_004	Not Included in Pathway or Brite	289
+WM14_S9_004	Genetic Information Processing	193
+WM14_S9_010	Metabolism	401
+WM14_S9_010	Brite Hierarchies	409
+WM14_S9_010	Not Included in Pathway or Brite	136
+WM14_S9_010	Organismal Systems	17
+WM14_S9_010	Human Diseases	129
+WM14_S9_010	Cellular Processes	84
+WM14_S9_010	Environmental Information Processing	54
+WM14_S9_010	Genetic Information Processing	41
+WM14_S9_013	Metabolism	902
+WM14_S9_013	Brite Hierarchies	1017
+WM14_S9_013	Not Included in Pathway or Brite	271
+WM14_S9_013	Environmental Information Processing	257
+WM14_S9_013	Human Diseases	106
+WM14_S9_013	Organismal Systems	52
+WM14_S9_013	Genetic Information Processing	73
+WM14_S9_013	Cellular Processes	261
+WM14_S9_015	Metabolism	1565
+WM14_S9_015	Environmental Information Processing	357
+WM14_S9_015	Brite Hierarchies	2046
+WM14_S9_015	Not Included in Pathway or Brite	439
+WM14_S9_015	Human Diseases	176
+WM14_S9_015	Organismal Systems	91
+WM14_S9_015	Cellular Processes	160
+WM14_S9_015	Genetic Information Processing	190
+WM14_S9_024	Metabolism	252
+WM14_S9_024	Human Diseases	51
+WM14_S9_024	Brite Hierarchies	343
+WM14_S9_024	Not Included in Pathway or Brite	64
+WM14_S9_024	Organismal Systems	11
+WM14_S9_024	Environmental Information Processing	93
+WM14_S9_024	Cellular Processes	72
+WM14_S9_024	Genetic Information Processing	28
+WM14_S9_026	Metabolism	546
+WM14_S9_026	Brite Hierarchies	581
+WM14_S9_026	Environmental Information Processing	102
+WM14_S9_026	Human Diseases	44
+WM14_S9_026	Organismal Systems	29
+WM14_S9_026	Not Included in Pathway or Brite	129
+WM14_S9_026	Genetic Information Processing	106
+WM14_S9_026	Cellular Processes	93
+WM14_S9_033	Metabolism	440
+WM14_S9_033	Brite Hierarchies	721
+WM14_S9_033	Not Included in Pathway or Brite	172
+WM14_S9_033	Environmental Information Processing	171
+WM14_S9_033	Organismal Systems	95
+WM14_S9_033	Human Diseases	106
+WM14_S9_033	Cellular Processes	113
+WM14_S9_033	Genetic Information Processing	57
+WM14_S9_035	Metabolism	1066
+WM14_S9_035	Environmental Information Processing	103
+WM14_S9_035	Human Diseases	66
+WM14_S9_035	Brite Hierarchies	791
+WM14_S9_035	Not Included in Pathway or Brite	164
+WM14_S9_035	Genetic Information Processing	153
+WM14_S9_035	Cellular Processes	86
+WM14_S9_035	Organismal Systems	24
+WM14_S9_038	Metabolism	72
+WM14_S9_038	Environmental Information Processing	28
+WM14_S9_038	Human Diseases	12
+WM14_S9_038	Brite Hierarchies	138
+WM14_S9_038	Not Included in Pathway or Brite	34
+WM14_S9_038	Cellular Processes	21
+WM14_S9_038	Organismal Systems	7
+WM14_S9_038	Genetic Information Processing	13
+WM15_S10_004	Metabolism	1095
+WM15_S10_004	Environmental Information Processing	189
+WM15_S10_004	Cellular Processes	99
+WM15_S10_004	Human Diseases	160
+WM15_S10_004	Brite Hierarchies	1300
+WM15_S10_004	Not Included in Pathway or Brite	283
+WM15_S10_004	Organismal Systems	68
+WM15_S10_004	Genetic Information Processing	192
+WM15_S10_005	Metabolism	223
+WM15_S10_005	Brite Hierarchies	261
+WM15_S10_005	Not Included in Pathway or Brite	63
+WM15_S10_005	Environmental Information Processing	61
+WM15_S10_005	Organismal Systems	16
+WM15_S10_005	Human Diseases	33
+WM15_S10_005	Genetic Information Processing	15
+WM15_S10_005	Cellular Processes	55
+WM15_S10_006	Metabolism	1200
+WM15_S10_006	Environmental Information Processing	158
+WM15_S10_006	Cellular Processes	164
+WM15_S10_006	Human Diseases	280
+WM15_S10_006	Brite Hierarchies	1099
+WM15_S10_006	Not Included in Pathway or Brite	255
+WM15_S10_006	Organismal Systems	89
+WM15_S10_006	Genetic Information Processing	156
+WM15_S10_010	Metabolism	484
+WM15_S10_010	Human Diseases	135
+WM15_S10_010	Brite Hierarchies	539
+WM15_S10_010	Not Included in Pathway or Brite	132
+WM15_S10_010	Environmental Information Processing	93
+WM15_S10_010	Organismal Systems	68
+WM15_S10_010	Genetic Information Processing	50
+WM15_S10_010	Cellular Processes	97
+WM15_S10_012	Metabolism	1482
+WM15_S10_012	Organismal Systems	81
+WM15_S10_012	Cellular Processes	289
+WM15_S10_012	Human Diseases	230
+WM15_S10_012	Brite Hierarchies	1583
+WM15_S10_012	Environmental Information Processing	466
+WM15_S10_012	Not Included in Pathway or Brite	316
+WM15_S10_012	Genetic Information Processing	146
+WM15_S10_013	Metabolism	1449
+WM15_S10_013	Organismal Systems	99
+WM15_S10_013	Environmental Information Processing	289
+WM15_S10_013	Cellular Processes	240
+WM15_S10_013	Human Diseases	221
+WM15_S10_013	Brite Hierarchies	1544
+WM15_S10_013	Not Included in Pathway or Brite	335
+WM15_S10_013	Genetic Information Processing	151
+WM15_S10_016	Metabolism	1101
+WM15_S10_016	Environmental Information Processing	206
+WM15_S10_016	Cellular Processes	100
+WM15_S10_016	Human Diseases	175
+WM15_S10_016	Brite Hierarchies	1459
+WM15_S10_016	Not Included in Pathway or Brite	302
+WM15_S10_016	Organismal Systems	100
+WM15_S10_016	Genetic Information Processing	147
+WM15_S10_017	Metabolism	215
+WM15_S10_017	Brite Hierarchies	209
+WM15_S10_017	Not Included in Pathway or Brite	63
+WM15_S10_017	Organismal Systems	10
+WM15_S10_017	Human Diseases	24
+WM15_S10_017	Environmental Information Processing	44
+WM15_S10_017	Cellular Processes	25
+WM15_S10_017	Genetic Information Processing	26
+WM15_S10_026	Metabolism	606
+WM15_S10_026	Organismal Systems	52
+WM15_S10_026	Human Diseases	94
+WM15_S10_026	Brite Hierarchies	679
+WM15_S10_026	Environmental Information Processing	98
+WM15_S10_026	Cellular Processes	58
+WM15_S10_026	Not Included in Pathway or Brite	100
+WM15_S10_026	Genetic Information Processing	130
+WM15_S10_027	Metabolism	556
+WM15_S10_027	Organismal Systems	99
+WM15_S10_027	Human Diseases	144
+WM15_S10_027	Brite Hierarchies	711
+WM15_S10_027	Environmental Information Processing	105
+WM15_S10_027	Cellular Processes	81
+WM15_S10_027	Not Included in Pathway or Brite	121
+WM15_S10_027	Genetic Information Processing	138
+WM15_S10_028	Metabolism	880
+WM15_S10_028	Organismal Systems	104
+WM15_S10_028	Brite Hierarchies	1129
+WM15_S10_028	Environmental Information Processing	156
+WM15_S10_028	Human Diseases	234
+WM15_S10_028	Not Included in Pathway or Brite	196
+WM15_S10_028	Cellular Processes	133
+WM15_S10_028	Genetic Information Processing	175
+WM15_S10_029	Metabolism	553
+WM15_S10_029	Brite Hierarchies	412
+WM15_S10_029	Not Included in Pathway or Brite	136
+WM15_S10_029	Environmental Information Processing	86
+WM15_S10_029	Organismal Systems	26
+WM15_S10_029	Human Diseases	19
+WM15_S10_029	Genetic Information Processing	44
+WM15_S10_029	Cellular Processes	82
+WM15_S10_033	Metabolism	1082
+WM15_S10_033	Environmental Information Processing	169
+WM15_S10_033	Cellular Processes	88
+WM15_S10_033	Human Diseases	155
+WM15_S10_033	Brite Hierarchies	1143
+WM15_S10_033	Not Included in Pathway or Brite	262
+WM15_S10_033	Organismal Systems	61
+WM15_S10_033	Genetic Information Processing	164
+WM15_S10_034	Metabolism	1107
+WM15_S10_034	Organismal Systems	178
+WM15_S10_034	Environmental Information Processing	396
+WM15_S10_034	Human Diseases	190
+WM15_S10_034	Brite Hierarchies	1688
+WM15_S10_034	Not Included in Pathway or Brite	371
+WM15_S10_034	Cellular Processes	293
+WM15_S10_034	Genetic Information Processing	165
+WM16_S11_008	Metabolism	1244
+WM16_S11_008	Environmental Information Processing	203
+WM16_S11_008	Cellular Processes	143
+WM16_S11_008	Human Diseases	196
+WM16_S11_008	Brite Hierarchies	1358
+WM16_S11_008	Not Included in Pathway or Brite	330
+WM16_S11_008	Organismal Systems	72
+WM16_S11_008	Genetic Information Processing	178
+WM16_S11_010	Metabolism	514
+WM16_S11_010	Human Diseases	88
+WM16_S11_010	Brite Hierarchies	817
+WM16_S11_010	Environmental Information Processing	210
+WM16_S11_010	Organismal Systems	33
+WM16_S11_010	Not Included in Pathway or Brite	202
+WM16_S11_010	Genetic Information Processing	53
+WM16_S11_010	Cellular Processes	185
+WM16_S11_015	Metabolism	1174
+WM16_S11_015	Environmental Information Processing	172
+WM16_S11_015	Not Included in Pathway or Brite	271
+WM16_S11_015	Brite Hierarchies	1146
+WM16_S11_015	Human Diseases	276
+WM16_S11_015	Organismal Systems	98
+WM16_S11_015	Genetic Information Processing	144
+WM16_S11_015	Cellular Processes	163
+WM16_S11_016	Metabolism	915
+WM16_S11_016	Brite Hierarchies	1529
+WM16_S11_016	Environmental Information Processing	363
+WM16_S11_016	Human Diseases	182
+WM16_S11_016	Not Included in Pathway or Brite	374
+WM16_S11_016	Organismal Systems	42
+WM16_S11_016	Cellular Processes	256
+WM16_S11_016	Genetic Information Processing	105
+WM16_S11_018	Metabolism	708
+WM16_S11_018	Brite Hierarchies	671
+WM16_S11_018	Environmental Information Processing	160
+WM16_S11_018	Human Diseases	62
+WM16_S11_018	Organismal Systems	34
+WM16_S11_018	Not Included in Pathway or Brite	199
+WM16_S11_018	Cellular Processes	145
+WM16_S11_018	Genetic Information Processing	63
+WM16_S11_020	Metabolism	802
+WM16_S11_020	Brite Hierarchies	994
+WM16_S11_020	Not Included in Pathway or Brite	233
+WM16_S11_020	Organismal Systems	55
+WM16_S11_020	Human Diseases	140
+WM16_S11_020	Environmental Information Processing	195
+WM16_S11_020	Genetic Information Processing	109
+WM16_S11_020	Cellular Processes	138
+WM16_S11_023	Metabolism	163
+WM16_S11_023	Brite Hierarchies	219
+WM16_S11_023	Not Included in Pathway or Brite	44
+WM16_S11_023	Human Diseases	30
+WM16_S11_023	Cellular Processes	25
+WM16_S11_023	Organismal Systems	10
+WM16_S11_023	Environmental Information Processing	37
+WM16_S11_023	Genetic Information Processing	14
+WM16_S11_027	Metabolism	721
+WM16_S11_027	Cellular Processes	47
+WM16_S11_027	Human Diseases	47
+WM16_S11_027	Brite Hierarchies	578
+WM16_S11_027	Environmental Information Processing	73
+WM16_S11_027	Not Included in Pathway or Brite	100
+WM16_S11_027	Genetic Information Processing	146
+WM16_S11_027	Organismal Systems	18
+WM16_S11_028	Metabolism	1156
+WM16_S11_028	Environmental Information Processing	172
+WM16_S11_028	Cellular Processes	111
+WM16_S11_028	Human Diseases	142
+WM16_S11_028	Brite Hierarchies	1238
+WM16_S11_028	Not Included in Pathway or Brite	280
+WM16_S11_028	Organismal Systems	60
+WM16_S11_028	Genetic Information Processing	180
+WM16_S11_032	Metabolism	1535
+WM16_S11_032	Environmental Information Processing	391
+WM16_S11_032	Organismal Systems	132
+WM16_S11_032	Not Included in Pathway or Brite	361
+WM16_S11_032	Brite Hierarchies	1366
+WM16_S11_032	Human Diseases	181
+WM16_S11_032	Genetic Information Processing	96
+WM16_S11_032	Cellular Processes	382
+WM16_S11_043	Metabolism	241
+WM16_S11_043	Environmental Information Processing	33
+WM16_S11_043	Human Diseases	52
+WM16_S11_043	Brite Hierarchies	390
+WM16_S11_043	Organismal Systems	19
+WM16_S11_043	Genetic Information Processing	103
+WM16_S11_043	Not Included in Pathway or Brite	62
+WM16_S11_043	Cellular Processes	32
+WM17_S12_003	Metabolism	1045
+WM17_S12_003	Environmental Information Processing	194
+WM17_S12_003	Cellular Processes	118
+WM17_S12_003	Human Diseases	122
+WM17_S12_003	Brite Hierarchies	1206
+WM17_S12_003	Not Included in Pathway or Brite	260
+WM17_S12_003	Organismal Systems	59
+WM17_S12_003	Genetic Information Processing	149
+WM17_S12_005	Metabolism	1182
+WM17_S12_005	Environmental Information Processing	191
+WM17_S12_005	Cellular Processes	108
+WM17_S12_005	Human Diseases	161
+WM17_S12_005	Brite Hierarchies	1510
+WM17_S12_005	Not Included in Pathway or Brite	368
+WM17_S12_005	Organismal Systems	55
+WM17_S12_005	Genetic Information Processing	181
+WM17_S12_009	Metabolism	637
+WM17_S12_009	Brite Hierarchies	1035
+WM17_S12_009	Not Included in Pathway or Brite	256
+WM17_S12_009	Organismal Systems	26
+WM17_S12_009	Human Diseases	132
+WM17_S12_009	Environmental Information Processing	252
+WM17_S12_009	Cellular Processes	166
+WM17_S12_009	Genetic Information Processing	56
+WM17_S12_012	Metabolism	427
+WM17_S12_012	Environmental Information Processing	97
+WM17_S12_012	Brite Hierarchies	765
+WM17_S12_012	Human Diseases	237
+WM17_S12_012	Organismal Systems	61
+WM17_S12_012	Genetic Information Processing	170
+WM17_S12_012	Not Included in Pathway or Brite	122
+WM17_S12_012	Cellular Processes	97
+WM17_S12_015	Metabolism	1244
+WM17_S12_015	Environmental Information Processing	194
+WM17_S12_015	Cellular Processes	136
+WM17_S12_015	Human Diseases	143
+WM17_S12_015	Brite Hierarchies	1273
+WM17_S12_015	Not Included in Pathway or Brite	266
+WM17_S12_015	Organismal Systems	72
+WM17_S12_015	Genetic Information Processing	153
+WM17_S12_020	Metabolism	1139
+WM17_S12_020	Environmental Information Processing	270
+WM17_S12_020	Organismal Systems	62
+WM17_S12_020	Cellular Processes	117
+WM17_S12_020	Human Diseases	155
+WM17_S12_020	Brite Hierarchies	1717
+WM17_S12_020	Not Included in Pathway or Brite	389
+WM17_S12_020	Genetic Information Processing	191
+WM17_S12_021	Metabolism	258
+WM17_S12_021	Human Diseases	28
+WM17_S12_021	Brite Hierarchies	399
+WM17_S12_021	Not Included in Pathway or Brite	93
+WM17_S12_021	Organismal Systems	13
+WM17_S12_021	Environmental Information Processing	92
+WM17_S12_021	Cellular Processes	70
+WM17_S12_021	Genetic Information Processing	33
+WM17_S12_026	Metabolism	404
+WM17_S12_026	Environmental Information Processing	107
+WM17_S12_026	Brite Hierarchies	747
+WM17_S12_026	Organismal Systems	64
+WM17_S12_026	Human Diseases	243
+WM17_S12_026	Genetic Information Processing	146
+WM17_S12_026	Not Included in Pathway or Brite	98
+WM17_S12_026	Cellular Processes	81
+WM17_S12_032	Metabolism	239
+WM17_S12_032	Brite Hierarchies	323
+WM17_S12_032	Not Included in Pathway or Brite	103
+WM17_S12_032	Organismal Systems	12
+WM17_S12_032	Human Diseases	41
+WM17_S12_032	Environmental Information Processing	44
+WM17_S12_032	Genetic Information Processing	46
+WM17_S12_032	Cellular Processes	46
+WM17_S12_033	Metabolism	289
+WM17_S12_033	Brite Hierarchies	365
+WM17_S12_033	Human Diseases	44
+WM17_S12_033	Not Included in Pathway or Brite	84
+WM17_S12_033	Environmental Information Processing	90
+WM17_S12_033	Genetic Information Processing	22
+WM17_S12_033	Organismal Systems	10
+WM17_S12_033	Cellular Processes	67
+WM17_S12_034	Metabolism	963
+WM17_S12_034	Cellular Processes	67
+WM17_S12_034	Human Diseases	116
+WM17_S12_034	Brite Hierarchies	1078
+WM17_S12_034	Not Included in Pathway or Brite	282
+WM17_S12_034	Environmental Information Processing	139
+WM17_S12_034	Organismal Systems	56
+WM17_S12_034	Genetic Information Processing	157
+WM17_S12_042	Metabolism	1225
+WM17_S12_042	Organismal Systems	125
+WM17_S12_042	Environmental Information Processing	409
+WM17_S12_042	Human Diseases	234
+WM17_S12_042	Brite Hierarchies	1956
+WM17_S12_042	Not Included in Pathway or Brite	395
+WM17_S12_042	Cellular Processes	394
+WM17_S12_042	Genetic Information Processing	141
+WM17_S12_043	Metabolism	452
+WM17_S12_043	Organismal Systems	41
+WM17_S12_043	Brite Hierarchies	563
+WM17_S12_043	Not Included in Pathway or Brite	153
+WM17_S12_043	Human Diseases	64
+WM17_S12_043	Environmental Information Processing	119
+WM17_S12_043	Cellular Processes	108
+WM17_S12_043	Genetic Information Processing	30
+WM18_S13_006	Metabolism	1228
+WM18_S13_006	Brite Hierarchies	1212
+WM18_S13_006	Not Included in Pathway or Brite	295
+WM18_S13_006	Environmental Information Processing	175
+WM18_S13_006	Human Diseases	144
+WM18_S13_006	Organismal Systems	78
+WM18_S13_006	Cellular Processes	118
+WM18_S13_006	Genetic Information Processing	152
+WM18_S13_012	Metabolism	1548
+WM18_S13_012	Environmental Information Processing	382
+WM18_S13_012	Not Included in Pathway or Brite	527
+WM18_S13_012	Brite Hierarchies	1954
+WM18_S13_012	Human Diseases	179
+WM18_S13_012	Organismal Systems	112
+WM18_S13_012	Cellular Processes	183
+WM18_S13_012	Genetic Information Processing	192
+WM18_S13_013	Metabolism	1111
+WM18_S13_013	Environmental Information Processing	198
+WM18_S13_013	Organismal Systems	65
+WM18_S13_013	Cellular Processes	120
+WM18_S13_013	Human Diseases	155
+WM18_S13_013	Brite Hierarchies	1535
+WM18_S13_013	Not Included in Pathway or Brite	318
+WM18_S13_013	Genetic Information Processing	177
+WM18_S13_015	Metabolism	378
+WM18_S13_015	Human Diseases	56
+WM18_S13_015	Brite Hierarchies	530
+WM18_S13_015	Environmental Information Processing	108
+WM18_S13_015	Organismal Systems	21
+WM18_S13_015	Not Included in Pathway or Brite	171
+WM18_S13_015	Cellular Processes	86
+WM18_S13_015	Genetic Information Processing	51
+WM18_S13_021	Metabolism	699
+WM18_S13_021	Environmental Information Processing	101
+WM18_S13_021	Human Diseases	123
+WM18_S13_021	Brite Hierarchies	741
+WM18_S13_021	Not Included in Pathway or Brite	171
+WM18_S13_021	Organismal Systems	58
+WM18_S13_021	Cellular Processes	98
+WM18_S13_021	Genetic Information Processing	83
+WM18_S13_027	Metabolism	358
+WM18_S13_027	Brite Hierarchies	442
+WM18_S13_027	Organismal Systems	12
+WM18_S13_027	Human Diseases	95
+WM18_S13_027	Not Included in Pathway or Brite	92
+WM18_S13_027	Cellular Processes	71
+WM18_S13_027	Environmental Information Processing	104
+WM18_S13_027	Genetic Information Processing	43
+WM18_S13_033	Metabolism	234
+WM18_S13_033	Environmental Information Processing	23
+WM18_S13_033	Human Diseases	38
+WM18_S13_033	Brite Hierarchies	372
+WM18_S13_033	Genetic Information Processing	107
+WM18_S13_033	Not Included in Pathway or Brite	50
+WM18_S13_033	Cellular Processes	27
+WM18_S13_033	Organismal Systems	9
+WM18_S13_035	Metabolism	404
+WM18_S13_035	Brite Hierarchies	658
+WM18_S13_035	Environmental Information Processing	124
+WM18_S13_035	Organismal Systems	32
+WM18_S13_035	Human Diseases	58
+WM18_S13_035	Not Included in Pathway or Brite	171
+WM18_S13_035	Cellular Processes	95
+WM18_S13_035	Genetic Information Processing	55
+WM18_S13_040	Metabolism	914
+WM18_S13_040	Brite Hierarchies	894
+WM18_S13_040	Environmental Information Processing	201
+WM18_S13_040	Human Diseases	182
+WM18_S13_040	Organismal Systems	70
+WM18_S13_040	Not Included in Pathway or Brite	233
+WM18_S13_040	Genetic Information Processing	118
+WM18_S13_040	Cellular Processes	171
+WM19_S14_010	Metabolism	1150
+WM19_S14_010	Environmental Information Processing	275
+WM19_S14_010	Cellular Processes	144
+WM19_S14_010	Human Diseases	233
+WM19_S14_010	Brite Hierarchies	1668
+WM19_S14_010	Not Included in Pathway or Brite	353
+WM19_S14_010	Organismal Systems	111
+WM19_S14_010	Genetic Information Processing	201
+WM19_S14_013	Metabolism	101
+WM19_S14_013	Brite Hierarchies	112
+WM19_S14_013	Not Included in Pathway or Brite	34
+WM19_S14_013	Human Diseases	8
+WM19_S14_013	Genetic Information Processing	10
+WM19_S14_013	Environmental Information Processing	21
+WM19_S14_013	Cellular Processes	10
+WM19_S14_013	Organismal Systems	5
+WM19_S14_022	Metabolism	1144
+WM19_S14_022	Environmental Information Processing	169
+WM19_S14_022	Cellular Processes	129
+WM19_S14_022	Human Diseases	118
+WM19_S14_022	Brite Hierarchies	1173
+WM19_S14_022	Not Included in Pathway or Brite	257
+WM19_S14_022	Organismal Systems	60
+WM19_S14_022	Genetic Information Processing	145
+WM19_S14_023	Metabolism	701
+WM19_S14_023	Organismal Systems	64
+WM19_S14_023	Environmental Information Processing	96
+WM19_S14_023	Brite Hierarchies	795
+WM19_S14_023	Human Diseases	219
+WM19_S14_023	Not Included in Pathway or Brite	149
+WM19_S14_023	Genetic Information Processing	141
+WM19_S14_023	Cellular Processes	77
+WM19_S14_031	Metabolism	172
+WM19_S14_031	Brite Hierarchies	147
+WM19_S14_031	Not Included in Pathway or Brite	56
+WM19_S14_031	Environmental Information Processing	40
+WM19_S14_031	Genetic Information Processing	5
+WM19_S14_031	Organismal Systems	7
+WM19_S14_031	Human Diseases	5
+WM19_S14_031	Cellular Processes	15
+WM20_S15_003	Metabolism	1043
+WM20_S15_003	Environmental Information Processing	205
+WM20_S15_003	Organismal Systems	74
+WM20_S15_003	Cellular Processes	111
+WM20_S15_003	Human Diseases	179
+WM20_S15_003	Brite Hierarchies	1295
+WM20_S15_003	Not Included in Pathway or Brite	276
+WM20_S15_003	Genetic Information Processing	185
+WM20_S15_012	Metabolism	1223
+WM20_S15_012	Environmental Information Processing	196
+WM20_S15_012	Cellular Processes	128
+WM20_S15_012	Human Diseases	129
+WM20_S15_012	Brite Hierarchies	1294
+WM20_S15_012	Not Included in Pathway or Brite	301
+WM20_S15_012	Organismal Systems	86
+WM20_S15_012	Genetic Information Processing	165
+WM20_S15_015	Metabolism	1251
+WM20_S15_015	Organismal Systems	160
+WM20_S15_015	Environmental Information Processing	289
+WM20_S15_015	Cellular Processes	357
+WM20_S15_015	Human Diseases	217
+WM20_S15_015	Brite Hierarchies	1619
+WM20_S15_015	Not Included in Pathway or Brite	394
+WM20_S15_015	Genetic Information Processing	178
+WM20_S15_016	Metabolism	289
+WM20_S15_016	Brite Hierarchies	341
+WM20_S15_016	Environmental Information Processing	61
+WM20_S15_016	Organismal Systems	16
+WM20_S15_016	Human Diseases	45
+WM20_S15_016	Cellular Processes	58
+WM20_S15_016	Not Included in Pathway or Brite	102
+WM20_S15_016	Genetic Information Processing	31
+WM20_S15_018	Metabolism	429
+WM20_S15_018	Brite Hierarchies	506
+WM20_S15_018	Environmental Information Processing	92
+WM20_S15_018	Not Included in Pathway or Brite	116
+WM20_S15_018	Genetic Information Processing	57
+WM20_S15_018	Cellular Processes	80
+WM20_S15_018	Human Diseases	43
+WM20_S15_018	Organismal Systems	17
+WM20_S15_019	Metabolism	418
+WM20_S15_019	Brite Hierarchies	472
+WM20_S15_019	Environmental Information Processing	88
+WM20_S15_019	Organismal Systems	11
+WM20_S15_019	Human Diseases	48
+WM20_S15_019	Not Included in Pathway or Brite	108
+WM20_S15_019	Cellular Processes	90
+WM20_S15_019	Genetic Information Processing	46
+WM20_S15_028	Metabolism	169
+WM20_S15_028	Brite Hierarchies	136
+WM20_S15_028	Human Diseases	22
+WM20_S15_028	Organismal Systems	9
+WM20_S15_028	Not Included in Pathway or Brite	39
+WM20_S15_028	Environmental Information Processing	36
+WM20_S15_028	Cellular Processes	23
+WM20_S15_028	Genetic Information Processing	18
+WM20_S15_029	Metabolism	785
+WM20_S15_029	Organismal Systems	53
+WM20_S15_029	Environmental Information Processing	151
+WM20_S15_029	Brite Hierarchies	997
+WM20_S15_029	Human Diseases	158
+WM20_S15_029	Not Included in Pathway or Brite	214
+WM20_S15_029	Genetic Information Processing	142
+WM20_S15_029	Cellular Processes	171
+WM20_S15_032	Metabolism	298
+WM20_S15_032	Brite Hierarchies	471
+WM20_S15_032	Not Included in Pathway or Brite	119
+WM20_S15_032	Environmental Information Processing	128
+WM20_S15_032	Organismal Systems	27
+WM20_S15_032	Human Diseases	82
+WM20_S15_032	Cellular Processes	131
+WM20_S15_032	Genetic Information Processing	30
+WM20_S15_041	Metabolism	619
+WM20_S15_041	Brite Hierarchies	1004
+WM20_S15_041	Not Included in Pathway or Brite	210
+WM20_S15_041	Human Diseases	100
+WM20_S15_041	Organismal Systems	69
+WM20_S15_041	Environmental Information Processing	237
+WM20_S15_041	Cellular Processes	181
+WM20_S15_041	Genetic Information Processing	84
+WM20_S15_043	Metabolism	975
+WM20_S15_043	Environmental Information Processing	328
+WM20_S15_043	Brite Hierarchies	1046
+WM20_S15_043	Human Diseases	123
+WM20_S15_043	Not Included in Pathway or Brite	233
+WM20_S15_043	Organismal Systems	54
+WM20_S15_043	Cellular Processes	281
+WM20_S15_043	Genetic Information Processing	84
+WM20_S15_044	Metabolism	981
+WM20_S15_044	Environmental Information Processing	144
+WM20_S15_044	Cellular Processes	153
+WM20_S15_044	Human Diseases	221
+WM20_S15_044	Brite Hierarchies	949
+WM20_S15_044	Organismal Systems	73
+WM20_S15_044	Not Included in Pathway or Brite	196
+WM20_S15_044	Genetic Information Processing	119
+WM20_S15_045	Metabolism	1450
+WM20_S15_045	Brite Hierarchies	1292
+WM20_S15_045	Not Included in Pathway or Brite	438
+WM20_S15_045	Organismal Systems	112
+WM20_S15_045	Human Diseases	175
+WM20_S15_045	Environmental Information Processing	380
+WM20_S15_045	Genetic Information Processing	95
+WM20_S15_045	Cellular Processes	357
+WM20_S15_046	Metabolism	458
+WM20_S15_046	Human Diseases	48
+WM20_S15_046	Brite Hierarchies	417
+WM20_S15_046	Not Included in Pathway or Brite	102
+WM20_S15_046	Organismal Systems	29
+WM20_S15_046	Environmental Information Processing	62
+WM20_S15_046	Cellular Processes	75
+WM20_S15_046	Genetic Information Processing	49
+WM20_S15_048	Metabolism	333
+WM20_S15_048	Environmental Information Processing	51
+WM20_S15_048	Brite Hierarchies	603
+WM20_S15_048	Organismal Systems	26
+WM20_S15_048	Human Diseases	65
+WM20_S15_048	Cellular Processes	58
+WM20_S15_048	Genetic Information Processing	135
+WM20_S15_048	Not Included in Pathway or Brite	91
+WM20_S15_049	Metabolism	180
+WM20_S15_049	Brite Hierarchies	249
+WM20_S15_049	Organismal Systems	6
+WM20_S15_049	Human Diseases	20
+WM20_S15_049	Not Included in Pathway or Brite	62
+WM20_S15_049	Environmental Information Processing	69
+WM20_S15_049	Cellular Processes	34
+WM20_S15_049	Genetic Information Processing	19
+WM20_S15_050	Metabolism	140
+WM20_S15_050	Brite Hierarchies	187
+WM20_S15_050	Not Included in Pathway or Brite	58
+WM20_S15_050	Human Diseases	50
+WM20_S15_050	Organismal Systems	14
+WM20_S15_050	Cellular Processes	27
+WM20_S15_050	Genetic Information Processing	13
+WM20_S15_050	Environmental Information Processing	22
+WM21_S16_001	Metabolism	1141
+WM21_S16_001	Environmental Information Processing	178
+WM21_S16_001	Cellular Processes	112
+WM21_S16_001	Human Diseases	128
+WM21_S16_001	Brite Hierarchies	1293
+WM21_S16_001	Not Included in Pathway or Brite	284
+WM21_S16_001	Organismal Systems	50
+WM21_S16_001	Genetic Information Processing	157
+WM21_S16_002	Metabolism	1496
+WM21_S16_002	Environmental Information Processing	324
+WM21_S16_002	Cellular Processes	164
+WM21_S16_002	Human Diseases	179
+WM21_S16_002	Brite Hierarchies	1759
+WM21_S16_002	Not Included in Pathway or Brite	363
+WM21_S16_002	Organismal Systems	95
+WM21_S16_002	Genetic Information Processing	174
+WM21_S16_005	Metabolism	997
+WM21_S16_005	Environmental Information Processing	156
+WM21_S16_005	Organismal Systems	53
+WM21_S16_005	Brite Hierarchies	1194
+WM21_S16_005	Not Included in Pathway or Brite	256
+WM21_S16_005	Human Diseases	138
+WM21_S16_005	Cellular Processes	96
+WM21_S16_005	Genetic Information Processing	171
+WM21_S16_006	Metabolism	744
+WM21_S16_006	Organismal Systems	104
+WM21_S16_006	Brite Hierarchies	917
+WM21_S16_006	Not Included in Pathway or Brite	202
+WM21_S16_006	Environmental Information Processing	132
+WM21_S16_006	Human Diseases	126
+WM21_S16_006	Genetic Information Processing	120
+WM21_S16_006	Cellular Processes	66
+WM21_S16_012	Metabolism	305
+WM21_S16_012	Environmental Information Processing	42
+WM21_S16_012	Brite Hierarchies	296
+WM21_S16_012	Not Included in Pathway or Brite	95
+WM21_S16_012	Organismal Systems	13
+WM21_S16_012	Human Diseases	15
+WM21_S16_012	Cellular Processes	27
+WM21_S16_012	Genetic Information Processing	41
+WM21_S16_020	Metabolism	766
+WM21_S16_020	Organismal Systems	46
+WM21_S16_020	Cellular Processes	218
+WM21_S16_020	Human Diseases	106
+WM21_S16_020	Brite Hierarchies	986
+WM21_S16_020	Environmental Information Processing	264
+WM21_S16_020	Not Included in Pathway or Brite	245
+WM21_S16_020	Genetic Information Processing	92
+WM21_S16_023	Metabolism	251
+WM21_S16_023	Brite Hierarchies	335
+WM21_S16_023	Not Included in Pathway or Brite	83
+WM21_S16_023	Organismal Systems	21
+WM21_S16_023	Human Diseases	77
+WM21_S16_023	Genetic Information Processing	19
+WM21_S16_023	Cellular Processes	43
+WM21_S16_023	Environmental Information Processing	63
+WM21_S16_033	Metabolism	206
+WM21_S16_033	Human Diseases	45
+WM21_S16_033	Brite Hierarchies	445
+WM21_S16_033	Environmental Information Processing	29
+WM21_S16_033	Genetic Information Processing	148
+WM21_S16_033	Not Included in Pathway or Brite	82
+WM21_S16_033	Organismal Systems	14
+WM21_S16_033	Cellular Processes	21
+WM21_S16_034	Metabolism	1314
+WM21_S16_034	Environmental Information Processing	275
+WM21_S16_034	Cellular Processes	239
+WM21_S16_034	Human Diseases	206
+WM21_S16_034	Brite Hierarchies	1317
+WM21_S16_034	Not Included in Pathway or Brite	265
+WM21_S16_034	Organismal Systems	70
+WM21_S16_034	Genetic Information Processing	140
+WM21_S16_036	Metabolism	1214
+WM21_S16_036	Organismal Systems	68
+WM21_S16_036	Cellular Processes	215
+WM21_S16_036	Human Diseases	155
+WM21_S16_036	Brite Hierarchies	1237
+WM21_S16_036	Environmental Information Processing	335
+WM21_S16_036	Not Included in Pathway or Brite	253
+WM21_S16_036	Genetic Information Processing	109
+WM21_S16_039	Metabolism	42
+WM21_S16_039	Environmental Information Processing	11
+WM21_S16_039	Brite Hierarchies	128
+WM21_S16_039	Human Diseases	9
+WM21_S16_039	Genetic Information Processing	52
+WM21_S16_039	Cellular Processes	9
+WM21_S16_039	Organismal Systems	19
+WM21_S16_039	Not Included in Pathway or Brite	10
+WM22_S17_006	Metabolism	1431
+WM22_S17_006	Environmental Information Processing	262
+WM22_S17_006	Cellular Processes	164
+WM22_S17_006	Human Diseases	306
+WM22_S17_006	Brite Hierarchies	1224
+WM22_S17_006	Not Included in Pathway or Brite	313
+WM22_S17_006	Organismal Systems	84
+WM22_S17_006	Genetic Information Processing	149
+WM22_S17_012	Metabolism	1454
+WM22_S17_012	Environmental Information Processing	265
+WM22_S17_012	Cellular Processes	172
+WM22_S17_012	Human Diseases	182
+WM22_S17_012	Brite Hierarchies	1630
+WM22_S17_012	Not Included in Pathway or Brite	404
+WM22_S17_012	Organismal Systems	125
+WM22_S17_012	Genetic Information Processing	183
+WM22_S17_013	Metabolism	1057
+WM22_S17_013	Environmental Information Processing	118
+WM22_S17_013	Cellular Processes	80
+WM22_S17_013	Human Diseases	146
+WM22_S17_013	Brite Hierarchies	1091
+WM22_S17_013	Not Included in Pathway or Brite	221
+WM22_S17_013	Organismal Systems	60
+WM22_S17_013	Genetic Information Processing	200
+WM22_S17_014	Metabolism	1042
+WM22_S17_014	Environmental Information Processing	179
+WM22_S17_014	Cellular Processes	93
+WM22_S17_014	Human Diseases	118
+WM22_S17_014	Brite Hierarchies	1250
+WM22_S17_014	Not Included in Pathway or Brite	307
+WM22_S17_014	Organismal Systems	71
+WM22_S17_014	Genetic Information Processing	178
+WM22_S17_015	Metabolism	1083
+WM22_S17_015	Organismal Systems	55
+WM22_S17_015	Environmental Information Processing	139
+WM22_S17_015	Cellular Processes	104
+WM22_S17_015	Human Diseases	199
+WM22_S17_015	Brite Hierarchies	1164
+WM22_S17_015	Not Included in Pathway or Brite	237
+WM22_S17_015	Genetic Information Processing	183
+WM22_S17_017	Metabolism	203
+WM22_S17_017	Not Included in Pathway or Brite	71
+WM22_S17_017	Environmental Information Processing	66
+WM22_S17_017	Human Diseases	27
+WM22_S17_017	Brite Hierarchies	278
+WM22_S17_017	Organismal Systems	7
+WM22_S17_017	Genetic Information Processing	32
+WM22_S17_017	Cellular Processes	48
+WM22_S17_018	Metabolism	1306
+WM22_S17_018	Environmental Information Processing	224
+WM22_S17_018	Brite Hierarchies	1404
+WM22_S17_018	Not Included in Pathway or Brite	345
+WM22_S17_018	Human Diseases	152
+WM22_S17_018	Organismal Systems	94
+WM22_S17_018	Cellular Processes	93
+WM22_S17_018	Genetic Information Processing	172
+WM22_S17_024	Metabolism	1397
+WM22_S17_024	Environmental Information Processing	307
+WM22_S17_024	Organismal Systems	71
+WM22_S17_024	Human Diseases	221
+WM22_S17_024	Brite Hierarchies	1316
+WM22_S17_024	Not Included in Pathway or Brite	295
+WM22_S17_024	Cellular Processes	251
+WM22_S17_024	Genetic Information Processing	123
+WM22_S17_034	Metabolism	815
+WM22_S17_034	Environmental Information Processing	136
+WM22_S17_034	Cellular Processes	109
+WM22_S17_034	Human Diseases	141
+WM22_S17_034	Brite Hierarchies	703
+WM22_S17_034	Organismal Systems	38
+WM22_S17_034	Not Included in Pathway or Brite	120
+WM22_S17_034	Genetic Information Processing	93
+WM22_S17_036	Metabolism	778
+WM22_S17_036	Environmental Information Processing	151
+WM22_S17_036	Brite Hierarchies	704
+WM22_S17_036	Human Diseases	86
+WM22_S17_036	Organismal Systems	32
+WM22_S17_036	Cellular Processes	96
+WM22_S17_036	Not Included in Pathway or Brite	158
+WM22_S17_036	Genetic Information Processing	65
+WM22_S17_037	Metabolism	103
+WM22_S17_037	Environmental Information Processing	29
+WM22_S17_037	Brite Hierarchies	263
+WM22_S17_037	Human Diseases	70
+WM22_S17_037	Genetic Information Processing	86
+WM22_S17_037	Cellular Processes	20
+WM22_S17_037	Organismal Systems	25
+WM22_S17_037	Not Included in Pathway or Brite	29
+WM22_S17_038	Metabolism	407
+WM22_S17_038	Brite Hierarchies	498
+WM22_S17_038	Environmental Information Processing	99
+WM22_S17_038	Organismal Systems	34
+WM22_S17_038	Not Included in Pathway or Brite	84
+WM22_S17_038	Cellular Processes	110
+WM22_S17_038	Genetic Information Processing	66
+WM22_S17_038	Human Diseases	34
+WM23_S18_007	Metabolism	1508
+WM23_S18_007	Environmental Information Processing	250
+WM23_S18_007	Cellular Processes	135
+WM23_S18_007	Human Diseases	186
+WM23_S18_007	Brite Hierarchies	1647
+WM23_S18_007	Not Included in Pathway or Brite	444
+WM23_S18_007	Organismal Systems	86
+WM23_S18_007	Genetic Information Processing	188
+WM23_S18_008	Metabolism	841
+WM23_S18_008	Environmental Information Processing	181
+WM23_S18_008	Brite Hierarchies	1307
+WM23_S18_008	Not Included in Pathway or Brite	233
+WM23_S18_008	Human Diseases	143
+WM23_S18_008	Organismal Systems	60
+WM23_S18_008	Cellular Processes	153
+WM23_S18_008	Genetic Information Processing	173
+WM23_S18_010	Metabolism	1271
+WM23_S18_010	Environmental Information Processing	293
+WM23_S18_010	Cellular Processes	179
+WM23_S18_010	Human Diseases	223
+WM23_S18_010	Brite Hierarchies	1628
+WM23_S18_010	Not Included in Pathway or Brite	374
+WM23_S18_010	Organismal Systems	90
+WM23_S18_010	Genetic Information Processing	187
+WM23_S18_016	Metabolism	143
+WM23_S18_016	Brite Hierarchies	214
+WM23_S18_016	Environmental Information Processing	31
+WM23_S18_016	Organismal Systems	11
+WM23_S18_016	Human Diseases	34
+WM23_S18_016	Not Included in Pathway or Brite	57
+WM23_S18_016	Cellular Processes	23
+WM23_S18_016	Genetic Information Processing	13
+WM24_S19_010	Metabolism	224
+WM24_S19_010	Environmental Information Processing	49
+WM24_S19_010	Organismal Systems	12
+WM24_S19_010	Human Diseases	12
+WM24_S19_010	Brite Hierarchies	282
+WM24_S19_010	Cellular Processes	16
+WM24_S19_010	Genetic Information Processing	26
+WM24_S19_010	Not Included in Pathway or Brite	70
+WM24_S19_016	Metabolism	920
+WM24_S19_016	Environmental Information Processing	222
+WM24_S19_016	Cellular Processes	118
+WM24_S19_016	Human Diseases	179
+WM24_S19_016	Brite Hierarchies	881
+WM24_S19_016	Not Included in Pathway or Brite	225
+WM24_S19_016	Organismal Systems	51
+WM24_S19_016	Genetic Information Processing	84
+WM24_S19_020	Metabolism	1749
+WM24_S19_020	Environmental Information Processing	282
+WM24_S19_020	Human Diseases	292
+WM24_S19_020	Brite Hierarchies	1635
+WM24_S19_020	Not Included in Pathway or Brite	420
+WM24_S19_020	Organismal Systems	117
+WM24_S19_020	Cellular Processes	229
+WM24_S19_020	Genetic Information Processing	184
+WM24_S19_025	Metabolism	1099
+WM24_S19_025	Environmental Information Processing	185
+WM24_S19_025	Cellular Processes	106
+WM24_S19_025	Human Diseases	114
+WM24_S19_025	Brite Hierarchies	1404
+WM24_S19_025	Not Included in Pathway or Brite	296
+WM24_S19_025	Organismal Systems	49
+WM24_S19_025	Genetic Information Processing	153
+WM24_S19_032	Metabolism	719
+WM24_S19_032	Human Diseases	45
+WM24_S19_032	Brite Hierarchies	523
+WM24_S19_032	Not Included in Pathway or Brite	169
+WM24_S19_032	Organismal Systems	32
+WM24_S19_032	Genetic Information Processing	79
+WM24_S19_032	Environmental Information Processing	93
+WM24_S19_032	Cellular Processes	50

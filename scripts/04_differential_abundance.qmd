@@ -23,6 +23,7 @@ library(tidyverse)
 library(microeco)
 library(tidytree)
 # BiocManager::install("ggtree")
+# BiocManager::install("microbiome")
 library(ggtree)
 ```
 
@@ -32,7 +33,7 @@ library(ggtree)
 ```{r}
 # View sample table 
 # view(mt_mag$sample_table)
-t1 <- trans_diff$new(dataset = mt_mag, method = "lefse", group = "strat_season", alpha = 0.05, taxa_level = 'all', lefse_subgroup = NULL)
+t1 <- trans_diff$new(dataset = mt_mag, method = "ancombc2", group = "strat_season", alpha = 0.05, taxa_level = 'all')
 view(t1$res_diff)
 t1$plot_diff_cladogram()
 t1$plot_diff_bar(threshold = 4.5)
@@ -93,4 +94,25 @@ vifs <- mt_mag$sample_table |>
 corrplot::corrplot(vifs)
 table(mt_mag$sample_table$strat_season, mt_mag$sample_table$use_maestro)
 
+```
+
+# Trans Func exploration 
+
+
+```{r}
+t2 <- trans_func$new(mt_16s)
+t2$for_what <- 'prok'
+
+t2$cal_func(prok_database = "FAPROTAX")
+
+network <- trans_network$new(dataset = mt_16s, cal_cor = "base", taxa_level = "OTU", filter_thres = 0.0001, cor_method = "spearman")
+network$cal_network(p_thres = 0.01, COR_cut = 0.7)
+network$cal_module()
+# convert module info to microtable object
+meco_module <- network$trans_comm(use_col = "module")
+meco_module_func <- trans_func$new(meco_module)
+meco_module_func$for_what <- "prok"
+meco_module_func$cal_func(prok_database = "FAPROTAX")
+meco_module_func$cal_func_FR(abundance_weighted = FALSE, perc = TRUE)
+meco_module_func$plot_func_FR()
 ```

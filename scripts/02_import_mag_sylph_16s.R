@@ -192,8 +192,8 @@ arc_df <- read_tsv("data/gtdb_bin_tax/gtdbtk.ar53.summary.tsv", na = "N/A")
 
 mag_df <- bind_rows(bac_df, arc_df) |> 
   mutate(sample = str_extract(user_genome, "WM.{2}"), .after = user_genome) |> 
-    mutate(genome = str_remove(user_genome, "MAGScoT_cleanbin_000")) |> 
-  select(genome, classification)
+    mutate(genome = str_remove(user_genome, "MAGScoT_cleanbin_000")) |>
+    dplyr::select(genome, classification)
   
   # Create vectors of column names
   clade_cols <- stringr::str_extract_all(mag_df$classification[3], "[a-z]{1}(?=_)")
@@ -245,7 +245,7 @@ colSums(de_coverage_clean[2:ncol(de_coverage_clean)])
 
 # import tree data
 tree_files <- list.files("data/gtdb_bin_tax/classify/", pattern = ".tree$", full.names = T) 
-tree <- read.tree(tree_files[9])
+tree <- ape::read.tree(tree_files[9])
 
 # Update tree tip labels
 tree$tip.label <- tree$tip.label |> 

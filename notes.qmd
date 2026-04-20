@@ -695,3 +695,25 @@ genes that have identity and function. Basically just another database.
 The KEGG number is the identifier for the protein.
 
 ![](output/plots\temp_data_alldepths_station.png){width="635"}
+
+# April 17, 2026
+
+Created master tables of each core metagenome and genes so I can see
+what is conserved throughout the year. Saved under output/data. Started putting data into microeco to see if I can run LefSE on it, that didn't work, it's not in the right format. Next steps to see if I can get thinks in the right format to run lefse on my own. 
+
+Maybe look at all the MAGs too to see what is going on with them not just the core group
+
+# April 19, 2026
+
+Finished the Nature Comms paper on DA. Seems like ANCOM-II and ALDEx2 as the best options (though most conservative). 
+
+# April 20, 2026
+
+Okay so I have abundances of genes in a bin AND abundances of bins in a sample. Can I assume that the genes in the bin correspond to that sample?
+
+I found an issue showing that the genomes that coverM calculated abundances for across the samples AND the genomes that I have metabolic data for, are different. They are each about 200 genomes but only share 65 in common. Maybe I can see if I can pull the metabolic info from the genomes from the de_coverage info to see if I can figure out how the genomes change throughout the year. 
+
+I could also look at the taxonomy of both and see how they are different. This is something to ask cody.
+
+Right now I have some code that just takes the genes taken from the genomes selected by coverM because there is an abundance associated with them. 
+

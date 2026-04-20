@@ -1,0 +1,142 @@
+bin	id	name	count
+WM16_S11_043	GH18	GH18: chitinase	1
+WM16_S11_043	GH57	GH57: alpha-amylase	1
+WM16_S11_043	GT28	GT28: 1,2-diacylglycerol 3-beta-galactosyltransferase	1
+WM16_S11_043	GT4	GT4: sucrose synthase	6
+WM16_S11_043	GT51	GT51: murein polymerase	1
+WM05_S5_015	AA1	AA1: laccase / p-diphenol:oxygen oxidoreductase / ferroxidase	1
+WM05_S5_015	AA3	AA3: cellobiose dehydrogenase	8
+WM05_S5_015	AA4	AA4: vanillyl-alcohol oxidase	1
+WM05_S5_015	CBM32	CBM32: galactose/lactose/polygalacturonic acid/LacNAc binding	2
+WM05_S5_015	CBM67	CBM67: L-rhamnose binding	3
+WM05_S5_015	CBM9	CBM9: cellulose binding	7
+WM05_S5_015	CBM91	CBM91: xylan binding	1
+WM05_S5_015	CE1	CE1: acetyl xylan esterase	13
+WM05_S5_015	CE11	CE11: UDP-3-0-acyl N-acetylglucosamine deacetylase	2
+WM05_S5_015	CE14	CE14: N-acetyl-1-D-myo-inosityl-2-amino-2-deoxy-alpha-D-glucopyranoside deacetylase	5
+WM05_S5_015	CE19	CE19: pectin methylesterase	2
+WM05_S5_015	CE20	CE20: acetylestarerase	5
+WM05_S5_015	CE4	CE4: acetyl xylan esterase	4
+WM05_S5_015	CE7	CE7: acetyl xylan esterase	1
+WM05_S5_015	CE9	CE9: N-acetylglucosamine 6-phosphate deacetylase	2
+WM05_S5_015	GH10	GH10: endo-1,4-beta-xylanase	1
+WM05_S5_015	GH109	GH109: alpha-N-acetylgalactosaminidase	20
+WM05_S5_015	GH116	GH116: beta-glucosidase	1
+WM05_S5_015	GH121	GH121: beta-L-arabinobiosidase	1
+WM05_S5_015	GH125	GH125: exo-alpha-1,6-mannosidase	1
+WM05_S5_015	GH127	GH127: beta-L-arabinofuranosidase	2
+WM05_S5_015	GH13	GH13: alpha-amylase	7
+WM05_S5_015	GH130	GH130: beta-1,4-mannosylglucose phosphorylase	1
+WM05_S5_015	GH137	GH137: beta-L-arabinofuranosidase	1
+WM05_S5_015	GH140	GH140: beta-1,2-apiosidase	1
+WM05_S5_015	GH141	GH141: alpha-L-fucosidase	1
+WM05_S5_015	GH144	GH144: endo-beta-1,2-glucanase	2
+WM05_S5_015	GH146	GH146: beta-L-arabinofuranosidase	1
+WM05_S5_015	GH154	GH154: Beta-glucuronidase; beta-1,6-D-glucuronidase	1
+WM05_S5_015	GH16	GH16: xyloglucan:xyloglucosyltransferase	3
+WM05_S5_015	GH163	GH163: endo-beta-N-acetylglucosaminidase	1
+WM05_S5_015	GH171	GH171: peptidoglycan beta-N-acetylmuramidase	1
+WM05_S5_015	GH172	GH172: difructose-anhydride-I synthase (EC 4.2.1.179 (old 3.2.1.134)); alpha-D-Arabinofuranosidase	2
+WM05_S5_015	GH18	GH18: chitinase	3
+WM05_S5_015	GH2	GH2: beta-galactosidase	3
+WM05_S5_015	GH20	GH20: beta-hexosaminidase	8
+WM05_S5_015	GH23	GH23: lysozyme type G	2
+WM05_S5_015	GH25	GH25: lysozyme	1
+WM05_S5_015	GH29	GH29: alpha-L-fucosidase	4
+WM05_S5_015	GH3	GH3: beta-glucosidase	3
+WM05_S5_015	GH30	GH30: endo-beta-1,4-xylanase	1
+WM05_S5_015	GH31	GH31: alpha-glucosidase	1
+WM05_S5_015	GH32	GH32: invertase	1
+WM05_S5_015	GH33	GH33: sialidase or neuraminidase	3
+WM05_S5_015	GH37	GH37: alpha,alpha-trehalase	1
+WM05_S5_015	GH43	GH43: beta-xylosidase	5
+WM05_S5_015	GH5	GH5: endo-beta-1,4-glucanase / cellulase	2
+WM05_S5_015	GH51	GH51: endoglucanase	4
+WM05_S5_015	GH63	GH63: processing alpha-glucosidase	2
+WM05_S5_015	GH67	GH67: alpha-glucuronidase	1
+WM05_S5_015	GH73	GH73: lysozyme	1
+WM05_S5_015	GH77	GH77: amylomaltase or 4-alpha-glucanotransferase	1
+WM05_S5_015	GH78	GH78: alpha-L-rhamnosidase	3
+WM05_S5_015	GH88	GH88: d-4,5-unsaturated beta-glucuronyl hydrolase	1
+WM05_S5_015	GH94	GH94: cellobiose phosphorylase	2
+WM05_S5_015	GH95	GH95: alpha-L-fucosidase	3
+WM05_S5_015	GH97	GH97: glucoamylase	1
+WM05_S5_015	GT1	GT1: UDP-glucuronosyltransferase	1
+WM05_S5_015	GT113	GT113: glucosyltransferase/hexosyltransferase	1
+WM05_S5_015	GT19	GT19: lipid-A-disaccharide synthase	1
+WM05_S5_015	GT27	GT27: polypeptide alpha-N-acetylgalactosaminyltransferase	2
+WM05_S5_015	GT28	GT28: 1,2-diacylglycerol 3-beta-galactosyltransferase	1
+WM05_S5_015	GT30	GT30: CMP-beta-KDO: alpha-3-deoxy-D-manno-octulosonic-acid (KDO) transferase	1
+WM05_S5_015	GT35	GT35: glycogen or starch phosphorylase	1
+WM05_S5_015	GT4	GT4: sucrose synthase	11
+WM05_S5_015	GT5	GT5: UDP-Glc: glycogen glucosyltransferase	3
+WM05_S5_015	GT51	GT51: murein polymerase	3
+WM05_S5_015	GT81	GT81: NDP-Glc: glucosyl-3-phosphoglycerate synthase	1
+WM05_S5_015	GT83	GT83: undecaprenyl phosphate-alpha-L-Ara4N: 4-amino-4-deoxy-beta-L-arabinosyltransferase	2
+WM05_S5_015	GT84	GT84: cyclic beta-1,2-glucan synthase	1
+WM05_S5_015	GT9	GT9: lipopolysaccharide N-acetylglucosaminyltransferase	1
+WM05_S5_015	GT94	GT94: GlcA-beta-1,2-Man-alpha-1,3-Glc-beta-1,4-Glc-alpha-1-PP-undecaprenol beta-1,4-mannosyltransferase	1
+WM22_S17_024	AA3	AA3: cellobiose dehydrogenase	6
+WM22_S17_024	AA7	AA7: glucooligosaccharide oxidase	2
+WM22_S17_024	CBM48	CBM48: glycogene binding	1
+WM22_S17_024	CE1	CE1: acetyl xylan esterase	4
+WM22_S17_024	CE11	CE11: UDP-3-0-acyl N-acetylglucosamine deacetylase	1
+WM22_S17_024	CE4	CE4: acetyl xylan esterase	1
+WM22_S17_024	CE9	CE9: N-acetylglucosamine 6-phosphate deacetylase	2
+WM22_S17_024	GH1	GH1: beta-glucosidase	1
+WM22_S17_024	GH102	GH102: peptidoglycan lytic transglycosylase	1
+WM22_S17_024	GH103	GH103: peptidoglycan lytic transglycosylase	3
+WM22_S17_024	GH108	GH108: N-acetylmuramidase	1
+WM22_S17_024	GH109	GH109: alpha-N-acetylgalactosaminidase	3
+WM22_S17_024	GH13	GH13: alpha-amylase	5
+WM22_S17_024	GH141	GH141: alpha-L-fucosidase	1
+WM22_S17_024	GH19	GH19: chitinase	1
+WM22_S17_024	GH2	GH2: beta-galactosidase	2
+WM22_S17_024	GH23	GH23: lysozyme type G	3
+WM22_S17_024	GH25	GH25: lysozyme	1
+WM22_S17_024	GH3	GH3: beta-glucosidase	1
+WM22_S17_024	GH4	GH4: maltose-6-phosphate glucosidase	1
+WM22_S17_024	GH42	GH42: beta-galactosidase	1
+WM22_S17_024	GT1	GT1: UDP-glucuronosyltransferase	2
+WM22_S17_024	GT14	GT14: beta-1,3-galactosyl-O-glycosyl-glycoprotein beta-1,6-N-acetylglucosaminyltransferase	2
+WM22_S17_024	GT19	GT19: lipid-A-disaccharide synthase	1
+WM22_S17_024	GT25	GT25: lipopolysaccharide beta-1,4-galactosyltransferase	1
+WM22_S17_024	GT28	GT28: 1,2-diacylglycerol 3-beta-galactosyltransferase	1
+WM22_S17_024	GT30	GT30: CMP-beta-KDO: alpha-3-deoxy-D-manno-octulosonic-acid (KDO) transferase	3
+WM22_S17_024	GT35	GT35: glycogen or starch phosphorylase	1
+WM22_S17_024	GT4	GT4: sucrose synthase	7
+WM22_S17_024	GT5	GT5: UDP-Glc: glycogen glucosyltransferase	2
+WM22_S17_024	GT51	GT51: murein polymerase	5
+WM18_S13_040	AA1	AA1: laccase / p-diphenol:oxygen oxidoreductase / ferroxidase	4
+WM18_S13_040	AA3	AA3: cellobiose dehydrogenase	5
+WM18_S13_040	AA4	AA4: vanillyl-alcohol oxidase	1
+WM18_S13_040	CE1	CE1: acetyl xylan esterase	1
+WM18_S13_040	CE11	CE11: UDP-3-0-acyl N-acetylglucosamine deacetylase	1
+WM18_S13_040	CE4	CE4: acetyl xylan esterase	3
+WM18_S13_040	GH103	GH103: peptidoglycan lytic transglycosylase	4
+WM18_S13_040	GH130	GH130: beta-1,4-mannosylglucose phosphorylase	1
+WM18_S13_040	GH144	GH144: endo-beta-1,2-glucanase	1
+WM18_S13_040	GH15	GH15: glucoamylase	1
+WM18_S13_040	GH17	GH17: glucan endo-1,3-beta-glucosidase	1
+WM18_S13_040	GH94	GH94: cellobiose phosphorylase	2
+WM18_S13_040	GT19	GT19: lipid-A-disaccharide synthase	1
+WM18_S13_040	GT20	GT20: alpha,alpha-trehalose-phosphate synthase [UDP-forming]	1
+WM18_S13_040	GT30	GT30: CMP-beta-KDO: alpha-3-deoxy-D-manno-octulosonic-acid (KDO) transferase	1
+WM18_S13_040	GT4	GT4: sucrose synthase	2
+WM18_S13_040	GT41	GT41: UDP-GlcNAc: peptide beta-N-acetylglucosaminyltransferase	1
+WM18_S13_040	GT51	GT51: murein polymerase	2
+WM18_S13_040	GT83	GT83: undecaprenyl phosphate-alpha-L-Ara4N: 4-amino-4-deoxy-beta-L-arabinosyltransferase	2
+WM18_S13_040	GT84	GT84: cyclic beta-1,2-glucan synthase	1
+WM18_S13_040	GT9	GT9: lipopolysaccharide N-acetylglucosaminyltransferase	2
+WM21_S16_033	AA1	AA1: laccase / p-diphenol:oxygen oxidoreductase / ferroxidase	1
+WM21_S16_033	AA3	AA3: cellobiose dehydrogenase	2
+WM21_S16_033	CE4	CE4: acetyl xylan esterase	1
+WM21_S16_033	GH108	GH108: N-acetylmuramidase	1
+WM21_S16_033	GH24	GH24: lysozyme	1
+WM21_S16_033	GT28	GT28: 1,2-diacylglycerol 3-beta-galactosyltransferase	1
+WM21_S16_033	GT51	GT51: murein polymerase	1
+WM05_S5_040	GH15	GH15: glucoamylase	1
+WM05_S5_040	GT20	GT20: alpha,alpha-trehalose-phosphate synthase [UDP-forming]	2
+WM05_S5_040	GT28	GT28: 1,2-diacylglycerol 3-beta-galactosyltransferase	1
+WM05_S5_040	GT4	GT4: sucrose synthase	5
+WM05_S5_040	GT51	GT51: murein polymerase	1
