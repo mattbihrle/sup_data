@@ -1,0 +1,190 @@
+#
+#
+#
+#
+#
+#
+# Install libraries I might need
+# BiocManager::install("ANCOMBC")
+# BiocManager:: install("ALDEx2")
+```
+#
+# Load Libraries
+library(microeco)
+library(file2meco)
+library(tidyverse)
+# library(lefser)
+library(phyloseq)
+library(ANCOMBC)
+library(ALDEx2)
+#
+#
+#
+# Load in data
+#FOAM data
+foam_1_df <- read_tsv("output/data/metabolism/foam_1.tsv")
+foam_2_df <- read_tsv("output/data/metabolism/foam_2.tsv")
+foam_3_df <- read_tsv("output/data/metabolism/foam_3.tsv")
+foam_id_df <- read_tsv("output/data/metabolism/foam_genes.tsv")
+# KEGG data (more genes total)
+kegg_1_df <- read_tsv("output/data/metabolism/kegg_1.tsv")
+kegg_2_df <- read_tsv("output/data/metabolism/kegg_2.tsv")
+kegg_3_df <- read_tsv("output/data/metabolism/kegg_3.tsv")
+kegg_id_df <- read_tsv("output/data/metabolism/kegg_genes.tsv")
+#
+#
+#
+# Try to make a new microtable object, might need to do some work to get it into a human readable format
+
+foam_1_wide <- foam_1_df |> 
+    # mutate(bin = str_extract(bin, "^.{4}")) |> 
+    pivot_wider(names_from = name, values_from = count) |> 
+        column_to_rownames("bin")
+
+foam_mt <- microtable$new(otu_table = foam_1_wide, sample_table = mt_mag$sample_table)
+
+foam_mt$cal_abund(rel = FALSE)
+# use_percentage = FALSE disable percentage for relative abundance
+test1 <- trans_abund$new(test, taxrank = "Level.2", ntaxa = 10, use_percentage = FALSE)
+test1$plot_bar(facet = "Group", bar_full = FALSE, xtext_angle = 30) + ggplot2::ylab("Abundance (RPK)")
+
+# Now that we have a wide df, try to plot it
+
+foam_1_df |> 
+    group_by(bin) |> 
+    mutate(rel_abund = count/sum(count)) |> 
+    ungroup() |> 
+    ggplot(aes(x = bin, y = rel_abund, fill = name)) +
+    geom_bar(stat = "identity")
+
+#
+
+#
+#
+#
+# Code from the tutorial
+library(microeco)
+library(file2meco)
+library(magrittr)
+?humann2meco
+sample_file_path <- system.file("extdata", "example_metagenome_sample_info.tsv", package="file2meco") |> 
+    read_tsv()
+match_file_path <- system.file("extdata", "example_metagenome_match_table.tsv", package="file2meco") |> 
+    read_tsv()
+# use KEGG pathway based HUMAnN result
+abund_file_path <- system.file("extdata", "example_HUMAnN_KEGG_abund.tsv", package="file2meco") |> 
+    read_tsv() |> 
+    separate_wider_delim("# Pathway", names = c("gene", "org"), delim = "|", too_few = "align_start")
+# match_table parameter can be used to replace sample names
+test <- humann2meco(abund_file_path, db = "KEGG", sample_table = sample_file_path, match_table = match_file_path)
+# remove the unclassified pathway in Level.1
+test$tax_table %<>% subset(Level.1 != "unclassified")
+test$tidy_dataset()
+# rel = FALSE donot use relative abundance, use the raw RPK
+test$cal_abund(select_cols = 1:3, rel = FALSE)
+# use_percentage = FALSE disable percentage for relative abundance
+test1 <- trans_abund$new(test, taxrank = "Level.2", ntaxa = 10, use_percentage = FALSE)
+test1$plot_bar(facet = "Group", bar_full = FALSE, xtext_angle = 30) + ggplot2::ylab("Abundance (RPK)")
+
+tax_test <- test$tax_table |> 
+    rownames_to_column("gene_name") |> 
+    mutate(gene_simp = str_extract(gene_name, "^.{7}"))
+
+
+#
+#
+#
+#
+#
+#
+#
+#
+#
+# Test
+abund_file_path <- system.file("extdata", "example_HUMAnN_KEGG_abund.tsv", package="file2meco")
+abund_file_path <- system.file("extdata", "example_Ncyc_table.tsv", package="file2meco")
+test <- read_tsv(abund_file_path)
+#
+#
+#
+#
+# Figure out how many are in each group
+
+foam_1_df <- foam_1_df |> 
+    group_by(bin) |> 
+    mutate(n = length(unique(name))) |> 
+    ungroup()
+#
+#
+#
+#
+# New test to see how the rollup files work
+
+# foam_df <- read_tsv("output/data/metabolism/foam_rollup.tsv")
+foam_df <- read_tsv("output/data/metabolism/foam_rollup_all.tsv")
+load("output/data/mt_mag.RData")
+
+foam_df <- foam_df |> 
+    mutate(rowname = paste0(id, "|", bin), .before = everything())
+
+waldo::compare(core_bins, unique(foam_df$bin))
+nrow(foam_df) == length(unique(foam_df$rowname))
+
+# There are repeat rownames, likely due to functional redundancies. I need to next look at which pathway to put them in and how to deal with the additional counts of the gene. 
+
+# Update count numbers
+
+foam_df_test <- foam_df |> 
+    group_by(rowname) |> 
+    mutate(count = sum(count)) |> 
+    ungroup() |> 
+    # mutate(count = count_sum,
+    # -count_sum) |> 
+        distinct(rowname, .keep_all = T)
+
+nrow(foam_df_test)
+
+# Now append all the additional taxa data into the table
+
+waldo::compare(core_bins, rownames(mt_mag$tax_table))
+
+core_bins <- sort(core_bins)
+mag_names <- sort(rownames(mt_mag$tax_table))
+tax_test <- mt_mag$tax_table |> 
+    rownames_to_column("bin") |> 
+    left_join(y = foam_df_test, by = "bin") |> 
+    column_to_rownames("rowname")
+
+# Make an otu_table 
+
+otu_table <- mt_mag$otu_table |> 
+    rownames_to_column("bin")
+
+tax_names <- tax_test |> 
+    rownames_to_column("rowname") |> 
+    dplyr::select(rowname, bin)
+
+otu_table_final <- otu_table |> 
+    left_join(tax_names) |> 
+    dplyr::select(-bin) |> 
+    column_to_rownames("rowname")
+
+
+mt_genes <- microeco::microtable$new(tax_table = tax_test, otu_table = otu_table_final, sample_table = mt_mag$sample_table)
+
+mt_genes$cal_abund()
+    t1 <- trans_diff$new(mt_genes, method = "lefse", group = "strat_season", p_adjust_method = "none")
+    save(t1, "output/data/metabolism/t1.RData")
+    t1$plot_diff_bar(threshold = 2.5)
+
+
+test$tax_table <- test$tax_table |> 
+    subset()
+
+test$tidy_dataset()
+t1 <- trans_abund$new(test, taxrank = "l2", ntaxa = 10, use_percentage = FALSE)
+trans_abund$plot_bar(t1, facet = "strat_season", bar_full = FALSE, xtext_angle = 30) + ggplot2::ylab("Abundance (RPK)")
+
+#
+#
+#

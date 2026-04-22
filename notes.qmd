@@ -717,3 +717,48 @@ I could also look at the taxonomy of both and see how they are different. This i
 
 Right now I have some code that just takes the genes taken from the genomes selected by coverM because there is an abundance associated with them. 
 
+# April 21, 2026
+
+ANCOM-BC results: LFC is the log fold change - the change in abundance over season logged. I can add fixed and random effects. Probably should figure that out here soon. 
+
+Major groups to look at: 
+Taxa
+  - d__Bacteria|p__Bacteroidota|c__Bacteroidia|o__Chitinophagales|f__Chitinophagaceae|g__Sediminibacterium|s__Sediminibacterium sp017996795|WM15_S10_008
+  - d__Bacteria|p__Patescibacteria|c__Paceibacteria|o__UBA9973|f__UBA2100|g__UBA10103|s__|WM12_S7_040
+  - Taxa
+d__Bacteria|p__Verrucomicrobiota|c__Verrucomicrobiae|o__Chthoniobacterales|f__JACTMZ01|g__JACTMZ01|s__|WM03_S3_027
+  - d__Bacteria|p__Actinomycetota|c__Actinomycetes|o__Nanopelagicales|f__Nanopelagicaceae|g__Planktophila|s__|WM02_S2_051
+
+  d__Bacteria|p__Pseudomonadota|c__Gammaproteobacteria|o__Burkholderiales|f__Burkholderiaceae|g__Polaromonas|s__|WM22_S17_026
+
+  d__Bacteria|p__Actinomycetota|c__Actinomycetes|o__Mycobacteriales|f__Mycobacteriaceae|g__Mycobacterium|s__|WM02_S2_015
+
+  d__Bacteria|p__Bacteroidota|c__Bacteroidia|o__Chitinophagales|f__Chitinophagaceae|g__Sediminibacterium|s__|WM19_S14_012
+
+  d__Bacteria|p__Actinomycetota|c__Actinomycetes|o__Mycobacteriales|f__Mycobacteriaceae|g__Mycobacterium|s__|WM03_S3_040
+
+  d__Bacteria|p__Planctomycetota|c__Planctomycetia|o__Planctomycetales|f__Planctomycetaceae|g__SXXK01|s__SXXK01 sp003670925|WM04_S4_034
+
+  d__Bacteria|p__Pseudomonadota|c__Gammaproteobacteria|o__Xanthomonadales|f__Xanthomonadaceae|g__Arenimonas|s__|WM17_S12_035
+
+  
+
+  # April 22, 2026
+
+  Micropresentation feedback:
+    - Look at "cliques" with igraph R package to look for similarly abundant taxa
+    - There may be another R package out of Berkeley (IMG) for looking at guilds. 
+    -  Paciefiobacteria have small genomes
+    -  Carbon
+      -  Urban measurments are close to shore
+      -  Look at the Sterner paper on carbon, ,and Liz's carbon measurements.  
+      -  Daily or 12 hour median temperatures/others for the environmental variables (this would be an easy change to make)
+      -  pH 'trend' is probably accurate but the values are not
+      -  Split the coloring up by stratification, or have each month as a color?
+      -  Add information on completeness of genomes and contamination
+      -  Possibly look at cyanos and what they are doing
+      -  Ask Emma about how to keep the colors the same across taxa
+      -  Mycobacteria, host associated
+      -  Also think about why CoverM removed the abundances for a bunch of genes?
+
+Started working on fixing the data plots to have an average. So far it looks better code is under 05 - maestro plots

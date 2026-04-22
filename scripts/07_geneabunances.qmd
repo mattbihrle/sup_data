@@ -121,7 +121,7 @@ foam_1_df <- foam_1_df |>
 # New test to see how the rollup files work
 
 # foam_df <- read_tsv("output/data/metabolism/foam_rollup.tsv")
-foam_df <- foam_rollup_df
+foam_df <- read_tsv("output/data/metabolism/foam_rollup_all.tsv")
 load("output/data/mt_mag.RData")
 
 foam_df <- foam_df |> 
@@ -170,11 +170,13 @@ otu_table_final <- otu_table |>
     column_to_rownames("rowname")
 
 
-test <- microeco::microtable$new(tax_table = tax_test, otu_table = otu_table_final, sample_table = mt_mag$sample_table)
+mt_genes <- microeco::microtable$new(tax_table = tax_test, otu_table = otu_table_final, sample_table = mt_mag$sample_table)
 
-test$cal_abund(select_cols = c("l1", "l2", "l3", "l4", "ec", "f", "g", "s"))
-    t1 <- trans_diff$new(test, method = "lefse", group = "strat_season")
-    t1$plot_diff_bar(threshold = 4)
+mt_genes$cal_abund()
+    t1 <- trans_diff$new(mt_genes, method = "lefse", group = "strat_season", p_adjust_method = "none")
+    save(t1, "output/data/metabolism/t1.RData")
+    t1$plot_diff_bar(threshold = 2.5)
+
 
 test$tax_table <- test$tax_table |> 
     subset()

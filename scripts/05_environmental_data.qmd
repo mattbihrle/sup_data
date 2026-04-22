@@ -13,7 +13,9 @@ library(leaflet) # for custom color mapping
 # Run previous scripts to load in microtable objects
 
 ```{r}
-source("scripts/02_import_mag_sylph_16s.R")
+load("output/data/mt_mag.RData")
+load("output/data/mt_16s.RData")
+load("output/data/mt_sylph.RData")
 load("output/data/temp_df_long.RData")
 ```
 
@@ -204,13 +206,15 @@ temp_df_long |>
  quantile(mt_mag$sample_table$temp_c_24h_med)
 ```
 
-
+# Maestro Plots
 
 ```{r}
 # Maestro Plot
 
 load("output/data/maestro_df_clean.RData")
 load("output/data/clean_long_m_df.RData")
+
+
 
 clean_long_m_df |> 
     filter(variable != "T2", variable != "P") |> 
@@ -219,4 +223,65 @@ clean_long_m_df |>
     facet_wrap(~variable, scales = "free") +
     theme_minimal() +
     labs(color = "Variable", x = "Date", y = NULL)
+
+  noon_midnight_plot <- maestro_df_clean |> 
+    select(round_date, matches("12h_med")) |> 
+    pivot_longer(cols = ! "round_date", names_to = "var", values_to = "vals") |> 
+    distinct() |> 
+      ggplot(aes(round_date, vals, color = var)) +
+    geom_smooth() +
+    facet_wrap(~var, scales = "free") +
+    theme_minimal() +
+    labs(color = "Variable", x = "Date", y = NULL) +
+    theme_classic()
+noon_midnight_plot
+
+daily_plot <- maestro_df_clean |> 
+    select(date, matches("24h_avg")) |> 
+    pivot_longer(cols = !date, names_to = "var", values_to = "vals") |> 
+    distinct() |> 
+      ggplot(aes(date, vals, color = var)) +
+    geom_smooth() +
+    facet_wrap(~var, scales = "free") +
+    theme_minimal() +
+    labs(color = "Variable", x = "Date", y = NULL)
+
+daily_plot
+  plot <- maestro_df_clean |> 
+    ggplot(aes(x = T, y = DO, color = date)) +
+    geom_point() +
+    scale_color_viridis_c(trans = "date", direction = 1) +
+    theme_classic() +
+    labs(x = "Temp (C)", y = "DO (umol/kg)")
+    plot
+  plotly::plotly_build(plot)
+
+    plot <- maestro_df_clean |> 
+    ggplot(aes(x = T, y = do_sat_percent, color = date)) +
+    geom_point() +
+    scale_color_viridis_c(trans = "date", direction = 1) +
+    theme_classic() +
+    labs(x = "Temp (C)")
+    plot
+  plotly::plotly_build(plot)
+
+    plot <- maestro_df_clean |> 
+    ggplot(aes(x = T, y = pH, color = date)) +
+    geom_point() +
+    scale_color_viridis_c(trans = "date", direction = 1) +
+    theme_classic() +
+    labs(x = "Temp (C)", y = "pH")
+    plot
+  plotly::plotly_build(plot)
+
+    plot <- maestro_df_clean |> 
+    ggplot(aes(x = T, y = CHL, color = date)) +
+    geom_point() +
+    scale_color_viridis_c(trans = "date", direction = 1) +
+    theme_classic() +
+    labs(x = "Temp (C)", y = "CHL")
+    plot
+  plotly::plotly_build(plot)
+
+  colnames(maestro_df_clean)
 ```

@@ -163,7 +163,7 @@ for(i in 1:length(bin_names)) {
   path
   # Select the file you want with the regex here
 int_df <- list.files(path, pattern = paste0(".*", bin_name, ".*", ".tsv"), full.names = T) |> 
-  read_tsv() |> 
+  read_tsv(show_col_types = F) |> 
   mutate(bin = bin_name, .before = everything()) |> 
       rename_with(tolower)
   
@@ -177,7 +177,7 @@ foam_rollup_df <- gene_df
 
 foam_rollup_df$bin <- foam_rollup_df$bin |> 
   str_remove(pattern = "MAGScoT_cleanbin_000")
-
+foam_rollup_df <- write_tsv(foam_rollup_df, "output/data/metabolism/foam_rollup_all.tsv")
 # Then for KEGG -----------------------------------------------------------------
 
 for(i in 1:length(bin_names)) {

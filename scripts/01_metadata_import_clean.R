@@ -40,7 +40,7 @@ temp_df <- temp_df |>
     rownames_to_column(var = "dttm") |>
   mutate(dttm = as_datetime((as.numeric(dttm) - 719529) * 86400)) |> 
     # round to nearest hour to make things easier
-  mutate(dttm = round_date(dttm, unit = "hour")) |> 
+  mutate(dttm = round_date(dttm, unit = "hour"))
   #   # Select only columns less than 50m
   # select(which(as.numeric(colnames(temp_df)) <= 50))
 # move dttm column out, convert to datetime and pivot long
@@ -52,7 +52,7 @@ temp_df_long <- temp_df |>
   pivot_longer(cols = !dttm, names_to = "depth", values_to = "temp") |>
   # Create variable of local time
   mutate(dttm_local = with_tz(dttm, tzone = "US/Central")) |> 
-# Add averaged temperature column
+  # Add averaged temperature column
   mutate(date = floor_date(dttm_local, unit = "day")) |> 
   group_by(date, depth) |> 
   mutate(temp_c_24h_med = median(temp)) |> 
@@ -294,12 +294,12 @@ do_sat <- o2.at.sat(ts.data = do_df, altitude = 183, salinity = 0) |>
   mutate(o2_sat_percent = maestro_df$do_mgl/do.sat*100)
 
 # Add the original column back into the maestro_df
-maestro_df <- maestro_df |> 
+maestro_df_clean <- maestro_df_clean |> 
   mutate(do_sat_percent = do_sat$o2_sat_percent)
 
 # Plot o2 saturation
 
-plot <- plot_outliers(maestro_df, "do_sat_percent")
+plot <- plot_outliers(maestro_df_clean, "do_sat_percent")
 plot
 
 # Data look pretty good at this depth? Maybe later can get a better sense of trends
@@ -502,30 +502,48 @@ plot_samples <- function(maestro_df, var, plotly = T) {
     }
   }
 
-
 for(i in 1:length(data_vars)) {
   plot <- plot_samples(maestro_df_clean, data_vars[i], plotly = F)
   print(plot)
 }
-
+maestro_df_clean_saved <- maestro_df_clean
  # Looking at all these plots it seems like turbidity is the only one with a crazy coefficient of variance.
  # I'm just going to take the mean value. 
 ## Average data ------------------------------------------------------------------------------
-maestro_df_clean <- maestro_df_clean |>  
+maestro_df_clean <- maestro_df_clean|>  
   group_by(date) |> 
-  mutate(cdom_24h_avg = mean(CDOM, na.rm = T),
-         chla_24h_avg = mean(CND, na.rm = T),
-         cond_24h_avg = mean(CND, na.rm = T),
-         do_24h_avg = mean(DO, na.rm = T),
-         pres_db_24h_avg = mean(P, na.rm = T),
-         pco2_24h_avg = mean(PCO2, na.rm = T),
-         phyc_24h_avg = mean(PHYC, na.rm = T),
-         mtemp_c_24h_avg = mean(T, na.rm = T),
-         mtemp_2_c_24h_avg = mean(T2, na.rm = T),
-         turb_24h_avg = mean(TURB, na.rm = T),
-         ph_24h_avg = mean(pH, na.rm = T),
+  mutate(cdom_24h_avg = mean(CDOM, na.rm = TRUE),
+         chla_24h_avg = mean(CHL, na.rm = TRUE),
+         cond_24h_avg = mean(CND, na.rm = TRUE),
+         do_24h_avg = mean(DO, na.rm = TRUE),
+         pres_db_24h_avg = mean(P, na.rm = TRUE),
+         pco2_24h_avg = mean(PCO2, na.rm = TRUE),
+         phyc_24h_avg = mean(PHYC, na.rm = TRUE),
+         mtemp_c_24h_avg = mean(T, na.rm = TRUE),
+         mtemp_2_c_24h_avg = mean(T2, na.rm = TRUE),
+         turb_24h_avg = mean(TURB, na.rm = TRUE),
+         ph_24h_avg = mean(pH, na.rm = TRUE),
 ) |> 
   ungroup()
+
+# Create noon and midnight mean values
+maestro_df_clean <- maestro_df_clean|>  
+  mutate(round_date = round_date(dttm_local, unit = "12 hours")) |> 
+  group_by(round_date) |> 
+  mutate(cdom_12h_med = median(CDOM, na.rm = TRUE),
+         chla_12h_med = median(CHL, na.rm = TRUE),
+         cond_12h_med = median(CND, na.rm = TRUE),
+         do_12h_med = median(DO, na.rm = TRUE),
+         pres_db_12h_med = median(P, na.rm = TRUE),
+         pco2_12h_med = median(PCO2, na.rm = TRUE),
+         phyc_12h_med = median(PHYC, na.rm = TRUE),
+         mtemp_c_12h_med = median(T, na.rm = TRUE),
+         mtemp_2_c_12h_med = median(T2, na.rm = TRUE),
+         turb_12h_med = median(TURB, na.rm = TRUE),
+         ph_12h_med = median(pH, na.rm = TRUE),
+) |> 
+  ungroup()
+
 
 clean_long_m_df <- maestro_df_clean |> 
   select(all_of(data_vars), dttm, date, sample, sample_date) |> 

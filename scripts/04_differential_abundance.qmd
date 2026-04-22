@@ -33,13 +33,45 @@ library(ggtree)
 ```{r}
 # View sample table 
 # view(mt_mag$sample_table)
-t1 <- trans_diff$new(dataset = mt_mag, method = "ancombc2", group = "strat_season", alpha = 0.05, taxa_level = 'all')
+t1 <- trans_diff$new(dataset = mt_mag, method = "ancombc2", group = "strat_season", fix_formula = "strat_season", alpha = 0.05, taxa_level = 'all')
 view(t1$res_diff)
-t1$plot_diff_cladogram()
-t1$plot_diff_bar(threshold = 4.5)
+sig_taxa <- t1$res_diff |> 
+    filter (P.adj <=0.1)
+t2 <- clone(t1)
+t2$res_diff$Factors <- t1$res_diff$Factors |> 
+    str_replace("\\((i|I)ntercept\\)", "summer") |> 
+    str_replace("strat_season.L", "fall") |> 
+    str_replace("strat_season.Q", "winter") |> 
+    str_replace("strat_season.C", "spring")
+t2$res_diff |> 
+    filter(P.adj < 0.1)$
+plot_diff_bar(keep_full_name = TRUE, heatmap_cell = "P.adj", heatmap_sig = "Significance", heatmap_x = "Factors", heatmap_y = "Taxa")
+
+
+fig_pair <- t2$res_diff |> 
+    filter(P.adj < 0.1) |> 
+    mutate(Taxa = str_remove(Taxa, "\\|WM.*")) |> 
+    mutate(Taxa = str_remove(Taxa, "d__Bacteria\\|")) |> 
+    distinct(Taxa, .keep_all = T) |> 
+    ggplot(aes(x = Factors, y = Taxa, fill = lfc)) + 
+    geom_tile(color = "black") +
+    scale_fill_gradient2(low = "blue", high = "red", mid = "white", 
+                         na.value = "white",
+                         name = NULL) +
+    geom_text(aes(Factors, Taxa, label = lfc), size = 4) +
+    scale_color_identity(guide = FALSE) +
+    labs(x = NULL, y = NULL, title = "Log fold changes compared to summer, (p < 0.1)") +
+    theme_minimal() +
+    theme(plot.title = element_text(hjust = 0.5))
+fig_pair
+
+
+t1$plot_diff_abund()
 # we show 20 taxa with the highest LDA (log10)
 t1$plot_diff_bar(use_number = 1:30, width = 0.8, add_sig = T)
 
+
+unique |> 
 ```
 
 ## Interpretation

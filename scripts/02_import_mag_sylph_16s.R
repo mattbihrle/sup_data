@@ -292,7 +292,6 @@ mt_mag$cal_betadiv(method = c("bray","aitchison","robust.aitchison"), unifrac = 
 head(mt_mag$beta_diversity)
 
 # Save the tables we care about
-
 save(mt_mag, file = "output/data/mt_mag.RData")
 save(mt_sylph, file = "output/data/mt_sylph.RData")
 save(mt_16s, file = "output/data/mt_16s.RData")
