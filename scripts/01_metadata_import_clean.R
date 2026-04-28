@@ -199,7 +199,7 @@ maestro_df <- maestro_df |>
 
 ##  Create otlier function ------------------------------------------------------------------
 
-plot_outliers <- function(maestro_df, var, plotly = T) {
+plot_outliers <- function(maestro_df, var, plotly = F) {
   outlier_df <- maestro_df |> 
     select(dttm_local,  var) |> 
     rename(data = var) |> 
@@ -225,19 +225,19 @@ plot_outliers <- function(maestro_df, var, plotly = T) {
 ### Clean CDOM ------------------------------------------------------------------
 
 plot <- plot_outliers(maestro_df, "CDOM")
-plot
+#plot
 
 maestro_df_clean <- maestro_df
 #Try outliers plot again
 plot <- plot_outliers(maestro_df_clean, "CDOM")
-plot
+#plot
 
 # Looks good moving onto the next
 
 ### Clean CHL ------------------------------------------------------------------
 
 plot <- plot_outliers(maestro_df, "CHL")
-plot
+#plot
 
 # Based on the plot there are some obvious seeming outliers at the bottom of the data
 # Removing those
@@ -247,20 +247,20 @@ maestro_df_clean <- maestro_df_clean |>
 
 #Try outliers plot again
 plot <- plot_outliers(maestro_df_clean, "CHL")
-plot
+#plot
 
 # Looks better moving on to the next
 
 ### Clean CND ------------------------------------------------------------------
 
 plot <- plot_outliers(maestro_df, "CND")
-plot
+#plot
 # Conductivity looks good
 
 ### Clean DO ------------------------------------------------------------------
 
 plot <- plot_outliers(maestro_df, "DO")
-plot
+#plot
 
 # DO looks like there is some craziness at the beginning but might just be diurnal cycles
 # While the water column is stratified
@@ -297,10 +297,12 @@ do_sat <- o2.at.sat(ts.data = do_df, altitude = 183, salinity = 0) |>
 maestro_df_clean <- maestro_df_clean |> 
   mutate(do_sat_percent = do_sat$o2_sat_percent)
 
-# Plot o2 saturation
+# Add do_sat_percent to our 'data_vars list
+
+data_vars <- c(data_vars, "do_sat_percent")
 
 plot <- plot_outliers(maestro_df_clean, "do_sat_percent")
-plot
+#plot
 
 # Data look pretty good at this depth? Maybe later can get a better sense of trends
 
@@ -308,14 +310,14 @@ plot
 ### Clean P ------------------------------------------------------------------
 
 plot <- plot_outliers(maestro_df, "P")
-plot
+#plot
 
 # Pressure doesn't seem to have any crazy differences. I'm going to leave it as is
 
 ### Clean PCO2 ------------------------------------------------------------------
 
 plot <- plot_outliers(maestro_df, "PCO2")
-plot
+#plot
 
 # pco2 goes fricking crazzzzy at the end of the deployment, plot a single day to see wahat is up
 maestro_df |> 
@@ -336,7 +338,7 @@ maestro_df_clean <- maestro_df_clean |>
   mutate(PCO2 = ifelse(date(dttm_local) <= "2025-05-01" , PCO2, as.numeric("NA")))
 
 plot <- plot_outliers(maestro_df_clean, "PCO2")
-plot
+#plot
 
 # Looks okay but still there's a huge drop in late april
 plot <- maestro_df |> 
@@ -344,14 +346,14 @@ plot <- maestro_df |>
   mutate(morning = as.logical(ifelse(hour(dttm_local) >= 12 & hour(dttm_local) <= 23, "TRUE", "FALSE"))) |> 
   ggplot(aes(dttm_local, PCO2)) +
   geom_line()
-plotly_build(plot)
+#plotly_build(plot)
 
 # It seems like there's not a clear cut-off. I think I'll keep it as is
 
 ### Clean PHYC ------------------------------------------------------------------
 
 plot <- plot_outliers(maestro_df, "PHYC")
-plot
+#plot
 
 # Phycocyanin stays relatively normal and dull. I'm going to leave it as is. 
 
@@ -359,28 +361,28 @@ plot
 
 #Try outliers plot again
 plot <- plot_outliers(maestro_df_clean, "PHYC")
-plot
+#plot
 
 # Looks better moving on to the next
 
 ### Clean TURB ------------------------------------------------------------------
 
 plot <- plot_outliers(maestro_df, "TURB")
-plot
+#plot
 
 # Some pretty high turbidity levels in the middle but should keep those for now. Plus Turbidity
 # isn't very interesting
 
 #Try outliers plot again
 plot <- plot_outliers(maestro_df_clean, "TURB")
-plot
+#plot
 
 # Looks better moving on to the next
 
 ### Clean pH ------------------------------------------------------------------
 
 plot <- plot_outliers(maestro_df, "pH")
-plot
+#plot
 
 test <- maestro_df_clean |> 
   select(dttm_local, pH) |> 
@@ -393,7 +395,7 @@ test <- maestro_df_clean |>
 plot_outliers(test, "ph_mean")
 
 plot <- plot_outliers(maestro_df_clean, "pH")
-plot
+#plot
 
 # pH has some outliers but they all seem to follow the trend. There is one instance of an acidic 
 # pH which feels weird. The pH also goes pretty haywire at the end getting reall basic.
@@ -408,7 +410,7 @@ maestro_df_clean <- maestro_df_clean |>
 
 # Replot pH
 plot <- plot_outliers(maestro_df_clean, "pH")
-plot
+#plot
 # Looks better with that day removed, now check out the end of the data
 
 test <- maestro_df_clean |> 
@@ -429,12 +431,12 @@ maestro_df_clean <- maestro_df_clean |>
 plot_outliers(maestro_df_clean, "pH")
 
 # # Look at correlations
-test <- maestro_df_clean |> 
-  select(all_of(data_vars)) |> 
-  select(-c(CND, CDOM, TURB, T2, PHYC))
-colnames(test)
-GGally::ggpairs(test)
-test
+# test <- maestro_df_clean |> 
+#   select(all_of(data_vars)) |> 
+#   select(-c(CND, CDOM, TURB, T2, PHYC))
+# colnames(test)
+# GGally::ggpairs(test)
+# test
 
 
 plot_outliers(maestro_df_clean, "pH")
@@ -457,20 +459,20 @@ plotly_build(test)
 
 
 ## Recalculate multivariate outliers just for fun --------------------------------------
-outliers <- maestro_df_clean |> 
-  select(data_vars) |>  
-  drop_na() |> 
-  check_outliers(method = "mcd", verbose = T)
-outliers
+# #outliers <- maestro_df_clean |> 
+#   select(data_vars) |>  
+#   drop_na() |> 
+#   check_outliers(method = "mcd", verbose = T)
+# #outliers
 
-maestro_df_clean |> 
-  select(data_vars, dttm) |> 
-  drop_na() |> 
-  mutate(outlier = outliers) |> 
-  pivot_longer(-c(dttm, outlier), names_to = "variable", values_to = "vals") |> 
-  ggplot(aes(dttm, vals, color = outlier)) +
-  geom_point() +
-  facet_wrap(~variable, scales = "free")
+# #maestro_df_clean |> 
+#   select(data_vars, dttm) |> 
+#   drop_na() |> 
+#   mutate(outlier = outliers) |> 
+#   pivot_longer(-c(dttm, outlier), names_to = "variable", values_to = "vals") |> 
+#   ggplot(aes(dttm, vals, color = outlier)) +
+#   geom_point() +
+#   facet_wrap(~variable, scales = "free")
 
 
 # Plot each variable looking specifically at the sampling dates
@@ -502,11 +504,12 @@ plot_samples <- function(maestro_df, var, plotly = T) {
     }
   }
 
-for(i in 1:length(data_vars)) {
-  plot <- plot_samples(maestro_df_clean, data_vars[i], plotly = F)
-  print(plot)
-}
-maestro_df_clean_saved <- maestro_df_clean
+#for(i in 1:length(data_vars)) {
+ # plot <- plot_samples(maestro_df_clean, data_vars[i], plotly = F)
+#  print(plot)
+#}
+
+#maestro_df_clean_saved <- maestro_df_clean
  # Looking at all these plots it seems like turbidity is the only one with a crazy coefficient of variance.
  # I'm just going to take the mean value. 
 ## Average data ------------------------------------------------------------------------------
@@ -516,6 +519,7 @@ maestro_df_clean <- maestro_df_clean|>
          chla_24h_avg = mean(CHL, na.rm = TRUE),
          cond_24h_avg = mean(CND, na.rm = TRUE),
          do_24h_avg = mean(DO, na.rm = TRUE),
+         do_sat_24h_avg = mean(do_sat_percent, na.rm = TRUE),
          pres_db_24h_avg = mean(P, na.rm = TRUE),
          pco2_24h_avg = mean(PCO2, na.rm = TRUE),
          phyc_24h_avg = mean(PHYC, na.rm = TRUE),
@@ -534,6 +538,7 @@ maestro_df_clean <- maestro_df_clean|>
          chla_12h_med = median(CHL, na.rm = TRUE),
          cond_12h_med = median(CND, na.rm = TRUE),
          do_12h_med = median(DO, na.rm = TRUE),
+         do_sat_12h_med = median(do_sat_percent, na.rm = TRUE),
          pres_db_12h_med = median(P, na.rm = TRUE),
          pco2_12h_med = median(PCO2, na.rm = TRUE),
          phyc_12h_med = median(PHYC, na.rm = TRUE),
@@ -563,7 +568,6 @@ clean_long_m_df <- maestro_df_clean |>
 #   scale_color_viridis_c()+
 #   geom_point() +
 #   facet_wrap(~sample_date, scales = "free")
-
 
 
 #### Add maestro data to broader metadata file --------------------------------------------------
@@ -611,7 +615,7 @@ sw_meta_output <- maestro_df_clean |>
 # pres_plotly <- plotly::plotly_build(pres_plot)
 # pres_plotly
 
-
+stop()
 # Write Files to output ----------------------------------------------------------------
 sw_meta_output <- sw_meta_output |> 
   write_csv("output/data/metadata_supwinter.csv")

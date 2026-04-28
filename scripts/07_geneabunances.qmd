@@ -8,7 +8,7 @@ format: html
 # BiocManager::install("ANCOMBC")
 # BiocManager:: install("ALDEx2")
 ```
-```{r}
+```{r, echo = F}
 # Load Libraries
 library(microeco)
 library(file2meco)
@@ -17,9 +17,10 @@ library(tidyverse)
 library(phyloseq)
 library(ANCOMBC)
 library(ALDEx2)
+library(igraph)
 ```
 
-```{r}
+```{r, echo = F}
 # Load in data
 #FOAM data
 foam_1_df <- read_tsv("output/data/metabolism/foam_1.tsv")
@@ -31,6 +32,12 @@ kegg_1_df <- read_tsv("output/data/metabolism/kegg_1.tsv")
 kegg_2_df <- read_tsv("output/data/metabolism/kegg_2.tsv")
 kegg_3_df <- read_tsv("output/data/metabolism/kegg_3.tsv")
 kegg_id_df <- read_tsv("output/data/metabolism/kegg_genes.tsv")
+```
+
+``` {r, echo = F}
+# Load in the microtable objects
+load("output/data/mt_mag.RData")
+load("output/data/mt_16s.RData")
 ```
 
 ```{r}

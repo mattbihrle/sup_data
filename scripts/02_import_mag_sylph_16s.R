@@ -20,7 +20,9 @@ library(tidyverse) #tidyverse last
 
 
 # Import meta data ----------------------------------------------------------
-sw_meta <- read_csv("output/data/metadata_supwinter.csv")
+sw_meta <- read_csv("output/data/metadata_supwinter.csv") |> 
+  select(!matches(c("_med", "round_date")))|> 
+  distinct()
 # Load in and clean sylph data-----------------------------------------------------------------------------------
 
 b_df <- readr::read_tsv("data/superior_sylph/Sylph_TaxAbund_out.tsv")
@@ -206,7 +208,7 @@ mag_df_clean <- mag_df %>% tidyr::separate_wider_delim(
   cols = classification, delim = ";", names = clade_cols, too_few = "align_start")
 
 # Import coverage/abundance data
-de_coverage <- read_tsv("data/derep_bins/Drep_Bins_coverage.tsv")
+de_coverage <- read_tsv("msi_downloads/Drep_Bins_coverage_04_23.tsv")
   
 de_coverage$genome <- str_replace_all(de_coverage$Genome, pattern = "_MAGScoT_cleanbin_000", replacement = "_")
 

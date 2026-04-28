@@ -1,0 +1,12 @@
+﻿variable ,unit,instrument,description,nice_name,daily_avg,noon_mid_med
+DO,umol/L,maestro,dissolved oxygen,DO (umol/L),do_24h_avg,do_12h_med
+Temp,degrees C,maestro,temerature,Temperature (C),mtemp_c_24h_avg,mtemp_12h_med
+temp,degrees C,thermistors,temerature,Temperature (C),mtemp_2_c_24h_avg,mtemp_12h_med
+COND,mS/cm,maestro,conductivity,Conductivity (mS/cm),cond_24h_avg,cond_12h_med
+P,dbar,maestro,pressure,Pressure (db),pres_db_24h_avg,p_12h_med
+pCO2,umol/L,maestro,partial pressure CO2,pCO2 (umol/L),pco2_24h_avg,pco2_12h_med
+PH,PH,maestro,pH,pH,ph_24h_avg,ph_12h_med
+TURB,NTU,maestro,turbidity,Turbidity (NTU),turb_24h_avg,turb_12h_med
+CDOM,ppb,maestro,colored dissolved organic matter,CDOM (ppb),cdom_24h_avg,cdom_12h_med
+CHL,ug/L,maestro,Chlorophyll-a concentration,Chl-a (ug/L),chla_24h_avg,chl_12h_med
+PHYC,cells/ml,maestro,phycocyanin,Phycocyanin (cells/mL),phyc_24h_avg,phyc_12h_med

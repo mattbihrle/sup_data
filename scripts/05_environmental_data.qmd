@@ -172,6 +172,22 @@ temp_df_long <- temp_df_long |>
 #                        y = temp_df_long$depth, 
 #                        z = temp_df_long$temp)
 
+
+#set custom breaks by binning data into 10 bins with equal number
+# of observations
+breaks <- cut(temp_df_long$temp, 20) |> 
+  unique() |> 
+  str_remove("\\(") |> 
+  str_remove("\\]") |> 
+  str_squish() |> 
+  # Extract everything before the comma to set breaks
+  str_extract(".*(?=,)") |> 
+    as.numeric() |> 
+    na.omit() |> 
+    # reorder numerically
+  sort()
+
+  # Create temp plot
 temp_df_long |> 
     ungroup() |> 
     # select(dttm, depth, temp) |> 
@@ -182,7 +198,8 @@ temp_df_long |>
         drop_na() |> 
         distinct() |> 
     ggplot(aes(x = date, y = depth, z = temp)) +
-      geom_contour_filled(binwidth = 0.5) +
+      # geom_contour_filled(breaks = breaks) +
+      geom_contour_filled(binwidth = 0.8) +
         # scale_fill_brewer(palette = "RdBu", direction = -1) +
         scale_fill_viridis_d(option = "turbo") +
   labs(x = "Date", y = "Depth (m)", fill = "Temperature (°C)") +
@@ -196,11 +213,12 @@ temp_df_long |>
     guides(fill = guide_legend(ncol = 1, reverse = T)) +
     geom_point(data = samp_dates, aes(x = sample_date, y = 38, z = NULL), color = 'white') +
     geom_point(data = samp_dates, aes(x = sample_date, y = 22, z = NULL), color = 'white') +
-    geom_vline(xintercept = sw_meta$date[which(sw_meta$strat_season == "summer")], color = "red") +
+    # geom_vline(xintercept = sw_meta$date[which(sw_meta$strat_season == "summer")], color = "red") +
     # geom_vline(xintercept = sw_meta$date[which(sw_meta$strat_season == "fall")]) +
-    geom_vline(xintercept = sw_meta$date[which(sw_meta$strat_season == "winter")], , color = "red") +
+    # geom_vline(xintercept = sw_meta$date[which(sw_meta$strat_season == "winter")], , color = "red") +
     # geom_vline(xintercept = sw_meta$date[which(sw_meta$strat_season == "spring")]) +
     NULL
+
  sw_meta$date[which(sw_meta$strat_season == "summer")]
 
  quantile(mt_mag$sample_table$temp_c_24h_med)
@@ -214,6 +232,9 @@ temp_df_long |>
 load("output/data/maestro_df_clean.RData")
 load("output/data/clean_long_m_df.RData")
 
+labels <- read_csv("data/units_cheatsheet.csv")
+
+lookup <- setNames(labels$nice_name, labels$daily_avg)
 
 
 clean_long_m_df |> 
@@ -229,7 +250,7 @@ clean_long_m_df |>
     pivot_longer(cols = ! "round_date", names_to = "var", values_to = "vals") |> 
     distinct() |> 
       ggplot(aes(round_date, vals, color = var)) +
-    geom_smooth() +
+    geom_point() +
     facet_wrap(~var, scales = "free") +
     theme_minimal() +
     labs(color = "Variable", x = "Date", y = NULL) +
@@ -237,19 +258,21 @@ clean_long_m_df |>
 noon_midnight_plot
 
 daily_plot <- maestro_df_clean |> 
-    select(date, matches("24h_avg")) |> 
+    select(date, matches("24h_avg"), -matches("mtemp_2_")) |> 
     pivot_longer(cols = !date, names_to = "var", values_to = "vals") |> 
-    distinct() |> 
+    distinct() |>
       ggplot(aes(date, vals, color = var)) +
-    geom_smooth() +
-    facet_wrap(~var, scales = "free") +
+    geom_line() +
+    facet_wrap(~var, scales = "free", labeller = as_labeller(lookup) ) +
     theme_minimal() +
-    labs(color = "Variable", x = "Date", y = NULL)
+    labs(color = "Variable", x = "Date", y = NULL) + 
+    theme_classic() +
+    theme(legend.position = "none")
 
 daily_plot
   plot <- maestro_df_clean |> 
     ggplot(aes(x = T, y = DO, color = date)) +
-    geom_point() +
+    geom_line() +
     scale_color_viridis_c(trans = "date", direction = 1) +
     theme_classic() +
     labs(x = "Temp (C)", y = "DO (umol/kg)")

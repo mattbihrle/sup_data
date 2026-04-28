@@ -22,18 +22,18 @@ are all similar however some of the minor taxa are different.
 **Question:** How sensitive are each method of taxonomy, which do we
 trust? **Next Steps:**
 
-- Split phyla into autotrophs and heterotrophs and mixotrophs
+-   Split phyla into autotrophs and heterotrophs and mixotrophs
 
-- Incorporate env metadata (O2 measurements as measure of respiration
-  and carbon consumed?)
+-   Incorporate env metadata (O2 measurements as measure of respiration
+    and carbon consumed?)
 
-- Research into how I should go about sorting through this data
+-   Research into how I should go about sorting through this data
 
-- Research into how the 16S data vs the metagenomic data works
+-   Research into how the 16S data vs the metagenomic data works
 
-- Keep working on getting binning data
+-   Keep working on getting binning data
 
-- *Figure out if I need to normalize the data and how?*
+-   *Figure out if I need to normalize the data and how?*
 
 ```{r}
 source("scripts/01_intro_script.R")
@@ -45,9 +45,9 @@ Started looking at top 20 families. Code is in the bottom of
 "sylph_mircoeco". Also created spreadsheet with names of families and
 comments about what I could find out about their metabolism or ecology.
 
-- Continue this work -
+-   Continue this work -
 
-- Email Jay to get temp data
+-   Email Jay to get temp data
 
 # Feb 10, 2026
 
@@ -80,16 +80,17 @@ https://library.virginia.edu/data/articles/starting-non-metric-multidimensional-
 
 # Feb 16, 2026
 
-- Imported matlab data to R. Used claude to get intial scripts to import
-  the .mat file into python and then write to csvs. At the bottom of
-  "Intro Scripts" there is a chunk to write all of those to a dataframe
-  in R. Matlab date is since jan 1, 1900 rather than jan 1, 1970.
-- Decided to rewrite the matlab import in R, kept at the bottom of
-  01_intro_scripts. Updated `sw_meta$strat_season` based on first 40m of
-  temperature. Summer = stratification, fall = post summer isothermal
-  period, winter = reverse stratification, spring = post winter
-  isothermal Found some cool plots that look different based on the
-  temperature but both seem to show seasonal differences.
+-   Imported matlab data to R. Used claude to get intial scripts to
+    import the .mat file into python and then write to csvs. At the
+    bottom of "Intro Scripts" there is a chunk to write all of those to
+    a dataframe in R. Matlab date is since jan 1, 1900 rather than jan
+    1, 1970.
+-   Decided to rewrite the matlab import in R, kept at the bottom of
+    01_intro_scripts. Updated `sw_meta$strat_season` based on first 40m
+    of temperature. Summer = stratification, fall = post summer
+    isothermal period, winter = reverse stratification, spring = post
+    winter isothermal Found some cool plots that look different based on
+    the temperature but both seem to show seasonal differences.
 
 ```{r}
 source("scripts/01_intro_script.R") # if needed
@@ -132,15 +133,15 @@ the most abundant families.**
 **TODO** - How to deal with the difference between the mag data and the
 16s data?
 
-- Show NDMS graphs
+-   Show NDMS graphs
 
-- Show temperature determination
+-   Show temperature determination
 
-- Binning script?
+-   Binning script?
 
-- missing merged.fasta file
+-   missing merged.fasta file
 
-- Committee - Jay - Ted - Bill - Formal Thesis Proposal? - Job Stuff.
+-   Committee - Jay - Ted - Bill - Formal Thesis Proposal? - Job Stuff.
 
 **First work on binning stuff, then lefse, then think about committee
 things.**
@@ -418,12 +419,12 @@ part, and changed the delimiter in the final contigs file to look for
 '\_' instead of ':'. Once each one worked, I started the whole binning
 script and we will see how long it takes.
 
-- Did some research into lefSE and using that in microeco. The resulting
-  code is at the bottom of 16s analysis. The next thing to do is to look
-  at what taxa are coming out there.
-- See if I can get some other data from Jay. - CHECK
-- Start laying out some figures (read a couple of papers)
-- Email Stormi about outside thesis committee folks - CHECK
+-   Did some research into lefSE and using that in microeco. The
+    resulting code is at the bottom of 16s analysis. The next thing to
+    do is to look at what taxa are coming out there.
+-   See if I can get some other data from Jay. - CHECK
+-   Start laying out some figures (read a couple of papers)
+-   Email Stormi about outside thesis committee folks - CHECK
 
 # March 6, 2026
 
@@ -522,26 +523,27 @@ out all the statistics I should be doing
 
 # March 27, 2026
 
-- Working through a book to figure out the stats
-  https://uw.pressbooks.pub/appliedmultivariatestatistics/chapter/relativizations/
-  - Currently trying to figure out which normalization to do on the
-    abundance data. "Gower and X\^2 distances perform better than other
-    measures in revealing the relationships among the samples along an
-    environmental gradient even under low sequencing depth and the
-    presence of noise in simulating abundance vectors The Jaccard
-    dissimilarity measure was shown to perform well in revealing the
-    cluster relationships when such relationships were prominent, but
-    not very well for subtle clusters. The χ 2 distance was shown to
-    perform well in revealing environmental gradients, but only
-    moderately well in revealing underlying clusters." -
-    - Statistical Analysis of micrbiome data (pg 84)
+-   Working through a book to figure out the stats
+    https://uw.pressbooks.pub/appliedmultivariatestatistics/chapter/relativizations/
+    -   Currently trying to figure out which normalization to do on the
+        abundance data. "Gower and X\^2 distances perform better than
+        other measures in revealing the relationships among the samples
+        along an environmental gradient even under low sequencing depth
+        and the presence of noise in simulating abundance vectors The
+        Jaccard dissimilarity measure was shown to perform well in
+        revealing the cluster relationships when such relationships were
+        prominent, but not very well for subtle clusters. The χ 2
+        distance was shown to perform well in revealing environmental
+        gradients, but only moderately well in revealing underlying
+        clusters." -
+        -   Statistical Analysis of micrbiome data (pg 84)
 
 It's hard for me to tell from this which to use. This doesn't seem to be
 quite the right answer.
 
-- As reccomended by the 'performance' package documentation, I called
-  outliers based on MAD (median absolute deviation) instead of the mean
-  in the environmental data.
+-   As reccomended by the 'performance' package documentation, I called
+    outliers based on MAD (median absolute deviation) instead of the
+    mean in the environmental data.
 
 # March 30, 2026
 
@@ -654,8 +656,8 @@ person about carbon in the lake (who may be on the guardian?).
 Finished with most of the environmental data. Added a tree and unifrac
 distances into the MAGs data.
 
-- Created a nice plot of the 16s data to show how the communities
-  change. Used the robust aitchison with an NMDS
+-   Created a nice plot of the 16s data to show how the communities
+    change. Used the robust aitchison with an NMDS
 
 **TO DO:** - Output a nice looking table of significance for
 stratification season - Check and see if other things like not
@@ -666,9 +668,9 @@ little overlapping of layers to show how the nmds is built?
 
 # April 8, 2026 Questions for Cody:
 
-- how do I deal with tree data?
-- metabolic stuff?
-- any other way to define the groupings?
+-   how do I deal with tree data?
+-   metabolic stuff?
+-   any other way to define the groupings?
 
 **ToDo:** - Make a nice PCoA figure with 16s data and environmental
 data - Look at the UBA taxa in the winter - Look at figures from other
@@ -699,66 +701,108 @@ The KEGG number is the identifier for the protein.
 # April 17, 2026
 
 Created master tables of each core metagenome and genes so I can see
-what is conserved throughout the year. Saved under output/data. Started putting data into microeco to see if I can run LefSE on it, that didn't work, it's not in the right format. Next steps to see if I can get thinks in the right format to run lefse on my own. 
+what is conserved throughout the year. Saved under output/data. Started
+putting data into microeco to see if I can run LefSE on it, that didn't
+work, it's not in the right format. Next steps to see if I can get
+thinks in the right format to run lefse on my own.
 
-Maybe look at all the MAGs too to see what is going on with them not just the core group
+Maybe look at all the MAGs too to see what is going on with them not
+just the core group
 
 # April 19, 2026
 
-Finished the Nature Comms paper on DA. Seems like ANCOM-II and ALDEx2 as the best options (though most conservative). 
+Finished the Nature Comms paper on DA. Seems like ANCOM-II and ALDEx2 as
+the best options (though most conservative).
 
 # April 20, 2026
 
-Okay so I have abundances of genes in a bin AND abundances of bins in a sample. Can I assume that the genes in the bin correspond to that sample?
+Okay so I have abundances of genes in a bin AND abundances of bins in a
+sample. Can I assume that the genes in the bin correspond to that
+sample?
 
-I found an issue showing that the genomes that coverM calculated abundances for across the samples AND the genomes that I have metabolic data for, are different. They are each about 200 genomes but only share 65 in common. Maybe I can see if I can pull the metabolic info from the genomes from the de_coverage info to see if I can figure out how the genomes change throughout the year. 
+I found an issue showing that the genomes that coverM calculated
+abundances for across the samples AND the genomes that I have metabolic
+data for, are different. They are each about 200 genomes but only share
+65 in common. Maybe I can see if I can pull the metabolic info from the
+genomes from the de_coverage info to see if I can figure out how the
+genomes change throughout the year.
 
-I could also look at the taxonomy of both and see how they are different. This is something to ask cody.
+I could also look at the taxonomy of both and see how they are
+different. This is something to ask cody.
 
-Right now I have some code that just takes the genes taken from the genomes selected by coverM because there is an abundance associated with them. 
+Right now I have some code that just takes the genes taken from the
+genomes selected by coverM because there is an abundance associated with
+them.
 
 # April 21, 2026
 
-ANCOM-BC results: LFC is the log fold change - the change in abundance over season logged. I can add fixed and random effects. Probably should figure that out here soon. 
+ANCOM-BC results: LFC is the log fold change - the change in abundance
+over season logged. I can add fixed and random effects. Probably should
+figure that out here soon.
 
-Major groups to look at: 
+Major groups to look at: Taxa -
+d\_\_Bacteria\|p\_\_Bacteroidota\|c\_\_Bacteroidia\|o\_\_Chitinophagales\|f\_\_Chitinophagaceae\|g\_\_Sediminibacterium\|s\_\_Sediminibacterium
+sp017996795\|WM15_S10_008 -
+d\_\_Bacteria\|p\_\_Patescibacteria\|c\_\_Paceibacteria\|o\_\_UBA9973\|f\_\_UBA2100\|g\_\_UBA10103\|s\_\_\|WM12_S7_040 -
 Taxa
-  - d__Bacteria|p__Bacteroidota|c__Bacteroidia|o__Chitinophagales|f__Chitinophagaceae|g__Sediminibacterium|s__Sediminibacterium sp017996795|WM15_S10_008
-  - d__Bacteria|p__Patescibacteria|c__Paceibacteria|o__UBA9973|f__UBA2100|g__UBA10103|s__|WM12_S7_040
-  - Taxa
-d__Bacteria|p__Verrucomicrobiota|c__Verrucomicrobiae|o__Chthoniobacterales|f__JACTMZ01|g__JACTMZ01|s__|WM03_S3_027
-  - d__Bacteria|p__Actinomycetota|c__Actinomycetes|o__Nanopelagicales|f__Nanopelagicaceae|g__Planktophila|s__|WM02_S2_051
+d\_\_Bacteria\|p\_\_Verrucomicrobiota\|c\_\_Verrucomicrobiae\|o\_\_Chthoniobacterales\|f\_\_JACTMZ01\|g**JACTMZ01\|s**\|WM03_S3_027 -
+d\_\_Bacteria\|p\_\_Actinomycetota\|c\_\_Actinomycetes\|o\_\_Nanopelagicales\|f\_\_Nanopelagicaceae\|g\_\_Planktophila\|s\_\_\|WM02_S2_051
 
-  d__Bacteria|p__Pseudomonadota|c__Gammaproteobacteria|o__Burkholderiales|f__Burkholderiaceae|g__Polaromonas|s__|WM22_S17_026
+d\_\_Bacteria\|p\_\_Pseudomonadota\|c\_\_Gammaproteobacteria\|o\_\_Burkholderiales\|f\_\_Burkholderiaceae\|g**Polaromonas\|s**\|WM22_S17_026
 
-  d__Bacteria|p__Actinomycetota|c__Actinomycetes|o__Mycobacteriales|f__Mycobacteriaceae|g__Mycobacterium|s__|WM02_S2_015
+d\_\_Bacteria\|p\_\_Actinomycetota\|c\_\_Actinomycetes\|o\_\_Mycobacteriales\|f\_\_Mycobacteriaceae\|g**Mycobacterium\|s**\|WM02_S2_015
 
-  d__Bacteria|p__Bacteroidota|c__Bacteroidia|o__Chitinophagales|f__Chitinophagaceae|g__Sediminibacterium|s__|WM19_S14_012
+d\_\_Bacteria\|p\_\_Bacteroidota\|c\_\_Bacteroidia\|o\_\_Chitinophagales\|f\_\_Chitinophagaceae\|g**Sediminibacterium\|s**\|WM19_S14_012
 
-  d__Bacteria|p__Actinomycetota|c__Actinomycetes|o__Mycobacteriales|f__Mycobacteriaceae|g__Mycobacterium|s__|WM03_S3_040
+d\_\_Bacteria\|p\_\_Actinomycetota\|c\_\_Actinomycetes\|o\_\_Mycobacteriales\|f\_\_Mycobacteriaceae\|g**Mycobacterium\|s**\|WM03_S3_040
 
-  d__Bacteria|p__Planctomycetota|c__Planctomycetia|o__Planctomycetales|f__Planctomycetaceae|g__SXXK01|s__SXXK01 sp003670925|WM04_S4_034
+d\_\_Bacteria\|p\_\_Planctomycetota\|c\_\_Planctomycetia\|o\_\_Planctomycetales\|f\_\_Planctomycetaceae\|g\_\_SXXK01\|s\_\_SXXK01
+sp003670925\|WM04_S4_034
 
-  d__Bacteria|p__Pseudomonadota|c__Gammaproteobacteria|o__Xanthomonadales|f__Xanthomonadaceae|g__Arenimonas|s__|WM17_S12_035
+d\_\_Bacteria\|p\_\_Pseudomonadota\|c\_\_Gammaproteobacteria\|o\_\_Xanthomonadales\|f\_\_Xanthomonadaceae\|g**Arenimonas\|s**\|WM17_S12_035
 
-  
+\# April 22, 2026
 
-  # April 22, 2026
+Micropresentation feedback: - Look at "cliques" with igraph R package to
+look for similarly abundant taxa - There may be another R package out of
+Berkeley (IMG) for looking at guilds. - Paciefiobacteria have small
+genomes - Carbon - Urban measurments are close to shore - Look at the
+Sterner paper on carbon, ,and Liz's carbon measurements.\
+- \[x\] Daily or 12 hour median temperatures/others for the
+environmental variables (this would be an easy change to make) (done
+April 23) - pH 'trend' is probably accurate but the values are not -
+Split the coloring up by stratification, or have each month as a
+color? - Add information on completeness of genomes and contamination -
+Possibly look at cyanos and what they are doing - Ask Emma about how to
+keep the colors the same across taxa - Mycobacteria, host associated -
+Also think about why CoverM removed the abundances for a bunch of genes?
 
-  Micropresentation feedback:
-    - Look at "cliques" with igraph R package to look for similarly abundant taxa
-    - There may be another R package out of Berkeley (IMG) for looking at guilds. 
-    -  Paciefiobacteria have small genomes
-    -  Carbon
-      -  Urban measurments are close to shore
-      -  Look at the Sterner paper on carbon, ,and Liz's carbon measurements.  
-      -  Daily or 12 hour median temperatures/others for the environmental variables (this would be an easy change to make)
-      -  pH 'trend' is probably accurate but the values are not
-      -  Split the coloring up by stratification, or have each month as a color?
-      -  Add information on completeness of genomes and contamination
-      -  Possibly look at cyanos and what they are doing
-      -  Ask Emma about how to keep the colors the same across taxa
-      -  Mycobacteria, host associated
-      -  Also think about why CoverM removed the abundances for a bunch of genes?
+Started working on fixing the data plots to have an average. So far it
+looks better code is under 05 - maestro plots
 
-Started working on fixing the data plots to have an average. So far it looks better code is under 05 - maestro plots
+# April 23, 2026
+
+Updated the sonde plot to be 24 hr averages. Look at cliques stuff next.
+Created a new little script to designate bins as high med low quality
+based on MIMAG criteria (thanks Maya!)
+
+Rerunning coverM with a couple of different options: - using the
+--coupled tag for the reads and dereplicating - using the --coupled tag
+for the reads and not dereplicating to see what the abundances look like
+afterwards. This can run for a while because I still have all the gene
+information I need from metacerberus.
+
+# April 24, 2026
+
+So for some reason the mapping without dereplication didn't run but
+running the coupled abundance did run and instead put the relative
+abundances together it seems. I should try to compare the two to see if
+they are significantly different.
+
+-   Comparing the two abundances it seems like they are different. I'm
+    not sure if it is significant at all but might be nice to check with
+    Cody and see. It at least seems to be more accurate than just taking
+    the forward reads to check the abundance. I'm going to go with the
+    "coupled" group from here on out.
+
+**FIX DOsat percent in metadata**
