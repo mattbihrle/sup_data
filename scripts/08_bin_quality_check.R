@@ -71,12 +71,13 @@ df_final <- bind_cols(
 
 df_final <- df_final |> 
   select(matches("_mean")) |> 
-  # select(!WM06_mean:WM10_mean) |> 
+  select(!WM06_mean:WM10_mean) |> 
   rename_with( ~str_extract(.x, pattern = "WM.{2}"))
 
-bins_abundance_2 <- bins_abundance_2 |> 
+coupled_bins_abundance <- bins_abundance_2 |> 
   select(matches("Relative")) |> 
   rename_with( ~str_extract(.x, pattern = "WM.{2}"))
 
+fwd_rvs_bins_abundance <- df_final
 
 waldo::compare(bins_abundance_2, df_final)

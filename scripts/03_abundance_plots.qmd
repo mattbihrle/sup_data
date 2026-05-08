@@ -491,7 +491,7 @@ print(tb2$res_manova)
 plot <- tb2$plot_ordination(plot_color = "strat_season", plot_type = c("point", "ellipse"), NMDS_stress_pos = NULL, ellipse_level = 0.95) +
   geom_arrow_chain(colour = "black") + 
     ggtitle("NMDS Ordination of WM Data", subtitle = paste("Stress = ", round(tb2$res_ordination$model$stress, 2))) + 
-    geom_label_repel(label = mt_mag$sample_table$sample, color = "black") +
+    geom_label_repel(label = mt_16s$sample_table$sample, color = "black") +
     labs(color = "Season") +
     guides(fill = "none") +
     theme_classic() +
@@ -501,6 +501,33 @@ plot <- tb2$plot_ordination(plot_color = "strat_season", plot_type = c("point", 
     )
   plot
 
+
+
+plot <- tb2$plot_ordination(plot_color = "strat_season", plot_type = c("point", "ellipse"), NMDS_stress_pos = NULL, ellipse_level = 0.95) +
+  # geom_arrow_chain(colour = "black") + 
+    ggtitle("NMDS Ordination of WM Data", subtitle = paste("Stress = ", round(tb2$res_ordination$model$stress, 2))) + 
+    # geom_label_repel(label = mt_mag$sample_table$sample, color = "black") +
+    labs(color = "Season") +
+    guides(fill = "none") +
+    theme_classic() +
+    theme(
+      text = element_text(size = 15),
+      panel.border = element_rect(colour = "black", fill = NA, linewidth = 3)
+    )
+  plot
+
+  plot <- tb2$plot_ordination(plot_type = "point", NMDS_stress_pos = NULL, ellipse_level = 0.95) +
+  # geom_arrow_chain(colour = "black") + 
+    ggtitle("NMDS Ordination of WM Data", subtitle = paste("Stress = ", round(tb2$res_ordination$model$stress, 2))) + 
+    # geom_label_repel(label = mt_mag$sample_table$sample, color = "black") +
+    labs(color = "Season") +
+    guides(fill = "none") +
+    theme_classic() +
+    theme(
+      text = element_text(size = 15),
+      panel.border = element_rect(colour = "black", fill = NA, linewidth = 3)
+    )
+  plot
 stressplot(tb2$res_ordination$model)
 screeplot(tb2$res_ordination$model)
 

@@ -7,7 +7,6 @@ format: html
 ```{r}
 library(microeco)
 library(tidyverse)
-library(leaflet) # for custom color mapping
 ```
 
 # Run previous scripts to load in microtable objects
@@ -131,7 +130,7 @@ temp_df_long <- temp_df_long |>
   mutate(test = as.numeric(sample_date - date)) |> 
   # NEW STEP: Force a strict 14-day window!
   # Keep only the rows where the temp date is within 14 days of the sample date
-  filter(test <= 14) |>
+  # filter(test <= 14) |>
   # Calculate the bin average
   group_by(sample_date, depth) |> 
   mutate(temp_c_14d_avg = mean(temp, na.rm = TRUE)) |> 
@@ -175,7 +174,7 @@ temp_df_long <- temp_df_long |>
 
 #set custom breaks by binning data into 10 bins with equal number
 # of observations
-breaks <- cut(temp_df_long$temp, 20) |> 
+temp_breaks <- cut(temp_df_long$temp, 20) |> 
   unique() |> 
   str_remove("\\(") |> 
   str_remove("\\]") |> 
@@ -187,36 +186,42 @@ breaks <- cut(temp_df_long$temp, 20) |>
     # reorder numerically
   sort()
 
+temp_labels_1 <- seq(0, 17, by = 1)
+temp_labels_2 <- seq(1, 18, by = 1)
+
+temp_labels <- paste0(temp_labels_1, "-", temp_labels_2)
   # Create temp plot
 temp_df_long |> 
     ungroup() |> 
     # select(dttm, depth, temp) |> 
-    drop_na() |> 
+    drop_na(temp) |> 
     mutate(depth = as.numeric(depth)) |> 
     # filter(depth < 50) |> 
         select(date, depth, temp, sample_date) |> 
-        drop_na() |> 
+        # drop_na(temp) |> 
         distinct() |> 
     ggplot(aes(x = date, y = depth, z = temp)) +
       # geom_contour_filled(breaks = breaks) +
-      geom_contour_filled(binwidth = 0.8) +
+      geom_contour_filled(binwidth = 1) +
         # scale_fill_brewer(palette = "RdBu", direction = -1) +
-        scale_fill_viridis_d(option = "turbo") +
+        scale_fill_viridis_d(option = "turbo", labels = temp_labels) +
   labs(x = "Date", y = "Depth (m)", fill = "Temperature (°C)") +
     theme_classic() +
     theme(
       text = element_text(size = 15),
       panel.border = element_rect(colour = "black", fill = "red", linewidth = 3)
     ) +
-  scale_y_reverse(expand = c(0,0)) +
-  scale_x_date(expand = c(0,0)) +
+  scale_y_reverse(expand = c(0,0), n.breaks = 10) +
+  scale_x_date(expand = c(0,0), date_breaks = "1 month", date_label = "%b", limits = c(as_date("2024-07-20"), NA), ) +
     guides(fill = guide_legend(ncol = 1, reverse = T)) +
     geom_point(data = samp_dates, aes(x = sample_date, y = 38, z = NULL), color = 'white') +
-    geom_point(data = samp_dates, aes(x = sample_date, y = 22, z = NULL), color = 'white') +
+    # geom_point(data = samp_dates, aes(x = sample_date, y = 22, z = NULL), color = 'white') +
+    geom_hline(yintercept = 22, color = 'white', linetype = "dashed" ) +
     # geom_vline(xintercept = sw_meta$date[which(sw_meta$strat_season == "summer")], color = "red") +
     # geom_vline(xintercept = sw_meta$date[which(sw_meta$strat_season == "fall")]) +
     # geom_vline(xintercept = sw_meta$date[which(sw_meta$strat_season == "winter")], , color = "red") +
     # geom_vline(xintercept = sw_meta$date[which(sw_meta$strat_season == "spring")]) +
+    theme(text = element_text(size = 25), aspect.ratio = 0.7) +
     NULL
 
  sw_meta$date[which(sw_meta$strat_season == "summer")]

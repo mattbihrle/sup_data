@@ -52,17 +52,18 @@ fig_pair <- t2$res_diff |>
     filter(P.adj < 0.1) |> 
     mutate(Taxa = str_remove(Taxa, "\\|WM.*")) |> 
     mutate(Taxa = str_remove(Taxa, "d__Bacteria\\|")) |> 
+    mutate(Taxa = str_remove(Taxa, "\\|s__.*")) |> 
     distinct(Taxa, .keep_all = T) |> 
     ggplot(aes(x = Factors, y = Taxa, fill = lfc)) + 
     geom_tile(color = "black") +
     scale_fill_gradient2(low = "blue", high = "red", mid = "white", 
                          na.value = "white",
                          name = NULL) +
-    geom_text(aes(Factors, Taxa, label = lfc), size = 4) +
+    geom_text(aes(Factors, Taxa, label = lfc), size = 5, color = "black") +
     scale_color_identity(guide = FALSE) +
     labs(x = NULL, y = NULL, title = "Log fold changes compared to summer, (p < 0.1)") +
     theme_minimal() +
-    theme(plot.title = element_text(hjust = 0.5))
+    theme(plot.title = element_text(hjust = 0.5), text = element_text(color = "black", size = 15))
 fig_pair
 
 
@@ -71,7 +72,6 @@ t1$plot_diff_abund()
 t1$plot_diff_bar(use_number = 1:30, width = 0.8, add_sig = T)
 
 
-unique |> 
 ```
 
 ## Interpretation

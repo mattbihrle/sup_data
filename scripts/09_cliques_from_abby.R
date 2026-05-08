@@ -30,7 +30,7 @@ library(VSURF) # Random Forests approach to variable importance identification
 
 
 #they start with loading in datasets and tree. I'm going to load in my microtable and separate it out into the tax and counts and see what happens.
-mt_16s <- readRDS("/Users/abbysmason/SeaGrant2024/SeaGrant2024/outputs/estuary_microtableall.rds")
+# mt_16s <- readRDS("/Users/abbysmason/SeaGrant2024/SeaGrant2024/outputs/estuary_microtableall.rds")
 
 load("output/data/mt_16s.RData")
 #I'm just going to use my normal microtable that has everything and then use the contaminants list they have instead of just using cyanos
@@ -51,7 +51,7 @@ load("output/data/mt_16s.RData")
 
 #filter by prevalence
 mt_16s$filter_taxa(
-  rel_abund = 0.0002,  # At least 0.2% in any sample
+  rel_abund = 0.0002,  # At least 0.02% in any sample
 )
 
 #separate out taxa and counts here
@@ -106,13 +106,13 @@ V(t_network$res_network)$color <- modules
 layout <- layout_with_fr(t_network$res_network)
 
 module_colors <- c("M1" = "red",
-                   "M2" = "blue",
+                   "M2" = "orange",
                    "M3" = "green",
                    "M4" = "purple",
-                   "M5" = "orange",
+                   "M5" = "blue",
                    "M6" = "yellow")
 
-#map modules vector to colors
+# map modules vector to colors
 vertex_colors <- module_colors[modules]
 
 # Maybe add sample names here?
@@ -184,6 +184,46 @@ ggplot(module_long, aes(x = date, y = relabund, color = Module, group = Module, 
 # Add annotation for seasons in ppt
 
 
+
+## Test plotting cliques over the temperature
+
+temp_df_long |> 
+    ungroup() |> 
+    # select(dttm, depth, temp) |> 
+    drop_na(temp) |> 
+    mutate(depth = as.numeric(depth)) |> 
+    # filter(depth < 50) |> 
+        select(date, depth, temp, sample_date) |> 
+        # drop_na(temp) |> 
+        distinct() |> 
+    ggplot(aes(x = date, y = depth, z = temp)) +
+      # geom_contour_filled(breaks = breaks) +
+      geom_contour_filled(binwidth = 1) +
+        # scale_fill_brewer(palette = "RdBu", direction = -1) +
+        scale_fill_viridis_d(option = "turbo", labels = temp_labels) +
+  labs(x = "Date", y = "Depth (m)", fill = "Temperature (°C)") +
+    theme_classic() +
+    theme(
+      text = element_text(size = 15),
+      panel.border = element_rect(colour = "black", fill = "red", linewidth = 3)
+    ) +
+  scale_y_reverse(expand = c(0,0), n.breaks = 10) +
+  scale_x_date(expand = c(0,0), date_breaks = "1 month", date_label = "%b", limits = c(as_date("2024-07-20"), NA), ) +
+    guides(fill = guide_legend(ncol = 1, reverse = T)) +
+  # Clique Data
+  geom_point(data = filter(module_long, Module != c("M5", "M6")), mapping = aes(x = date, y = 160 - relabund*1.5, z = NULL, color = Module, group = Module, label = rownames(filter(module_long, Module != c("M5", "M6"))), size = 2)) +
+  geom_line(data = filter(module_long, Module != c("M5", "M6")), mapping = aes(x = date, y = 160 - relabund*1.5, z = NULL, color = Module, group = Module, label = rownames(filter(module_long, Module != c("M5", "M6"))), size = 1)) +
+  scale_color_viridis_d(option = "turbo") +
+    geom_point(data = samp_dates, aes(x = sample_date, y = 38, z = NULL), color = 'white') +
+    # geom_point(data = samp_dates, aes(x = sample_date, y = 22, z = NULL), color = 'white') +
+    # geom_hline(yintercept = 22, color = 'white', linetype = "dashed" ) +
+    # geom_vline(xintercept = sw_meta$date[which(sw_meta$strat_season == "summer")], color = "red") +
+    # geom_vline(xintercept = sw_meta$date[which(sw_meta$strat_season == "fall")]) +
+    # geom_vline(xintercept = sw_meta$date[which(sw_meta$strat_season == "winter")], , color = "red") +
+    # geom_vline(xintercept = sw_meta$date[which(sw_meta$strat_season == "spring")]) +
+    theme(text = element_text(size = 25), aspect.ratio = 0.7) +
+  guides(size = "none") +
+    NULL
 #maybe just one region over time with bars
 
 # ggplot(module_long, aes(x = as.factor(Time), y = relabund, fill = Sampling.Region)) +
@@ -193,38 +233,38 @@ ggplot(module_long, aes(x = date, y = relabund, color = Module, group = Module, 
 
 #the problem with this is that it shows all data points from each site which are all very different. I'm going to do boxplots with averages and see if that looks better
 
-module_means <- module_long %>%
-  group_by(Sampling.Region, Time, Site, Module) %>%
-  dplyr::summarise(Mean_Abund = mean(relabund, na.rm = TRUE))
+# module_means <- module_long %>%
+#   group_by(Sampling.Region, Time, Site, Module) %>%
+#   dplyr::summarise(Mean_Abund = mean(relabund, na.rm = TRUE))
 
 #so that each line only goes through averages, not every point
-line_means <- module_long %>%
-  group_by(Sampling.Region, Time, Module) %>%
-  dplyr::summarise(
-    Mean_Abund = median(relabund, na.rm = TRUE),
-    .groups = 'drop'
-  )
+# line_means <- module_long %>%
+#   group_by(Sampling.Region, Time, Module) %>%
+#   dplyr::summarise(
+#     Mean_Abund = median(relabund, na.rm = TRUE),
+#     .groups = 'drop'
+#   )
 
-module_long_estuary <- module_long %>%
-  filter(!Sampling.Region %in% c("Apostle Islands", "Jay Cooke State Park", "Pokegama River"))
+# module_long_estuary <- module_long %>%
+#   filter(!Sampling.Region %in% c("Apostle Islands", "Jay Cooke State Park", "Pokegama River"))
  
-line_means_estuary <- line_means %>%
-  filter(!Sampling.Region %in% c("Apostle Islands", "Jay Cooke State Park", "Pokegama River"))
+# line_means_estuary <- line_means %>%
+#   filter(!Sampling.Region %in% c("Apostle Islands", "Jay Cooke State Park", "Pokegama River"))
 
-module_means_estuary <- module_means %>%
-  filter(!Sampling.Region %in% c("Apostle Islands", "Jay Cooke State Park", "Pokegama River"))
+# module_means_estuary <- module_means %>%
+#   filter(!Sampling.Region %in% c("Apostle Islands", "Jay Cooke State Park", "Pokegama River"))
  
-ggplot(module_long_estuary, aes(x = factor(Time), y = relabund, fill = Module)) +
-  #geom_boxplot(alpha = 1, outlier.size = 0.5) +
-  # Line connecting the means
-  geom_line(data = line_means_estuary,
-            aes(x = factor(Time), y = Mean_Abund, group = Module, color = Module),
-            size = 1.2, inherit.aes = FALSE) +
-  # Points at the means
-  #geom_point(data = module_means_estuary,
-             #aes(x = factor(Time), y = Mean_Abund, color = Module),
-             #size = 0.5, inherit.aes = FALSE) +
-  facet_wrap(~Sampling.Region) +
-  labs(y = "Relative Abundance (%)", x = "Time Point") +
-  theme_minimal() +
-  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+# ggplot(module_long_estuary, aes(x = factor(Time), y = relabund, fill = Module)) +
+#   #geom_boxplot(alpha = 1, outlier.size = 0.5) +
+#   # Line connecting the means
+#   geom_line(data = line_means_estuary,
+#             aes(x = factor(Time), y = Mean_Abund, group = Module, color = Module),
+#             size = 1.2, inherit.aes = FALSE) +
+#   # Points at the means
+#   #geom_point(data = module_means_estuary,
+#              #aes(x = factor(Time), y = Mean_Abund, color = Module),
+#              #size = 0.5, inherit.aes = FALSE) +
+#   facet_wrap(~Sampling.Region) +
+#   labs(y = "Relative Abundance (%)", x = "Time Point") +
+#   theme_minimal() +
+#   theme(axis.text.x = element_text(angle = 45, hjust = 1))

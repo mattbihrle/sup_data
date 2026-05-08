@@ -806,3 +806,7 @@ they are significantly different.
     "coupled" group from here on out.
 
 **FIX DOsat percent in metadata**
+
+# May 8, 2026
+
+Started back up! Just plotted the cliques over top of the temperature. I edited the axes so that the cliques look a little better on so they should be taken as quantitatitve not qualitiative. 

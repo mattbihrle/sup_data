@@ -171,7 +171,7 @@ mt_sylph$beta_diversity$bray
   mt_16s
   mt_16s$tidy_dataset()
   mt_16s
-
+stop()
 mt_16s$sample_table$strat_season <- factor(mt_16s$sample_table$strat_season, 
   levels = c("summer", "fall", "winter", "spring"), 
   labels = c("Summer", "Fall", "Winter", "Spring"),
