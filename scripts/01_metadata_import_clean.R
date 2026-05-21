@@ -15,9 +15,11 @@ sw_meta <- read_csv("data/sw_metadata.csv") |>
 # Create secondary stratification season based on combining fall and winter toegether
 sw_meta <- sw_meta |> 
   mutate(strat_season_2 = ifelse(strat_season == "fall", "winter", strat_season))
-sw_meta$strat_season <- factor(sw_meta$strat_season, levels = c("summer", "fall", "winter", "spring"), ordered = T)
+sw_meta$strat_season <- factor(sw_meta$strat_season, 
+                  levels = c("summer", "fall", "winter", "spring"), ordered = T)
 
-sw_meta$strat_season_2 <- factor(sw_meta$strat_season_2, levels = c("summer", "winter", "spring"), ordered = T)
+sw_meta$strat_season_2 <- factor(sw_meta$strat_season_2,
+                          levels = c("summer", "winter", "spring"), ordered = T)
 # Create another stratification based on the equinox
 
 sw_meta <- sw_meta |> 
@@ -25,6 +27,14 @@ sw_meta <- sw_meta |>
   mutate(solar_season = ifelse(solar_season == "summer" & date >= "2024-09-22", "fall", solar_season)) |> 
   mutate(solar_season = ifelse(solar_season == "winter" & date >= "2025-03-20", "spring", solar_season)) |> 
   mutate(solar_season = ifelse(date > "2025-06-20", "summer", solar_season))
+
+# Create another stratification just based on overturn or not
+sw_meta <- sw_meta |>
+mutate(mixing = ifelse(strat_season == "fall" | strat_season == "spring",
+                "mixed", "stratified_inverse")) |>
+mutate(mixing = ifelse(strat_season == "summer", "stratified_std", mixing))
+  
+
 #import temp file ----------------------------------------------------------------------------
 mat_df <- readMat.default(con = "data/metadata/LSEO24h_temp.mat")
 
@@ -476,7 +486,7 @@ plotly_build(test)
 
 
 # Plot each variable looking specifically at the sampling dates
-plot_samples <- function(maestro_df, var, plotly = T) {
+plot_samples <- function(maestro_df, var, plotly = F) {
   sample_df <- maestro_df |> 
     filter(date == sample_date) |> 
     select(dttm_local,  var, sample_date) |> 
@@ -586,6 +596,8 @@ sw_meta_output <- maestro_df_clean |>
   mutate(use_maestro = as.logical(ifelse(
     abs(mtemp_c_24h_avg - temp_c_24h_med) < 1, "TRUE", "FALSE")),
      .after = strat_season)
+
+sw_meta_output$sample_date[1] <- sw_meta_output$date[1]
 
 # maestro_df <- maestro_df |> 
 #   left_join(avg_df, by = "date")

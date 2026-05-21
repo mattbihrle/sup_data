@@ -135,11 +135,84 @@ load("output/data/mt_mag.RData")
 foam_df_cut <- foam_df |> 
     slice(which(foam_df$bin %in% rownames(mt_mag$otu_table)))
 
-
+# Isolate just the nitrogen cycle genes
 foam_df_cut <- foam_df_cut |> 
     mutate(rowname = paste0(id, "|", bin)) |> 
-    relocate(rowname)
+    relocate(rowname) |> 
+    filter(l1 == "11_Nitrogen cycle") |> 
+    arrange(bin, rowname, l1, l2) |> 
+    distinct()
 
+ repeats <- foam_df_cut |>
+  dplyr::summarise(n = dplyr::n(), .by = c(rowname, bin, l1)) |>
+  dplyr::filter(n > 1L)
+
+foam_df_cut <- foam_df_cut |> 
+slice(-which(foam_df_cut$rowname == repeats$rowname[1])[2])
+
+ repeats <- foam_df_cut |>
+  dplyr::summarise(n = dplyr::n(), .by = c(rowname, bin, l1)) |>
+  dplyr::filter(n > 1L)
+
+
+# Okay no repeats, now see if I can make another table
+
+foam_cut_wide <- foam_df_cut |>
+    dplyr::select(-matches(c("func", "l1", "count", "id", "ec"))) |> 
+    pivot_wider(names_from = l2, values_from = c(l3, l4)) |> 
+    dplyr::select(-bin) |> 
+    column_to_rownames("rowname") |> 
+    filter(!if_all(everything(), is.na)) |> 
+    rownames_to_column("rowname") |> 
+    separate_wider_delim("rowname", delim = "|", names = c("id", "bin")) |> 
+    dplyr::select(-id) |> 
+
+    
+
+colnames_change <- colnames(foam_cut_wide) |> 
+    str_which(".*\\_.*") 
+prefix <- c("l3", "l4", "id", "ec")
+
+for(i in 1:length(prefix)){
+foam_cut_wide <- foam_cut_wide |> 
+    rename_with(~paste0(str_remove(.x, prefix[i]),"_", prefix[i]), 
+    starts_with(prefix[i]))
+}
+foam_cut_wide <- foam_cut_wide |> 
+    rename_with(~str_remove(.x, "^\\_"), starts_with("\\_"))
+
+
+
+# How many distinct l1s do we have?
+
+lvl1_cols <- foam_df_cut$l1 |> 
+    unique() |> 
+    sort()
+
+info <- seq(01:21)
+info <- paste0(info, "_info")
+info <- stringr::str_pad(info, 7, side = "left", pad = "0")
+info
+
+colnames <- c(lvl1_cols, info) |> 
+    sort()
+
+# Create blank data frame
+new_df <- data.frame(matrix(nrow = nrow(mt_mag$tax_table), ncol = length(colnames) + 1))
+colnames(new_df) <- c("bin", colnames)
+
+new_df <- new_df |> 
+    mutate(bin = unique(foam_df_cut$bin))
+for(i in 1:length(lvl1_cols)) {
+
+}
+
+
+test <- clone(mt_mag)
+
+
+lvl2_cols <- foam_df_cut$l2 |> 
+    unique()
 # Check for repeat rownames
 nrow(foam_df_cut) == length(unique(foam_df_cut$rowname))
 
@@ -198,4 +271,76 @@ test$tidy_dataset()
 t1 <- trans_abund$new(test, taxrank = "l2", ntaxa = 10, use_percentage = FALSE)
 trans_abund$plot_bar(t1, facet = "strat_season", bar_full = FALSE, xtext_angle = 30) + ggplot2::ylab("Abundance (RPK)")
 
+```
+
+# Test
+```{r}
+# Load required libraries
+library(microeco)
+library(magrittr)
+
+# -------------------------------------------------------------------
+# STEP 1: Extract data from your existing bin microtable
+# -------------------------------------------------------------------
+# Assuming your existing microtable is named 'mt_mag'
+bin_abund <- mt_mag$otu_table
+sample_meta <- mt_mag$sample_table
+
+# -------------------------------------------------------------------
+# STEP 2: Prepare the FOAM gene table
+# -------------------------------------------------------------------
+# Assuming 'foam_genes' is your loaded data.frame where:
+# - Rownames are FOAM gene IDs (e.g., "FOAM_0001")
+# - Colnames are Bin IDs (must match the rownames of bin_abund)
+# - Values are gene copy numbers (or 1/0 for presence/absence)
+
+# To prevent matrix multiplication errors, ensure the bins align perfectly.
+# Find the intersecting bins between both tables:
+common_bins <- intersect(colnames(foam_genes), rownames(bin_abund))
+
+# Filter and order both tables to match the common bins exactly
+foam_genes_filtered <- foam_genes[, common_bins, drop = FALSE]
+bin_abund_filtered <- bin_abund[common_bins, , drop = FALSE]
+
+# -------------------------------------------------------------------
+# STEP 3: Calculate Gene Abundances across samples
+# -------------------------------------------------------------------
+# Matrix multiplication: 
+# (Genes x Bins matrix) %*% (Bins x Samples matrix) = (Genes x Samples matrix)
+gene_abund_matrix <- as.matrix(foam_genes_filtered) %*% as.matrix(bin_abund_filtered)
+
+# Convert back to a dataframe for the microtable
+gene_abund <- as.data.frame(gene_abund_matrix)
+
+# -------------------------------------------------------------------
+# STEP 4: Create the new FOAM Gene microtable
+# -------------------------------------------------------------------
+# Instantiate a new microtable where the "OTUs" are now your FOAM genes
+meco_genes <- microtable$new(otu_table = gene_abund, 
+                             sample_table = sample_meta)
+
+# Optional but highly recommended: If you have a functional hierarchy/taxonomy 
+# for your FOAM genes (e.g., Level 1, Level 2, Gene), add it as the tax_table!
+# meco_genes$tax_table <- foam_hierarchy_df
+
+# Clean the dataset to remove any genes that have 0 abundance across all samples
+meco_genes$tidy_dataset()
+
+# -------------------------------------------------------------------
+# STEP 5: Run Differential Abundance
+# -------------------------------------------------------------------
+# Now you can use trans_diff on the genes just like you would on taxonomy.
+# Replace "YourGroupColumn" with the actual column name in your sample_table.
+
+# Example using LEfSe (Linear discriminant analysis Effect Size)
+t_diff <- trans_diff$new(dataset = meco_genes, 
+                         method = "lefse", 
+                         group = "YourGroupColumn", 
+                         alpha = 0.05)
+
+# View the results
+head(t_diff$res_diff)
+
+# Plot the top 20 differentially abundant genes
+t_diff$plot_diff_bar(use_number = 1:20)
 ```

@@ -22,18 +22,18 @@ are all similar however some of the minor taxa are different.
 **Question:** How sensitive are each method of taxonomy, which do we
 trust? **Next Steps:**
 
--   Split phyla into autotrophs and heterotrophs and mixotrophs
+- Split phyla into autotrophs and heterotrophs and mixotrophs
 
--   Incorporate env metadata (O2 measurements as measure of respiration
-    and carbon consumed?)
+- Incorporate env metadata (O2 measurements as measure of respiration
+  and carbon consumed?)
 
--   Research into how I should go about sorting through this data
+- Research into how I should go about sorting through this data
 
--   Research into how the 16S data vs the metagenomic data works
+- Research into how the 16S data vs the metagenomic data works
 
--   Keep working on getting binning data
+- Keep working on getting binning data
 
--   *Figure out if I need to normalize the data and how?*
+- *Figure out if I need to normalize the data and how?*
 
 ```{r}
 source("scripts/01_intro_script.R")
@@ -45,9 +45,9 @@ Started looking at top 20 families. Code is in the bottom of
 "sylph_mircoeco". Also created spreadsheet with names of families and
 comments about what I could find out about their metabolism or ecology.
 
--   Continue this work -
+- Continue this work -
 
--   Email Jay to get temp data
+- Email Jay to get temp data
 
 # Feb 10, 2026
 
@@ -80,17 +80,16 @@ https://library.virginia.edu/data/articles/starting-non-metric-multidimensional-
 
 # Feb 16, 2026
 
--   Imported matlab data to R. Used claude to get intial scripts to
-    import the .mat file into python and then write to csvs. At the
-    bottom of "Intro Scripts" there is a chunk to write all of those to
-    a dataframe in R. Matlab date is since jan 1, 1900 rather than jan
-    1, 1970.
--   Decided to rewrite the matlab import in R, kept at the bottom of
-    01_intro_scripts. Updated `sw_meta$strat_season` based on first 40m
-    of temperature. Summer = stratification, fall = post summer
-    isothermal period, winter = reverse stratification, spring = post
-    winter isothermal Found some cool plots that look different based on
-    the temperature but both seem to show seasonal differences.
+- Imported matlab data to R. Used claude to get intial scripts to import
+  the .mat file into python and then write to csvs. At the bottom of
+  "Intro Scripts" there is a chunk to write all of those to a dataframe
+  in R. Matlab date is since jan 1, 1900 rather than jan 1, 1970.
+- Decided to rewrite the matlab import in R, kept at the bottom of
+  01_intro_scripts. Updated `sw_meta$strat_season` based on first 40m of
+  temperature. Summer = stratification, fall = post summer isothermal
+  period, winter = reverse stratification, spring = post winter
+  isothermal Found some cool plots that look different based on the
+  temperature but both seem to show seasonal differences.
 
 ```{r}
 source("scripts/01_intro_script.R") # if needed
@@ -133,15 +132,15 @@ the most abundant families.**
 **TODO** - How to deal with the difference between the mag data and the
 16s data?
 
--   Show NDMS graphs
+- Show NDMS graphs
 
--   Show temperature determination
+- Show temperature determination
 
--   Binning script?
+- Binning script?
 
--   missing merged.fasta file
+- missing merged.fasta file
 
--   Committee - Jay - Ted - Bill - Formal Thesis Proposal? - Job Stuff.
+- Committee - Jay - Ted - Bill - Formal Thesis Proposal? - Job Stuff.
 
 **First work on binning stuff, then lefse, then think about committee
 things.**
@@ -419,12 +418,12 @@ part, and changed the delimiter in the final contigs file to look for
 '\_' instead of ':'. Once each one worked, I started the whole binning
 script and we will see how long it takes.
 
--   Did some research into lefSE and using that in microeco. The
-    resulting code is at the bottom of 16s analysis. The next thing to
-    do is to look at what taxa are coming out there.
--   See if I can get some other data from Jay. - CHECK
--   Start laying out some figures (read a couple of papers)
--   Email Stormi about outside thesis committee folks - CHECK
+- Did some research into lefSE and using that in microeco. The resulting
+  code is at the bottom of 16s analysis. The next thing to do is to look
+  at what taxa are coming out there.
+- See if I can get some other data from Jay. - CHECK
+- Start laying out some figures (read a couple of papers)
+- Email Stormi about outside thesis committee folks - CHECK
 
 # March 6, 2026
 
@@ -523,27 +522,26 @@ out all the statistics I should be doing
 
 # March 27, 2026
 
--   Working through a book to figure out the stats
-    https://uw.pressbooks.pub/appliedmultivariatestatistics/chapter/relativizations/
-    -   Currently trying to figure out which normalization to do on the
-        abundance data. "Gower and X\^2 distances perform better than
-        other measures in revealing the relationships among the samples
-        along an environmental gradient even under low sequencing depth
-        and the presence of noise in simulating abundance vectors The
-        Jaccard dissimilarity measure was shown to perform well in
-        revealing the cluster relationships when such relationships were
-        prominent, but not very well for subtle clusters. The χ 2
-        distance was shown to perform well in revealing environmental
-        gradients, but only moderately well in revealing underlying
-        clusters." -
-        -   Statistical Analysis of micrbiome data (pg 84)
+- Working through a book to figure out the stats
+  https://uw.pressbooks.pub/appliedmultivariatestatistics/chapter/relativizations/
+  - Currently trying to figure out which normalization to do on the
+    abundance data. "Gower and X\^2 distances perform better than other
+    measures in revealing the relationships among the samples along an
+    environmental gradient even under low sequencing depth and the
+    presence of noise in simulating abundance vectors The Jaccard
+    dissimilarity measure was shown to perform well in revealing the
+    cluster relationships when such relationships were prominent, but
+    not very well for subtle clusters. The χ 2 distance was shown to
+    perform well in revealing environmental gradients, but only
+    moderately well in revealing underlying clusters." -
+    - Statistical Analysis of micrbiome data (pg 84)
 
 It's hard for me to tell from this which to use. This doesn't seem to be
 quite the right answer.
 
--   As reccomended by the 'performance' package documentation, I called
-    outliers based on MAD (median absolute deviation) instead of the
-    mean in the environmental data.
+- As reccomended by the 'performance' package documentation, I called
+  outliers based on MAD (median absolute deviation) instead of the mean
+  in the environmental data.
 
 # March 30, 2026
 
@@ -656,8 +654,8 @@ person about carbon in the lake (who may be on the guardian?).
 Finished with most of the environmental data. Added a tree and unifrac
 distances into the MAGs data.
 
--   Created a nice plot of the 16s data to show how the communities
-    change. Used the robust aitchison with an NMDS
+- Created a nice plot of the 16s data to show how the communities
+  change. Used the robust aitchison with an NMDS
 
 **TO DO:** - Output a nice looking table of significance for
 stratification season - Check and see if other things like not
@@ -668,9 +666,9 @@ little overlapping of layers to show how the nmds is built?
 
 # April 8, 2026 Questions for Cody:
 
--   how do I deal with tree data?
--   metabolic stuff?
--   any other way to define the groupings?
+- how do I deal with tree data?
+- metabolic stuff?
+- any other way to define the groupings?
 
 **ToDo:** - Make a nice PCoA figure with 16s data and environmental
 data - Look at the UBA taxa in the winter - Look at figures from other
@@ -799,111 +797,183 @@ running the coupled abundance did run and instead put the relative
 abundances together it seems. I should try to compare the two to see if
 they are significantly different.
 
--   Comparing the two abundances it seems like they are different. I'm
-    not sure if it is significant at all but might be nice to check with
-    Cody and see. It at least seems to be more accurate than just taking
-    the forward reads to check the abundance. I'm going to go with the
-    "coupled" group from here on out.
+- Comparing the two abundances it seems like they are different. I'm not
+  sure if it is significant at all but might be nice to check with Cody
+  and see. It at least seems to be more accurate than just taking the
+  forward reads to check the abundance. I'm going to go with the
+  "coupled" group from here on out.
 
 **FIX DOsat percent in metadata**
 
 # May 8, 2026
 
-Started back up! Just plotted the cliques over top of the temperature. I edited the axes so that the cliques look a little better on so they should be taken as quantitatitve not qualitiative. 
+Started back up! Just plotted the cliques over top of the temperature. I
+edited the axes so that the cliques look a little better on so they
+should be taken as quantitatitve not qualitiative.
 
 # May 18, 2026
 
-Tried to start looking at how gene abundances change over time but realized that I ran metacerberus on the the mags so the abundance data that I have is per mag not per sample. Rerunning it now on the servers looking for cazy and KOfam genes. I can then try the clique analysis. Also spent an annoying amount of time trying to figure out a lab calendar for the sheik lab and learning api stuff.
+Tried to start looking at how gene abundances change over time but
+realized that I ran metacerberus on the the mags so the abundance data
+that I have is per mag not per sample. Rerunning it now on the servers
+looking for cazy and KOfam genes. I can then try the clique analysis.
+Also spent an annoying amount of time trying to figure out a lab
+calendar for the sheik lab and learning api stuff.
 
-![temperature and cliques data](output/plots/temp_and_cliques_patches.png)
-This graph needs a bit of work on the axes and such but otherwise looks pretty good. 
+![temperature and cliques
+data](output/plots/temp_and_cliques_patches.png) This graph needs a bit
+of work on the axes and such but otherwise looks pretty good.
 
-Re ran the cliques with a lower abundance threshold and got 5 cliques out of it. It looks like there are big shifts after mixing events that would affect that depth. In late Sept there was a mixing event where the thermocline dropped deeper and M2 and M4 popped off. Similar it see like the bigger changes happen after the water column warms and is mixed in May and June.
+Re ran the cliques with a lower abundance threshold and got 5 cliques
+out of it. It looks like there are big shifts after mixing events that
+would affect that depth. In late Sept there was a mixing event where the
+thermocline dropped deeper and M2 and M4 popped off. Similar it see like
+the bigger changes happen after the water column warms and is mixed in
+May and June.
 
-Biggest spikes in cliques are at:
-S3
-S9
-S12
-S17
+Biggest spikes in cliques are at: S3 S9 S12 S17
 
-Looking at M1, it looks like the dominant genuses are:
-  -  Sediminibacterium (specifically OTU2 which dominates module 1 a lot)
-  -  Bateroidetes bacterium UKL 13-3 (OTU22) is a minor player
-  -  Bradyrhizobium is big during some of the mixing events particularly the one during the summer -- **what does this one do?**
-  -  Gemmata (OTU35) also a smaller player
-  -  f__Comamonadaceae and an unknown genus (OTU13), seems to be one of the larger ones, this is a gammaproteobacteria
-  
+Looking at M1, it looks like the dominant genuses are: -
+Sediminibacterium (specifically OTU2 which dominates module 1 a lot) -
+Bateroidetes bacterium UKL 13-3 (OTU22) is a minor player -
+Bradyrhizobium is big during some of the mixing events particularly the
+one during the summer -- **what does this one do?** - Gemmata (OTU35)
+also a smaller player - f\_\_Comamonadaceae and an unknown genus
+(OTU13), seems to be one of the larger ones, this is a
+gammaproteobacteria
 
-The one to look into would be Sediminibacterium and Bradyrhizobium and OTU13
+The one to look into would be Sediminibacterium and Bradyrhizobium and
+OTU13
 
 ![m1 abundance](output/plots/m1_abundance.png)
 
-Looking at M2, dominant genuses are:
-  -  g__Sediminibacterium (OTU19). THis one dominates in the late season, growing in the second half of winter and into spring
-  -  g__LD29 (OTU6) which is a verrucamicrobial. This one is dominant during the summer but not during the rest of the year
-  -  g__Phenylobacterium (OTU16) which is a bit all over the place but does spike during S12 and S17 which are post mixing events
-  -  g__Leptothrix (OTU184) which shows un in the late winter and spring similar to sediminibacterium
-  -  g__LD29 (OTU18) this one shows up in the summer and fall and is gone during the winter and spring. Follows the same pattern as the other OTU in it's genus
-  -  f__Paracaedibacteraceae (OTU261). This has an unknown genus and species but shes up a lot in the late winter and spring
-  -  g__IMCC26207 (OTU57) in f__Microtrichaceae wich again, is more of a spring and late winter one
+Looking at M2, dominant genuses are: - g\_\_Sediminibacterium (OTU19).
+THis one dominates in the late season, growing in the second half of
+winter and into spring - g\_\_LD29 (OTU6) which is a verrucamicrobial.
+This one is dominant during the summer but not during the rest of the
+year - g\_\_Phenylobacterium (OTU16) which is a bit all over the place
+but does spike during S12 and S17 which are post mixing events -
+g\_\_Leptothrix (OTU184) which shows un in the late winter and spring
+similar to sediminibacterium - g\_\_LD29 (OTU18) this one shows up in
+the summer and fall and is gone during the winter and spring. Follows
+the same pattern as the other OTU in it's genus -
+f\_\_Paracaedibacteraceae (OTU261). This has an unknown genus and
+species but shes up a lot in the late winter and spring - g\_\_IMCC26207
+(OTU57) in f\_\_Microtrichaceae wich again, is more of a spring and late
+winter one
 
-  This module has a lot more variability than the others, it seems like there is a pretty start split between the first and second half of the year
+This module has a lot more variability than the others, it seems like
+there is a pretty start split between the first and second half of the
+year
 
-  ![m2 abundance](output/plots/m2_abundance.png)
+![m2 abundance](output/plots/m2_abundance.png)
 
-  Looking at M3, dominant genuses are:
-  On first glance, this one is a lot more variable without a couple of dominant genuses. However the most are:
-    -  g__Novosphingobium (OTU1) which has kind of a wave pattern peaking in late fall and late winter but doesn't seem to be especially associated with seasonality
-    -  f__Microbacteriaceae (OTU4), this one also has kind of a misxed bag but is much more around in spring and early summer. 
-    -  f__KD3-93 (OTU5), this one goes all over the place but is generally arround except for S3
-    -  f__Pirellulaceae (OTU12), this one is much more present during the summer but not so much once we get into fall. It is a planktomycete which tend to be particle associated 
-        we think
-    
+Looking at M3, dominant genuses are: On first glance, this one is a lot
+more variable without a couple of dominant genuses. However the most
+are: - g\_\_Novosphingobium (OTU1) which has kind of a wave pattern
+peaking in late fall and late winter but doesn't seem to be especially
+associated with seasonality - f\_\_Microbacteriaceae (OTU4), this one
+also has kind of a misxed bag but is much more around in spring and
+early summer. - f\_\_KD3-93 (OTU5), this one goes all over the place but
+is generally arround except for S3 - f\_\_Pirellulaceae (OTU12), this
+one is much more present during the summer but not so much once we get
+into fall. It is a planktomycete which tend to be particle associated we
+think
+
 ![m3 abundance](output/plots/m3_abundance.png)
 
-Lastly, M4 abundances:
-  -  g__Prosthecobacter, s__Cenchrus americanus(OTU29) which spikes late fall into winter
-  -  o__Kapabacteriales the rest unknown (OTU28), this one is around a lot during the summer months and spring but not the fall and winter, maybe is a temperature thing for it. 
-  -  g__Polaromonas(OTU17) which is mostly only around during the one weird sample in mid summer (S3). It is a psycrophile which means that it loves cold. which is interesting for a post upper water column mixing event...
-  -  g__Bradyrhizobium (OTU206), this one is generally around but doesn't have any very interesting abundance patterns
+Lastly, M4 abundances: - g\_\_Prosthecobacter, s\_\_Cenchrus
+americanus(OTU29) which spikes late fall into winter -
+o\_\_Kapabacteriales the rest unknown (OTU28), this one is around a lot
+during the summer months and spring but not the fall and winter, maybe
+is a temperature thing for it. - g\_\_Polaromonas(OTU17) which is mostly
+only around during the one weird sample in mid summer (S3). It is a
+psycrophile which means that it loves cold. which is interesting for a
+post upper water column mixing event... - g\_\_Bradyrhizobium (OTU206),
+this one is generally around but doesn't have any very interesting
+abundance patterns
 
-![m4 abundance](output/plots/m4_abundance.png) 
+![m4 abundance](output/plots/m4_abundance.png)
 
-Tomorrow steps:
-  -  Start to look at the most dominant taxa and see what pathways they hold
-  -  Look back at the 4 modules to see what is going on there
-  -  Do a write up of my NMDS plot
+Tomorrow steps: - Start to look at the most dominant taxa and see what
+pathways they hold - Look back at the 4 modules to see what is going on
+there - Do a write up of my NMDS plot
 
 # May 19, 2026
 
-Looking at the ANCOMBC2 to investigate which taxa are responsible for changes. I'm not really sure what to do with this information. Maybe I guess I can just start taking a look at the pathways manually? That seems kind of boring tbh. 
+Looking at the ANCOMBC2 to investigate which taxa are responsible for
+changes. I'm not really sure what to do with this information. Maybe I
+guess I can just start taking a look at the pathways manually? That
+seems kind of boring tbh.
 
 # May 20, 2026
 
 ![nmds aitchison distances](output/plots/nmds_16s_r.aitchison.png)
 
-NMDS ordination from Robust Aitchison distances shows distinct succession from WM01 - WM24, with spring and late summer samples showing the greatest differences. Stressplot shown at ![stressplot](output/plots/16s_r.aitchison_nmds_stressplot.png)
+NMDS ordination from Robust Aitchison distances shows distinct
+succession from WM01 - WM24, with spring and late summer samples showing
+the greatest differences. Stressplot shown at
+![stressplot](output/plots/16s_r.aitchison_nmds_stressplot.png)
 
-
-Just to go over it once again I ran NMDS and PCoA for both the MAGs and the 16S data with the different distance measures (Bray, Aitchison, RAitchison, Unifrac (mags only)). Some look better than others but most show a similar sucession. All the plots are in "ouput/plots/beta_div". The ones that look best are:
-**mag-bray-nmds:** this one shows more like 3 distinct seasons which is interesting. 
+Just to go over it once again I ran NMDS and PCoA for both the MAGs and
+the 16S data with the different distance measures (Bray, Aitchison,
+RAitchison, Unifrac (mags only)). Some look better than others but most
+show a similar sucession. All the plots are in "ouput/plots/beta_div".
+The ones that look best are: **mag-bray-nmds:** this one shows more like
+3 distinct seasons which is interesting.
 ![mag-bray-nmds](output/plots/beta_div/mt_mag%20NMDS%20bray.png)
 
-For the 16s data the first two axes of the PCoA describe about 40-45% of the data and show almost two separate groups that divide at about WM16.
+For the 16s data the first two axes of the PCoA describe about 40-45% of
+the data and show almost two separate groups that divide at about WM16.
 ![16s-aitchison-pcoa](output/plots/beta_div/mt_16s%20PCoA%20aitchison.png)
-Comparing this to temperature it looks like this change happens mid-march after a big storm event.
+Comparing this to temperature it looks like this change happens
+mid-march after a big storm event.
 ![temp_plot](output/plots/temp_and_cliques.png)
 
-Maybe it is possible that there was some winter growth that didn't catch up until then? It doesn't seem like conditions are all that different between WM15 and WM16. 
+Maybe it is possible that there was some winter growth that didn't catch
+up until then? It doesn't seem like conditions are all that different
+between WM15 and WM16.
 
-With the MAG data the PCoA two axes describe about 54% of the the data. It looks more like there are three groupings here in both the bray and the aitchison data. 
+With the MAG data the PCoA two axes describe about 54% of the the data.
+It looks more like there are three groupings here in both the bray and
+the aitchison data.
 ![mag-pcoa-bray](output/plots/beta_div/mt_mag%20PCoA%20bray.png)
 
-The weighted unifrac seems to have the most variation explained by the axes but doesn't have any grouping that makes sense. I am wondering if I input the tree correctly for that one? I should give the tree another shot and then recalculate. 
+The weighted unifrac seems to have the most variation explained by the
+axes but doesn't have any grouping that makes sense. I am wondering if I
+input the tree correctly for that one? I should give the tree another
+shot and then recalculate.
 
-Hmm okay looking at script 02 it looks like I did use the backbone tree for the unifrac distances. It looks I can **combine trees and manually calcuate unifrac distances** but I think that might be a long rabbit hole to go down right now. I am going to try and work with the environmental data instead to see if I can workout what is up with the PCoA groupings. 
+Hmm okay looking at script 02 it looks like I did use the backbone tree
+for the unifrac distances. It looks I can **combine trees and manually
+calcuate unifrac distances** but I think that might be a long rabbit
+hole to go down right now. I am going to try and work with the
+environmental data instead to see if I can workout what is up with the
+PCoA groupings.
 
-Next worked on getting the env data figured out and ran a dbRDA. **Need to do more work to make sure I'm doing things correctly** and **check the interpolated values** but it looks like there is some neat clustering going on. Something to look more into. 
-![dbRDA first pass](output/plots/dbrda_test.png)
+Next worked on getting the env data figured out and ran a dbRDA. **Need
+to do more work to make sure I'm doing things correctly** and **check
+the interpolated values** but it looks like there is some neat
+clustering going on. Something to look more into. ![dbRDA first
+pass](output/plots/dbrda_test.png)
 
+
+# May 21, 2026
+
+Starting today looking at the environmental data and seeing which were significant, 
+what I could use for a rDBA analysis. (*05_environmental_data.qmd*) Looking at a bunch of different stratification regimes it seems like do_sat, temp, and cond are the big ones with pco2 and cdom significant factors when splitting up by solar season and/or combining winter/fall into the same season. Hmm now that I'm thinking about it, **I should set up a stratification that is just (stratified, overturn, weak stratification)**pc
+
+- Working on wilcox ranking of the environmental data. It looks like chla is a big predictor along with temp, do and pco2. That's pretty cool to see and indicaates that particle associated taxa might be especially important. 
+![drba_loadings](output/plots/dbrda_arrows.png)
+
+Okay, I made an RDA plot and it looks like there are a couple of families that are strongly associated with chla which is interesting. Chitinophages are a bit driver on one of the axes and the UBA taxa tend to be really common. 
+
+In the 16S data the RDA looks kinda wild but it also shows that chitinophages are the major players in the microbial world here. 
+
+![rda_mags_family](output/plots/rda_mt_mag_family.png)
+![rda_16s_family](output/plots/rda_16s_family.png)
+
+**Maybe it is time to start looking at the chitinophages genomes**
+
+Ended the day trying to get the genes in as a microtable object. I think I need to try and treat each gene like an OTU and then take the abundances off of the bins to see how gene abundance changes. Honestly but also once 
 

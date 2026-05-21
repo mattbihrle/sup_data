@@ -7,6 +7,7 @@ format: html
 ```{r}
 library(microeco)
 library(tidyverse)
+library(skimr)
 ```
 
 # Run previous scripts to load in microtable objects
@@ -19,39 +20,200 @@ load("output/data/temp_df_long.RData")
 ```
 
 
-# Create environmental object
+# Create environmental object - MAGs
 
 ```{r}
-t1 <- trans_env$new(dataset = mt_mag, env_cols = c(1:19), standardize = F, complete_na = T) 
 
-# Remove maestro temp which starts with NA
+# First add a "month" column to sample table 
+
+mt_mag$sample_table <- mt_mag$sample_table |> 
+  mutate(month = as.factor(month(date)))
+
+#Reorder months to be in order from 8 - 7
+
+mt_mag$sample_table$month <- mt_mag$sample_table$month |> 
+  factor(levels = c("8", "9", "10", "11", "12", "1", "2", "3", "4", "5", "6", "7"))
+mt_mag$sample_table$month
+cols <- ncol(mt_mag$sample_table)
+t1 <- trans_env$new(dataset = mt_mag, env_cols = c(1:cols), standardize = F, complete_na = T)
+
+#Check to see what values are missing and such
+sum_stats <- skim(t1$data_env)
+sum_stats
+
+# Remove any variables that have NAs in them as per skimr
+na_vars <- sum_stats$skim_variable[which(sum_stats$complete_rate < 1)]
+
 t1$data_env <- t1$data_env |> 
-  dplyr::select(-matches("mtemp"))
+  dplyr::select(-any_of(na_vars))
 
-# t1$data_env$chla_24h_avg[1] <- t1$data_env |> 
-#     filter()
+colnames(t1$data_env)
+
+#Reskim
+
+sum_stats <- skim(t1$data_env)
+sum_stats
+
+# Remove other variables I don't want
+t1$data_env <- t1$data_env |> 
+  dplyr::select(-matches(c("depth", "pres", "use_maestro", "date")))
+colnames(t1$data_env)
+
 # Calculate differences between variables at different sampling dates
-t1$cal_diff(group = "strat_season", method = "anova")
+t1$cal_diff(group = "strat_season", method = "wilcox")
 view(t1$res_diff)
 
+t1$cal_diff(group = "strat_season_2", method = "wilcox")
+view(t1$res_diff)
+
+
+t1$cal_diff(group = "solar_season", method = "wilcox")
+view(t1$res_diff)
+
+t1$cal_diff(group = "mixing", method = "wilcox")
+view(t1$res_diff)
+
+# Looking at the above tables I am thinking about keep do_sat, cond, temp, pco2, and phycocyanin.
 tmp <- list()
 for(i in 1:length(colnames(t1$data_env))){
     tmp[[i]] <- t1$plot_diff(measure = colnames(t1$data_env)[i], add_sig_text_size = 5, xtext_size = 12) + theme(plot.margin = unit(c(0.1, 0, 0, 1), "cm"))
 }
 plot(gridExtra::arrangeGrob(grobs = tmp, ncol = 3))
+
+# Calculate correlations across the variables
+t1$cal_autocor()
+clean_data <- t1$data_env |> 
+  select(-matches(c("sample", "strat", "mixing", "solar_season", "month", "turb", "ph_", "do_24")))
+
+plot <- GGally::ggpairs(clean_data)
+plot
+
 # Calculate RDA plot
-t1$cal_ordination(method = "dbRDA", use_measure = "robust.aitchison")
-t1$trans_ordination()
-t1$plot_ordination(plot_color = "strat_season")
+
+  # first remove the variables we don't want
+t2 <- clone(t1)
+t2$ data_env <- t2$data_env |> 
+  select(-matches(c("sample", "strat", "mixing", "solar_season", "month", "turb", "ph_", "do_24")))
+t2$cal_ordination(method = "dbRDA", use_measure = "wei_unifrac")
+t2$trans_ordination()
+t2$plot_ordination(plot_color = "strat_season")
 # the main results of RDA are related with the projection and angles between arrows
 # adjust the length of the arrows to show them better
-t1$trans_ordination(adjust_arrow_length = TRUE, max_perc_env = 1.5)
+t2$trans_ordination(adjust_arrow_length = TRUE, max_perc_env = 1.5)
 # t1$res_rda_trans is the transformed result for plotting
-t1$plot_ordination(plot_color = "strat_season", add_sample_label = "sample")
+t2$plot_ordination(plot_color = "strat_season", add_sample_label = "sample") +
+  ggarrow::geom_arrow_chain(colour = "black") 
 # Calculate correlation matrix
-t1$cal_autocor(group = "strat_season")
+t2$cal_autocor()
+t2$cal_ordination_anova()
+
+```
+
+# dbRDA by taxa
+```{r}
+t2$cal_ordination(method = "RDA", use_measure = "wei_unifrac", taxa_level = "f")
+t2$trans_ordination(show_taxa = 50, adjust_arrow_length = TRUE, max_perc_env = 0.5, max_perc_tax = 0.5)
+t2$plot_ordination(plot_color = "strat_season", add_sample_label = "sample") +
+  ggtitle("RDA of mt_mag at family level")
+```
 
 
+# Create environmental object - 16S
+
+```{r}
+
+# First add a "month" column to sample table 
+
+mt_16s$sample_table <- mt_16s$sample_table |> 
+  mutate(month = as.factor(month(date)))
+
+#Reorder months to be in order from 8 - 7
+
+mt_16s$sample_table$month <- mt_16s$sample_table$month |> 
+  factor(levels = c("8", "9", "10", "11", "12", "1", "2", "3", "4", "5", "6", "7"))
+mt_16s$sample_table$month
+cols <- ncol(mt_16s$sample_table)
+t1 <- trans_env$new(dataset = mt_16s, env_cols = c(1:cols), standardize = F, complete_na = T)
+
+#Check to see what values are missing and such
+sum_stats <- skim(t1$data_env)
+sum_stats
+
+# Remove any variables that have NAs in them as per skimr
+na_vars <- sum_stats$skim_variable[which(sum_stats$complete_rate < 1)]
+
+t1$data_env <- t1$data_env |> 
+  dplyr::select(-any_of(na_vars))
+
+colnames(t1$data_env)
+
+#Reskim
+
+sum_stats <- skim(t1$data_env)
+sum_stats
+
+# Remove other variables I don't want
+t1$data_env <- t1$data_env |> 
+  dplyr::select(-matches(c("depth", "pres", "use_maestro", "date")))
+colnames(t1$data_env)
+
+# Calculate differences between variables at different sampling dates
+t1$cal_diff(group = "strat_season", method = "wilcox")
+view(t1$res_diff)
+
+t1$cal_diff(group = "strat_season_2", method = "wilcox")
+view(t1$res_diff)
+
+
+t1$cal_diff(group = "solar_season", method = "wilcox")
+view(t1$res_diff)
+
+t1$cal_diff(group = "mixing", method = "wilcox")
+view(t1$res_diff)
+
+# Looking at the above tables I am thinking about keep do_sat, cond, temp, pco2, and phycocyanin.
+tmp <- list()
+for(i in 1:length(colnames(t1$data_env))){
+    tmp[[i]] <- t1$plot_diff(measure = colnames(t1$data_env)[i], add_sig_text_size = 5, xtext_size = 12) + theme(plot.margin = unit(c(0.1, 0, 0, 1), "cm"))
+}
+plot(gridExtra::arrangeGrob(grobs = tmp, ncol = 3))
+
+# Calculate correlations across the variables
+# t1$cal_autocor()
+# clean_data <- t1$data_env |> 
+#   select(-matches(c("sample", "strat", "mixing", "solar_season", "month", "turb", "ph_", "do_24")))
+
+# plot <- GGally::ggpairs(clean_data)
+# plot
+
+# Calculate RDA plot
+
+  # first remove the variables we don't want
+t2 <- clone(t1)
+t2$ data_env <- t2$data_env |> 
+  select(-matches(c("sample", "strat", "mixing", "solar_season", "month", "turb", "ph_", "do_24", "Seq", "fastq")))
+t2$cal_ordination(method = "dbRDA", use_measure = "robust.aitchison")
+t2$trans_ordination()
+t2$plot_ordination(plot_color = "strat_season")
+# the main results of RDA are related with the projection and angles between arrows
+# adjust the length of the arrows to show them better
+t2$trans_ordination(adjust_arrow_length = TRUE, max_perc_env = 2)
+# t1$res_rda_trans is the transformed result for plotting
+t2$plot_ordination(plot_color = "strat_season", add_sample_label = "sample") +
+  ggarrow::geom_arrow_chain(colour = "black") 
+# Calculate correlation matrix
+t2$cal_autocor()
+t2$cal_ordination_anova()
+
+```
+
+# dbRDA by taxa
+```{r}
+t2$cal_ordination(method = "RDA", use_measure = "bray", taxa_level = "f")
+t2$trans_ordination(show_taxa = 20, adjust_arrow_length = TRUE, max_perc_env = 0.5, max_perc_tax = 0.5)
+plot <- t2$plot_ordination(plot_color = "strat_season", add_sample_label = "sample") +
+  ggtitle("RDA of mt_16s at family level")
+plot
 ```
 
 # Temp plot
