@@ -7,7 +7,7 @@ files <- list.files("msi_downloads/metacerb/all_files/", full.names = T)
 files[1]
 
 foam_files <- files |>
-  str_extract(".*FOAM.*")
+  str_extract(".*FOAM.*") |> 
   na.omit()
 
 kegg_files <- files |> 

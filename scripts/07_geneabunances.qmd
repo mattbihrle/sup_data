@@ -48,7 +48,7 @@ foam_1_wide <- foam_1_df |>
     pivot_wider(names_from = name, values_from = count) |> 
         column_to_rownames("bin")
 
-foam_mt <- microtable$new(otu_table = foam_1_wide, sample_table = mt_mag$sample_table)
+foam_mt <- microtable$new(otu_table = foam_1_wide, sample_table = mt_mag$sample_table, tax_table = mt_mag$tax_table)
 
 foam_mt$cal_abund(rel = FALSE)
 # use_percentage = FALSE disable percentage for relative abundance
@@ -127,24 +127,30 @@ foam_1_df <- foam_1_df |>
 ```{r}
 # New test to see how the rollup files work
 
-# foam_df <- read_tsv("output/data/metabolism/foam_rollup.tsv")
-foam_df <- read_tsv("output/data/metabolism/foam_rollup_all.tsv")
+foam_df <- read_tsv("output/data/metabolism/foam_rollup.tsv")
+# foam_df <- read_tsv("output/data/metabolism/foam_rollup_all.tsv")
 load("output/data/mt_mag.RData")
 
-foam_df <- foam_df |> 
-    mutate(rowname = paste0(id, "|", bin), .before = everything())
+# Cut down the foam_df to only include bins that are in the mag dataset
+foam_df_cut <- foam_df |> 
+    slice(which(foam_df$bin %in% rownames(mt_mag$otu_table)))
 
-waldo::compare(core_bins, unique(foam_df$bin))
-nrow(foam_df) == length(unique(foam_df$rowname))
+
+foam_df_cut <- foam_df_cut |> 
+    mutate(rowname = paste0(id, "|", bin)) |> 
+    relocate(rowname)
+
+# Check for repeat rownames
+nrow(foam_df_cut) == length(unique(foam_df_cut$rowname))
 
 # There are repeat rownames, likely due to functional redundancies. I need to next look at which pathway to put them in and how to deal with the additional counts of the gene. 
 
-# Update count numbers
 
-foam_df_test <- foam_df |> 
-    group_by(rowname) |> 
-    mutate(count = sum(count)) |> 
-    ungroup() |> 
+# Only keep the first of the rownames
+foam_df_test <- foam_df_cut |> 
+    # group_by(rowname) |> 
+    # mutate(tot_count = sum(count)) |> 
+    # ungroup() |> 
     # mutate(count = count_sum,
     # -count_sum) |> 
         distinct(rowname, .keep_all = T)
@@ -153,9 +159,9 @@ nrow(foam_df_test)
 
 # Now append all the additional taxa data into the table
 
-waldo::compare(core_bins, rownames(mt_mag$tax_table))
+# waldo::compare(core_bins, rownames(mt_mag$tax_table))
 
-core_bins <- sort(core_bins)
+# core_bins <- sort(core_bins)
 mag_names <- sort(rownames(mt_mag$tax_table))
 tax_test <- mt_mag$tax_table |> 
     rownames_to_column("bin") |> 

@@ -9,7 +9,7 @@ library(RColorBrewer) # nice color options
 library(dplyr) # data handling
 library(network) # networks
 library(intergraph)  # networks
-library(ggnetwork)   # network plotting with ggplot. I updated this from ggnet to ggnetwork, I hope the functions are similar.
+# library(ggnetwork)   # network plotting with ggplot. I updated this from ggnet to ggnetwork, I hope the functions are similar.
 library(igraph)  # networks. leaving this out bc its automatically loaded with microeco
 library(ggplot2) # plotting library
 library(gridExtra) # gridding plots
@@ -27,12 +27,14 @@ library(vegan) # Multivariate ecological analysis
 #library(propr) #also not available for my version of R. leaving out for now.
 library(missForest) # Imputing missing values in dataframes using Random Forests
 library(VSURF) # Random Forests approach to variable importance identification
+library(patchwork)
 
 
 #they start with loading in datasets and tree. I'm going to load in my microtable and separate it out into the tax and counts and see what happens.
 # mt_16s <- readRDS("/Users/abbysmason/SeaGrant2024/SeaGrant2024/outputs/estuary_microtableall.rds")
 
 load("output/data/mt_16s.RData")
+load("output/data/temp_df_long.RData")
 #I'm just going to use my normal microtable that has everything and then use the contaminants list they have instead of just using cyanos
 #if i only did cyanos i would revisit the contaminant list and see what's still applicable
 
@@ -51,7 +53,7 @@ load("output/data/mt_16s.RData")
 
 #filter by prevalence
 mt_16s$filter_taxa(
-  rel_abund = 0.0002,  # At least 0.02% in any sample
+  rel_abund = 0.0001,  # At least 0.01% in any sample
 )
 
 #separate out taxa and counts here
@@ -76,7 +78,7 @@ t_network$cal_network(COR_p_thres = 0.01, COR_cut = 0.7)
 # This replaces the `cluster_louvain(bac.cor.ig)` function call
 t_network$cal_module(method = "cluster_louvain")
 
-#success? 5 modules. idk if thats good
+#success? 8 modules. idk if thats good
 modules <- igraph::vertex_attr(t_network$res_network, "module")
 head(modules)
 table(modules)
@@ -110,7 +112,9 @@ module_colors <- c("M1" = "red",
                    "M3" = "green",
                    "M4" = "purple",
                    "M5" = "blue",
-                   "M6" = "yellow")
+                   "M6" = "yellow",
+                   "M7" = "pink",
+                   "M8" = "brown")
 
 # map modules vector to colors
 vertex_colors <- module_colors[modules]
@@ -158,10 +162,91 @@ module_rel_abund$strat_season <- mt_16s$sample_table$strat_season
 # module_rel_abund$Site <- mt_16s$sample_table$Site
 
 module_long <- pivot_longer(module_rel_abund,
-                            cols = c("M1", "M2", "M3", "M4", "M5", "M6"),
+                            cols = c("M1", "M2", "M3", "M4", "M5", "M6", "M7", "M8"),
                             names_to = "Module",
                             values_to = "relabund")
 
+# Add modules to tax_table in 16s data
+
+  # first turn modules vector into df
+modules_df <- data.frame(modules) |> 
+  rownames_to_column("otu")
+mt_16s$tax_table <- mt_16s$tax_table |> 
+  rownames_to_column("otu") |> 
+  left_join(modules_df) |>
+  column_to_rownames("otu") |> 
+  mutate(otu = rownames(mt_16s$tax_table))
+
+mt_16s$cal_abund()
+
+# Look at specifically M1
+mt_m1 <- clone(mt_16s)
+
+mt_m1$tax_table <- mt_m1$tax_table |> 
+  filter(modules == "M1")
+
+mt_m1$tidy_dataset()$cal_abund()
+# Plot abundances
+
+rank = "otu"
+ntaxa = 30
+# Get vector of 20 most abundant families
+
+trans_abund$new(dataset = mt_m1, taxrank = rank, ntaxa = ntaxa)$
+  plot_bar(facet = "strat_season") +
+     ggtitle("16S", subtitle = paste("top", ntaxa, rank, "in M1"))
+
+
+# Look at specifically M2
+mt_m2 <- clone(mt_16s)
+
+mt_m2$tax_table <- mt_m2$tax_table |> 
+  filter(modules == "M2")
+
+mt_m2$tidy_dataset()$cal_abund()
+# Plot abundances
+
+rank = "otu"
+ntaxa = 30
+# Get vector of 20 most abundant families
+
+trans_abund$new(dataset = mt_m2, taxrank = rank, ntaxa = ntaxa)$
+  plot_bar(facet = "strat_season") +
+     ggtitle("16S", subtitle = paste("top", ntaxa, rank, "in M2"))
+
+# Look at specifically M3
+mt_m3 <- clone(mt_16s)
+
+mt_m3$tax_table <- mt_m3$tax_table |> 
+  filter(modules == "M3")
+
+mt_m3$tidy_dataset()$cal_abund()
+# Plot abundances
+
+rank = "otu"
+ntaxa = 30
+# Get vector of 20 most abundant families
+
+trans_abund$new(dataset = mt_m3, taxrank = rank, ntaxa = ntaxa)$
+  plot_bar(facet = "strat_season") +
+     ggtitle("16S", subtitle = paste("top", ntaxa, rank, "in M3"))
+
+# Look at specifically M4
+mt_m4 <- clone(mt_16s)
+
+mt_m4$tax_table <- mt_m4$tax_table |> 
+  filter(modules == "M4")
+
+mt_m4$tidy_dataset()$cal_abund()
+# Plot abundances
+
+rank = "otu"
+ntaxa = 30
+# Get vector of 20 most abundant families
+
+trans_abund$new(dataset = mt_m4, taxrank = rank, ntaxa = ntaxa)$
+  plot_bar(facet = "strat_season") +
+     ggtitle("16S", subtitle = paste("top", ntaxa, rank, "in M4"))
 
 # Create dates for season starts
 match("Summer", module_long$strat_season)
@@ -170,7 +255,7 @@ fall_start <- module_long$date[match("Fall", module_long$strat_season)]
 winter_start <- module_long$date[match("Winter", module_long$strat_season)]
 spring_start <- module_long$date[match("Spring", module_long$strat_season)]
 # Line plot - all regions
-ggplot(module_long, aes(x = date, y = relabund, color = Module, group = Module, label = rownames(module_long))) +
+p2 <- ggplot(module_long, aes(x = date, y = relabund, color = Module, group = Module, label = rownames(module_long))) +
   geom_rect(aes(xmin = sum_start, xmax = fall_start, ymax = max(relabund) +4 , ymin = max(relabund)+1),  fill = "grey", color = NULL) +
   geom_rect(aes(xmin = fall_start, xmax = winter_start, ymax = max(relabund) +4 , ymin = max(relabund)+1),  fill = "green4",  color = NULL) +
   geom_rect(aes(xmin = winter_start, xmax = spring_start, ymax = max(relabund) +4 , ymin = max(relabund)+1),  fill = "grey",  color = NULL) +
@@ -193,7 +278,7 @@ temp_df_long |>
     drop_na(temp) |> 
     mutate(depth = as.numeric(depth)) |> 
     # filter(depth < 50) |> 
-        select(date, depth, temp, sample_date) |> 
+        dplyr::select(date, depth, temp, sample_date) |> 
         # drop_na(temp) |> 
         distinct() |> 
     ggplot(aes(x = date, y = depth, z = temp)) +
@@ -211,8 +296,8 @@ temp_df_long |>
   scale_x_date(expand = c(0,0), date_breaks = "1 month", date_label = "%b", limits = c(as_date("2024-07-20"), NA), ) +
     guides(fill = guide_legend(ncol = 1, reverse = T)) +
   # Clique Data
-  geom_point(data = filter(module_long, Module != c("M5", "M6")), mapping = aes(x = date, y = 160 - relabund*1.5, z = NULL, color = Module, group = Module, label = rownames(filter(module_long, Module != c("M5", "M6"))), size = 2)) +
-  geom_line(data = filter(module_long, Module != c("M5", "M6")), mapping = aes(x = date, y = 160 - relabund*1.5, z = NULL, color = Module, group = Module, label = rownames(filter(module_long, Module != c("M5", "M6"))), size = 1)) +
+  geom_point(data = module_long, mapping = aes(x = date, y = 160 - relabund*1.5, z = NULL, color = Module, group = Module, label = rownames(module_long)), size = 2) +
+  geom_line(data = module_long, mapping = aes(x = date, y = 160 - relabund*1.5, z = NULL, color = Module, group = Module, label = rownames(module_long), size = 1)) +
   scale_color_viridis_d(option = "turbo") +
     geom_point(data = samp_dates, aes(x = sample_date, y = 38, z = NULL), color = 'white') +
     # geom_point(data = samp_dates, aes(x = sample_date, y = 22, z = NULL), color = 'white') +

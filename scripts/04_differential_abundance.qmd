@@ -33,10 +33,61 @@ library(ggtree)
 ```{r}
 # View sample table 
 # view(mt_mag$sample_table)
-t1 <- trans_diff$new(dataset = mt_mag, method = "ancombc2", group = "strat_season", fix_formula = "strat_season", alpha = 0.05, taxa_level = 'all')
+t1 <- trans_diff$new(dataset = mt_mag, method = "ancombc2", group = "strat_season", fix_formula = "strat_season", alpha = 0.05, taxa_level = 'bin')
 view(t1$res_diff)
 sig_taxa <- t1$res_diff |> 
-    filter (P.adj <=0.1)
+    filter (P.adj <=0.05)
+t2 <- clone(t1)
+t2$res_diff$Factors <- t1$res_diff$Factors |> 
+    str_replace("\\((i|I)ntercept\\)", "summer") |> 
+    str_replace("strat_season.L", "fall") |> 
+    str_replace("strat_season.Q", "winter") |> 
+    str_replace("strat_season.C", "spring")
+t2$res_diff <- t2$res_diff |> 
+    filter(P.adj < 0.05) 
+t2$plot_diff_bar(keep_full_name = TRUE, heatmap_cell = "P.adj", heatmap_sig = "Significance", heatmap_x = "Factors", heatmap_y = "Taxa")
+
+
+fig_pair <- t2$res_diff |> 
+    filter(t2$res_diff$P.adj < 0.05) |> 
+    mutate(Taxa = str_remove(Taxa, "\\|WM.*")) |> 
+    mutate(Taxa = str_remove(Taxa, "d__Bacteria\\|")) |> 
+    # mutate(Taxa = str_remove(Taxa, "\\|s__.*")) |> 
+    distinct(Taxa, .keep_all = T) |> 
+    ggplot(aes(x = Factors, y = Taxa, fill = lfc)) + 
+    geom_tile(color = "black") +
+    scale_fill_gradient2(low = "blue", high = "red", mid = "white", 
+                         na.value = "white",
+                         name = NULL) +
+    geom_text(aes(Factors, Taxa, label = lfc), size = 5, color = "black") +
+    scale_color_identity(guide = FALSE) +
+    labs(x = NULL, y = NULL, title = "Log fold changes compared to summer, (p < 0.1)") +
+    theme_minimal() +
+    theme(plot.title = element_text(hjust = 0.5), text = element_text(color = "black", size = 15))
+fig_pair
+
+
+
+
+t1$plot_diff_abund()
+# we show 20 taxa with the highest LDA (log10)
+t1$plot_diff_bar(use_number = 1:30, width = 0.8, add_sig = T)
+
+
+```
+
+## Interpretation
+It looks like the UBA2100 family is super prevalent during the winter. 
+Sediminibacterium is around a lot during the fall season?
+
+
+# 16s Analysis
+
+```{r}
+t1 <- trans_diff$new(dataset = mt_16s, method = "ancombc2", group = "strat_season", fix_formula = "strat_season", alpha = 0.05, taxa_level = 'otu')
+view(t1$res_diff)
+sig_taxa <- t1$res_diff |> 
+    filter (P.adj <=0.05)
 t2 <- clone(t1)
 t2$res_diff$Factors <- t1$res_diff$Factors |> 
     str_replace("\\((i|I)ntercept\\)", "summer") |> 
@@ -44,12 +95,12 @@ t2$res_diff$Factors <- t1$res_diff$Factors |>
     str_replace("strat_season.Q", "winter") |> 
     str_replace("strat_season.C", "spring")
 t2$res_diff |> 
-    filter(P.adj < 0.1)$
+    filter(P.adj < 0.05)$
 plot_diff_bar(keep_full_name = TRUE, heatmap_cell = "P.adj", heatmap_sig = "Significance", heatmap_x = "Factors", heatmap_y = "Taxa")
 
 
 fig_pair <- t2$res_diff |> 
-    filter(P.adj < 0.1) |> 
+    filter(t2$res_diff$P.adj < 0.05) |> 
     mutate(Taxa = str_remove(Taxa, "\\|WM.*")) |> 
     mutate(Taxa = str_remove(Taxa, "d__Bacteria\\|")) |> 
     mutate(Taxa = str_remove(Taxa, "\\|s__.*")) |> 
@@ -67,22 +118,15 @@ fig_pair <- t2$res_diff |>
 fig_pair
 
 
-t1$plot_diff_abund()
-# we show 20 taxa with the highest LDA (log10)
-t1$plot_diff_bar(use_number = 1:30, width = 0.8, add_sig = T)
-
 
 ```
-
-## Interpretation
-It looks like the UBA2100 family is super prevalent during the winter. 
-Sediminibacterium is around a lot during the fall season?
-
 ```{r}
 # Quick plot of temperature at our site
 
 
 ```
+
+# 16s abundances
 ```{r}
 t1 <- trans_diff$new(dataset = mt_16s, method = "lefse", group = "strat_season", alpha = 0.05, taxa_level = 'all', lefse_subgroup = NULL)
 view(t1$res_diff)

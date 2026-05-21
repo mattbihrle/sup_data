@@ -1,12 +1,20 @@
-# Igraph test
+##########################################################
+## Analysis of the metagenome results from the Biology Meet
+## Subduction project leg 1 Samples from Norther and Central
+## Costa Rica collected in 2017.
+## This script and associated data are available from my github repository
+## and from the appropriate database (SRA). For questions please contact:
+## Donato Giovannelli - donato.giovannelli@unina.it - dgiovannelli.github.io
+##########################################################
+
+### Load required libraries
 library(microbiome) # data analysis and visualisation
 library(phyloseq) # also the basis of data object. Data analysis and visualisation
 library(RColorBrewer) # nice color options
 library(dplyr) # data handling
 library(network) # networks
 library(intergraph)  # networks
-library(ggnet)   # network plotting with ggplot
-library(GGally)
+library(ggnetwork)   # network plotting with ggplot
 library(igraph)  # networks
 library(phyloseq) # ASV ecological analysis package
 library(ggplot2) # plotting library
@@ -19,73 +27,444 @@ library(ggpubr)
 library(ggtern) # ternary plots for geochemistry
 library(plyr)
 library(coda.base)
-library(tidyverse)
+# library(tydiverse)
 library(vegan) # Multivariate ecological analysis
 library(propr)
 library(missForest) # Imputing missing values in dataframes using Random Forests
 library(VSURF) # Random Forests approach to variable importance identification
-library(igraph)
+library(car) #for scatterplot
+library(tidyverse)
 
-nodes <- read.csv("igraph_test/Dataset1-Media-Example-NODES.csv", header=T, as.is=T)
+#########################################################
+## START HERE FOR SEPARATED MI-FASER OUTPUTS
+#########################################################
 
-links <- read.csv("igraph_test/Dataset1-Media-Example-EDGES.csv", header=T, as.is=T)
+# # Importing all the mi-faser csv files as separate objects
+# temp = list.files(pattern="*.csv")
+# for (i in 1:length(temp)) assign(temp[i], read.csv(temp[i]))
 
-nodes2 <- read.csv("igraph_test/Dataset2-Media-User-Example-NODES.csv", header=T, as.is=T)
+# mifaser<-ec_list.csv
 
-links2 <- read.csv("igraph_test/Dataset2-Media-User-Example-EDGES.csv", header=T, row.names=1)
+# test <- merge(x=ec_list.csv,y=BQF_mifaser.csv[,c("ec","readcount")], by="ec",  all.x=TRUE)
+
+# temp<-list(mifaser,ARS_mifaser.csv, BQF_mifaser.csv, BQS_mifaser.csv, BQS1_mifaser.csv,BR1F_mifaser.csv,BRF1_mifaser.csv,BRF2_mifaser.csv,BRS1_mifaser.csv,BRS2_mifaser.csv,CYF_mifaser.csv,CYS_mifaser.csv,EPF_mifaser.csv,EPS_mifaser.csv,ESF9_mifaser.csv,ETS_mifaser.csv,FAS_mifaser.csv,mifaser,MTF_mifaser.csv,PBS_mifaser.csv,PFF_mifaser.csv,PFS_mifaser.csv,PGF_mifaser.csv,PGS_mifaser.csv,PLS_mifaser.csv,QH2F_mifaser.csv,QHS1_mifaser.csv,QHS2_mifaser.csv,QNF_mifaser.csv,QNS_mifaser.csv,RSF_mifaser.csv,RSS_mifaser.csv,RVF_mifaser.csv,SIF_mifaser.csv,SIS_mifaser.csv,SLF_mifaser.csv,SLS_mifaser.csv,TCF_mifaser.csv,TCS_mifaser.csv)
+
+# dataset <- join_all(temp, "ec")
+
+# # Selecting only the readcount data
+# dataset <- cbind (dataset[,1], dataset[ , grepl( "readcount" , names( dataset ) ) ])
+
+# colnames(dataset)<-c('EC', 'ARS', 'BQF', 'BQS', 'BQS1', 'BR1F', 'BRF1', 'BRF2', 'BRS1', 'BRS2', 'CYF', 'CYS', 'EPF', 'EPS', 'ESF9', 'ETS', 'FAS', 'MTF', 'PBS', 'PFF', 'PFS', 'PGF', 'PGS', 'PLS', 'QH2F', 'QHS1', 'QHS2', 'QNF', 'QNS', 'RSF', 'RSS', 'RVF', 'SIF', 'SIS', 'SLF', 'SLS', 'TCF', 'TCS')
+
+# colnames(dataset)
+
+##############################################################
+#START HERE TO REPRODUCE THE ANALYSIS FROM THE DATA IN THE REPOSITORY
+#############################################################
+
+dataset <- read.csv("igraph_test/mifaser_dataset.csv", header=T, sep=",")
 
 
-links2 <- as.matrix(links2)
+#############################################################
+# Continue from here once you have loaded the appropriate dataset
+#############################################################
 
-dim(links2)
+dataset_clean<-subset (dataset, select=-c(ARS,PFF,PFS,PGS,PGF,PLS))
 
-dim(nodes2)
+dataset_clean
 
-net2 <- graph_from_incidence_matrix(links2)
+ecdata<-as.matrix(dataset_clean[,-1])
 
-table(V(net2)$type)
+row.names(ecdata)<-dataset_clean[,1]
+head(ecdata)
+row.names(ecdata)
 
-net2.bp <- bipartite.projection(net2)
+ecdata <- phyloseq(otu_table(ecdata, taxa_are_rows = T))
 
-bac.otu <- mt_16s$otu_table
-bac.tax <- mt_16s$tax_table
+ecdata #inspect the object
 
 
-bac.cor <- cor(bac.otu, method="spearman")
-# bac.cor[bac.cor < 0.7] = 0
-bac.cor.ig <- graph_from_adjacency_matrix(bac.cor, mode='undirected', add.rownames = NULL, weighted = TRUE)
+# Normalize counts to relative abundance first and then multiply for the median library abundance
+ecdata_n <- transform_sample_counts(ecdata, function(x) ((x / sum(x, na.rm=T))*median(colSums(ecdata, na.rm=T))))
+
+median(colSums(ecdata, na.rm=T))
+
+ecdata_n
+
+# extract only the relevant EC number for carbon metabolism
+ec_list<-read.csv("ec_list_carbon.csv", header=F)
+
+ec_list<-as.matrix(ec_list)
+
+rownames(otu_table(ecdata_n))
+
+dataset_carbon <- subset(otu_table(ecdata_n), rownames(otu_table(ecdata_n)) %in% c(ec_list))
+
+dataset_carbon
+
+
+#Building the co-occurrence network
+bac.cor <- cor(t(dataset_carbon),  use="complete.obs", method="spearman")   # use="complete.obs" because we have some missing data
+bac.cor[bac.cor < 0.5] = 0
+bac.cor.ig <- graph.adjacency(bac.cor, mode='undirected', add.rownames = TRUE, weighted = TRUE)
 bac.cor.ig <- igraph::simplify(bac.cor.ig)
-
-# Set Phyla coloring
-bac.cor.phyla <- map_levels(colnames(bac.otu), from = "best_hit", to = "Phylum", tax_table(bac_form))
-
-# Set up the colors for the phyla
-c47 <- c("#000000","#000080","#00008B","#0000CD","#0000FF","#006400","#008000","#008080","#008B8B","#00BFFF","#00CED1",
-"#00FA9A","#00FF00","#00FF7F","#00FFFF","#00FFFF","#191970","#1E90FF","#20B2AA","#228B22","#2E8B57","#2F4F4F","#32CD32","#3CB371","#40E0D0","#4169E1","#4682B4",
-"#483D8B","#48D1CC","#4B0082","#556B2F","#5F9EA0","#6495ED","#66CDAA","#696969","#6A5ACD","#6B8E23","#708090","#778899","#7B68EE","#7CFC00","#7FFF00","#7FFFD4",
-"#800000","#800080","#808000","#808080","#87CEEB","#87CEFA","#8A2BE2","#8B0000","#8B008B","#8B4513","#8FBC8F","#90EE90","#9370DB","#9400D3","#98FB98","#9932CC",
-"#9ACD32","#A0522D","#A52A2A","#A9A9A9","#ADD8E6","#ADFF2F","#AFEEEE","#B0C4DE","#B0E0E6","#B22222","#BA55D3","#BC8F8F","#BDB76B","#C0C0C0","#C71585","#CD5C5C",
-"#CD853F","#D2691E","#D2B48C","#D3D3D3","#D8BFD8","#DA70D6","#DAA520","#DB7093","#DC143C","#DCDCDC","#DDA0DD","#DEB887","#E0FFFF","#E6E6FA","#E9967A","#EE82EE",
-"#EEE8AA","#F08080","#F0E68C","#F0F8FF","#F0FFF0","#F0FFFF","#F4A460","#F5DEB3","#F5F5DC","#F5F5F5","#F5FFFA","#F8F8FF","#FA8072","#FAEBD7","#FAF0E6","#FAFAD2",
-"#FDF5E6","#FF0000","#FF00FF","#FF00FF","#FF1493","#FF4500","#FF6347","#FF69B4","#FF7F50","#FF8C00","#FFA500","#FFB6C1","#FFC0CB","#FFD700","#FFDAB9",
-"#FFDEAD","#FFE4B5","#FFE4C4","#FFE4E1","#FFEBCD","#FFEFD5","#FFF0F5","#FFF5EE","#FFF8DC","#FFFACD","#FFFAF0","#FFFAFA","#FFFF00","#FFFFE0","#FFFFF0","#FFFFFF"
-)
-
-my_color=c47[as.numeric(as.factor(bac.cor.phyla))]
-
-# Plot the computed netwrok using the FR force-directed layout
-l <- layout_with_kk(bac.cor.ig)
-svg("network_kk.svg", height=8, width=8)
-#png("network_kk.png", height=1200, width=1200)
-plot(bac.cor.ig, layout=l, vertex.size = 4, vertex.label = NA, rescale=T)
-plot
-plot <- plot(bac.cor.ig)
-legend("left", legend=levels(as.factor(bac.cor.phyla)) , col = c47 , bty = "n", pch=20 , pt.cex = 1, cex = 0.5, text.col="black", horiz = FALSE, inset = c(0.1, 0.1))
-dev.off()
+plot(bac.cor.ig, layout=layout_with_fr, vertex.size = 8, rescale=T)
 
 # Network statistics
-message("Edge and vertex count:")
 ecount(bac.cor.ig)
 vcount(bac.cor.ig)
-message("Assortativity degree:")
 assortativity_degree(bac.cor.ig, directed=F)
+
+# Identify cliques using Louvain
+bac.cor.louvain <- cluster_louvain(bac.cor.ig)
+modularity(bac.cor.louvain)
+V(bac.cor.ig)$color=bac.cor.louvain$membership
+
+plot(bac.cor.ig, layout=layout_with_fr, col = bac.cor.louvain, vertex.size = 8, rescale=T)
+
+# Identify cliques using Greedy clustering
+bac.cor.greedy <- cluster_fast_greedy(bac.cor.ig)
+modularity(bac.cor.greedy)
+V(bac.cor.ig)$color=bac.cor.greedy$membership
+plot(bac.cor.ig, layout=layout_with_fr, col = bac.cor.greedy, vertex.size = 8, rescale=T)
+
+svg("carbon_netwrok_cliques.svg", height = 4, width=4)
+plot(bac.cor.ig, layout=layout_with_fr, col = bac.cor.greedy, vertex.size = 8, rescale=T)
+dev.off()
+
+# Identify cliques using Walk trap
+bac.cor.walk <- cluster_walktrap(bac.cor.ig)
+modularity(bac.cor.walk)
+V(bac.cor.ig)$color=bac.cor.walk$membership
+plot(bac.cor.ig, layout=layout_with_fr, col = bac.cor.walk, vertex.size = 8, rescale=T)
+
+sizes(bac.cor.louvain)
+sizes(bac.cor.greedy)
+sizes(bac.cor.walk)
+
+### Extracting the list of ASV for the main cliques identified by the Louvain function
+V(bac.cor.ig)[bac.cor.louvain$membership == 1] -> bac.cor.group1
+V(bac.cor.ig)[bac.cor.louvain$membership == 2] -> bac.cor.group2
+V(bac.cor.ig)[bac.cor.louvain$membership == 3] -> bac.cor.group3
+V(bac.cor.ig)[bac.cor.louvain$membership == 4] -> bac.cor.group4
+V(bac.cor.ig)[bac.cor.louvain$membership == 5] -> bac.cor.group5
+
+bac.cor.group1
+bac.cor.group2
+bac.cor.group3
+bac.cor.group4
+bac.cor.group5
+
+#subset cliques
+clique1 <- subset(dataset_carbon, rownames(otu_table(dataset_carbon)) %in% c(names(bac.cor.group1)))
+clique2 <- subset(dataset_carbon, rownames(otu_table(dataset_carbon)) %in% c(names(bac.cor.group2)))
+clique3 <- subset(dataset_carbon, rownames(otu_table(dataset_carbon)) %in% c(names(bac.cor.group3)))
+clique4 <- subset(dataset_carbon, rownames(otu_table(dataset_carbon)) %in% c(names(bac.cor.group4)))
+clique5 <- subset(dataset_carbon, rownames(otu_table(dataset_carbon)) %in% c(names(bac.cor.group5)))
+
+
+envdata<-read.csv("subductCR_final_dataset.csv", header=T)
+
+envdata[,1]
+
+colnames(clique1)
+
+colSums(clique4, na.rm=T)
+
+plot(envdata$dic, log(colSums(clique4, na.rm=T)))
+cor.test(envdata$dic, colSums(clique4, na.rm=T), method = "spearman")
+
+## Test each clique abundance against environmental predictors using Person, Spearman and scatterplots
+#Clique 1
+par(mfrow=c(3,3))
+for (i in 1:length(envdata)) {
+    plot(envdata[,i], log(colSums(otu_table(clique1), na.rm=T)), xlab=colnames(envdata)[i])
+}
+
+message("Test with Pearson correlation:")
+# Pearson
+for (i in 16:length(envdata)) {
+    a <- cor.test(envdata[,i], colSums(otu_table(clique1), na.rm=T))
+       if (a$p.value<0.05) {
+           print(paste(i,colnames(envdata)[i],a$estimate, a$parameter, a$p.value))
+       }
+}
+message("Test with Spearman correlation:")
+# Spearman
+for (i in 16:length(envdata)) {
+    a <- suppressWarnings(cor.test(envdata[,i], colSums(otu_table(clique1), na.rm=T), method = "spearman"))
+       if (a$p.value<0.05) {
+           print(paste(i,colnames(envdata)[i],a$estimate, a$parameter, a$p.value))
+       }
+}
+
+#Clique 2
+par(mfrow=c(3,3))
+for (i in 1:length(envdata)) {
+    plot(envdata[,i], log(colSums(otu_table(clique2), na.rm=T)), xlab=colnames(envdata)[i])
+}
+
+message("Test with Pearson correlation:")
+# Pearson
+for (i in 16:length(envdata)) {
+    a <- cor.test(envdata[,i], colSums(otu_table(clique2), na.rm=T))
+       if (a$p.value<0.05) {
+           print(paste(i,colnames(envdata)[i],a$estimate, a$parameter, a$p.value))
+       }
+}
+message("Test with Spearman correlation:")
+# Spearman
+for (i in 16:length(envdata)) {
+    a <- suppressWarnings(cor.test(envdata[,i], colSums(otu_table(clique2), na.rm=T), method = "spearman"))
+       if (a$p.value<0.05) {
+           print(paste(i,colnames(envdata)[i],a$estimate, a$parameter, a$p.value))
+       }
+}
+
+#Clique 4
+par(mfrow=c(3,3))
+for (i in 1:length(envdata)) {
+    plot(envdata[,i], log(colSums(otu_table(clique4), na.rm=T)), xlab=colnames(envdata)[i])
+}
+
+message("Test with Pearson correlation:")
+# Pearson
+for (i in 16:length(envdata)) {
+    a <- cor.test(envdata[,i], colSums(otu_table(clique4), na.rm=T))
+       if (a$p.value<0.05) {
+           print(paste(i,colnames(envdata)[i],a$estimate, a$parameter, a$p.value))
+       }
+}
+message("Test with Spearman correlation:")
+# Spearman
+for (i in 16:length(envdata)) {
+    a <- suppressWarnings(cor.test(envdata[,i], colSums(otu_table(clique4), na.rm=T), method = "spearman"))
+       if (a$p.value<0.05) {
+           print(paste(i,colnames(envdata)[i],a$estimate, a$parameter, a$p.value))
+       }
+}
+
+#Clique 5
+par(mfrow=c(3,3))
+for (i in 1:length(envdata)) {
+    plot(envdata[,i], log(colSums(otu_table(clique5), na.rm=T)), xlab=colnames(envdata)[i])
+}
+
+message("Test with Pearson correlation:")
+# Pearson
+for (i in 16:length(envdata)) {
+    a <- cor.test(envdata[,i], colSums(otu_table(clique5), na.rm=T))
+       if (a$p.value<0.05) {
+           print(paste(i,colnames(envdata)[i],a$estimate, a$parameter, a$p.value))
+       }
+}
+message("Test with Spearman correlation:")
+# Spearman
+for (i in 16:length(envdata)) {
+    a <- suppressWarnings(cor.test(envdata[,i], colSums(otu_table(clique5), na.rm=T), method = "spearman"))
+       if (a$p.value<0.05) {
+           print(paste(i,colnames(envdata)[i],a$estimate, a$parameter, a$p.value))
+       }
+}
+
+sizes(bac.cor.greedy)
+
+### Extracting the list of ASV for the main cliques identified by the Louvain function
+V(bac.cor.ig)[bac.cor.greedy$membership == 1] -> bac.cor.gr.group1
+V(bac.cor.ig)[bac.cor.greedy$membership == 2] -> bac.cor.gr.group2
+V(bac.cor.ig)[bac.cor.greedy$membership == 3] -> bac.cor.gr.group3
+
+bac.cor.gr.group1
+bac.cor.gr.group2
+bac.cor.gr.group3
+
+#subset cliques
+clique.gr1 <- subset(dataset_carbon, rownames(otu_table(dataset_carbon)) %in% c(names(bac.cor.gr.group1)))
+clique.gr2 <- subset(dataset_carbon, rownames(otu_table(dataset_carbon)) %in% c(names(bac.cor.gr.group2)))
+clique.gr3 <- subset(dataset_carbon, rownames(otu_table(dataset_carbon)) %in% c(names(bac.cor.gr.group3)))
+
+## Test each clique abundance against environmental predictors using Person, Spearman and scatterplots
+#Clique 1
+par(mfrow=c(3,3))
+for (i in 1:length(envdata)) {
+    plot(envdata[,i], log(colSums(otu_table(clique.gr1), na.rm=T)), xlab=colnames(envdata)[i])
+}
+
+message("Test with Pearson correlation:")
+# Pearson
+for (i in 16:length(envdata)) {
+    a <- cor.test(envdata[,i], colSums(otu_table(clique.gr1), na.rm=T))
+       if (a$p.value<0.05) {
+           print(paste(i,colnames(envdata)[i],a$estimate, a$parameter, a$p.value))
+       }
+}
+message("Test with Spearman correlation:")
+# Spearman
+for (i in 16:length(envdata)) {
+    a <- suppressWarnings(cor.test(envdata[,i], colSums(otu_table(clique.gr1), na.rm=T), method = "spearman"))
+       if (a$p.value<0.05) {
+           print(paste(i,colnames(envdata)[i],a$estimate, a$parameter, a$p.value))
+       }
+}
+
+## Test each clique abundance against environmental predictors using Person, Spearman and scatterplots
+#Clique 2
+par(mfrow=c(3,3))
+for (i in 1:length(envdata)) {
+    plot(envdata[,i], log(colSums(otu_table(clique.gr2), na.rm=T)), xlab=colnames(envdata)[i])
+}
+
+message("Test with Pearson correlation:")
+# Pearson
+for (i in 16:length(envdata)) {
+    a <- cor.test(envdata[,i], colSums(otu_table(clique.gr2), na.rm=T))
+       if (a$p.value<0.05) {
+           print(paste(i,colnames(envdata)[i],a$estimate, a$parameter, a$p.value))
+       }
+}
+message("Test with Spearman correlation:")
+# Spearman
+for (i in 16:length(envdata)) {
+    a <- suppressWarnings(cor.test(envdata[,i], colSums(otu_table(clique.gr2), na.rm=T), method = "spearman"))
+       if (a$p.value<0.05) {
+           print(paste(i,colnames(envdata)[i],a$estimate, a$parameter, a$p.value))
+       }
+}
+
+## Test each clique abundance against environmental predictors using Person, Spearman and scatterplots
+#Clique 1
+par(mfrow=c(3,3))
+for (i in 1:length(envdata)) {
+    plot(envdata[,i], log(colSums(otu_table(clique.gr3), na.rm=T)), xlab=colnames(envdata)[i])
+}
+
+message("Test with Pearson correlation:")
+# Pearson
+for (i in 16:length(envdata)) {
+    a <- cor.test(envdata[,i], colSums(otu_table(clique.gr3), na.rm=T))
+       if (a$p.value<0.05) {
+           print(paste(i,colnames(envdata)[i],a$estimate, a$parameter, a$p.value))
+       }
+}
+message("Test with Spearman correlation:")
+# Spearman
+for (i in 16:length(envdata)) {
+    a <- suppressWarnings(cor.test(envdata[,i], colSums(otu_table(clique.gr3), na.rm=T), method = "spearman"))
+       if (a$p.value<0.05) {
+           print(paste(i,colnames(envdata)[i],a$estimate, a$parameter, a$p.value))
+       }
+}
+
+
+plot_data<-data.frame("clique2"=colSums(otu_table(clique.gr2), na.rm=T), "trench"=envdata$trench, "temp"=envdata$temp, "ph"=envdata$ph, "dic"=envdata$dic, "dic_d13"=envdata$dic_d13, "doc"=envdata$doc, "doc_d13"=envdata$doc_d13)
+
+plot_data
+
+cor.test(plot_data$temp, plot_data$clique2)
+cor.test(plot_data$temp, plot_data$clique2, method = "spearman")
+
+cor.test(plot_data$ph, plot_data$clique2)
+cor.test(plot_data$ph, plot_data$clique2, method = "spearman")
+
+cor.test(plot_data$dic, plot_data$clique2)
+cor.test(plot_data$dic, plot_data$clique2, method = "spearman")
+
+cor.test(plot_data$dic_d13, plot_data$clique2)
+cor.test(plot_data$dic_d13, plot_data$clique2, method = "spearman")
+
+cor.test(plot_data$doc, plot_data$clique2)
+cor.test(plot_data$doc, plot_data$clique2, method = "spearman")
+
+cor.test(plot_data$doc_d13, plot_data$clique2)
+cor.test(plot_data$doc_d13, plot_data$clique2, method = "spearman")
+
+names(envdata)
+
+for (i in 11:length(envdata)) {
+    a <- suppressWarnings(cor.test(envdata[,i], colSums(otu_table(clique.gr2), na.rm=T), method = "spearman"))
+           print(paste(i,colnames(envdata)[i],a$estimate, a$parameter, a$p.value))
+}
+
+ggplot(plot_data, aes(temp, log(clique2))) +
+geom_jitter(aes(color=trench), size=3) +
+geom_smooth(method = lm, se = F) +
+theme_bw()
+
+ggplot(plot_data, aes(ph, log(clique2))) +
+geom_jitter(aes(color=trench), size=3) +
+geom_smooth(method = lm, se = F) +
+theme_bw()
+
+ggplot(plot_data, aes(log(dic), log(clique2))) +
+geom_jitter(aes(color=trench), size=3) +
+geom_smooth(method = lm, formula= y~x, se = F) +
+ylim(NA, 11) +
+theme_bw()
+
+ggsave("clique2_dic.svg", height = 4, width=5)
+
+ggplot(plot_data, aes(dic_d13, log(clique2))) +
+geom_jitter(aes(color=trench), size=3) +
+geom_smooth(method = lm, formula= y~x, se = F) +
+ylim(NA, 11) +
+theme_bw()
+
+ggsave("clique2_dic_d13.svg", height = 4, width=5)
+
+ggplot(plot_data, aes(log(doc), log(clique2))) +
+geom_jitter(aes(color=trench), size=3) +
+geom_smooth(method = lm, formula= y~x, se = F) +
+ylim(NA, 11) +
+theme_bw()
+
+ggsave("clique2_doc.svg", height = 4, width=5)
+
+ggplot(plot_data, aes(doc_d13, log(clique2))) +
+geom_jitter(aes(color=trench), size=3) +
+geom_smooth(method = lm, formula= y~x, se = F) +
+ylim(NA, 11) +
+theme_bw()
+
+ggsave("clique2_doc_d13.svg", height = 4, width=5)
+
+
+# Extract environmental predictor and remove non numeric variables (i.e. factors) and unwanted variables (air temperature)
+envdata_rf <- data.frame(envdata[,10:74])
+names(envdata_rf)
+
+# Contruct the vetors for each clique abundance response variable and normalize them as Z-scores
+cliqueA <- scale(data.frame(colSums(otu_table(clique.gr1), na.rm = T)), center = TRUE, scale = TRUE)
+cliqueB <- scale(data.frame(colSums(otu_table(clique.gr2), na.rm = T)), center = TRUE, scale = TRUE)
+cliqueC <- scale(data.frame(colSums(otu_table(clique.gr3), na.rm = T)), center = TRUE, scale = TRUE)
+
+#Check if the predictors contain NAs
+if (grep("NA", envdata_rf)!=0){
+  print("There are NAs! Need to impute variables")
+} else {
+  print("No NAs in the predictors, good to go directly to the Random Forests")
+} # The predictors dataset c ontains NAs
+
+# Impute missing data using a iterative random forest approach with the missForest package
+envdata_rf2 <- missForest(envdata_rf, maxiter=10, variablewise = TRUE, verbose = TRUE, ntree=5000)
+envdata_rf2$OOBerror
+envdata_rf2$ximp # dataframe with imputed missing values to be used in downstrewam analysis
+
+# Run the the Random Forests model for variable selection using VSURF
+cliqueA_RF <- VSURF(x = data.frame(envdata_rf2$ximp), y = cliqueA[,1], parallel=T, ntree=2000, mtry=23)
+summary(cliqueA_RF)
+plot(cliqueA_RF)
+colnames(envdata_rf2$ximp)[cliqueA_RF$varselect.thres]
+colnames(envdata_rf2$ximp)[cliqueA_RF$varselect.interp]
+
+# Repeat for each cliques
+cliqueB_RF <- VSURF(x = data.frame(envdata_rf2$ximp), y = cliqueB[,1], parallel=T, ntree=5000, mtry=50)
+plot(cliqueB_RF)
+colnames(envdata_rf2$ximp)[cliqueB_RF$varselect.thres]
+colnames(envdata_rf2$ximp)[cliqueB_RF$varselect.interp]
+
+cliqueC_RF <- VSURF(x = data.frame(envdata_rf2$ximp), y = cliqueC[,1], parallel=T, ntree=2000, mtry=23)
+plot(cliqueC_RF)
+colnames(envdata_rf2$ximp)[cliqueC_RF$varselect.thres]
+colnames(envdata_rf2$ximp)[cliqueC_RF$varselect.interp]
+
+save.image() # Save all this good work!

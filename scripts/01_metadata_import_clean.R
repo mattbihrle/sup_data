@@ -615,7 +615,6 @@ sw_meta_output <- maestro_df_clean |>
 # pres_plotly <- plotly::plotly_build(pres_plot)
 # pres_plotly
 
-stop()
 # Write Files to output ----------------------------------------------------------------
 sw_meta_output <- sw_meta_output |> 
   write_csv("output/data/metadata_supwinter.csv")

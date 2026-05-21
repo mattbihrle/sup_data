@@ -21,7 +21,7 @@ library(tidyverse) #tidyverse last
 
 # Import meta data ----------------------------------------------------------
 sw_meta <- read_csv("output/data/metadata_supwinter.csv") |> 
-  select(!matches(c("_med", "round_date")))|> 
+  dplyr::select(!matches(c("12h_med", "round_date")))|> 
   distinct()
 # Load in and clean sylph data-----------------------------------------------------------------------------------
 
@@ -67,13 +67,13 @@ long_b_df$date <- mdy(long_b_df$date)
 
 otu_table <- b_df |> 
     rownames_to_column("otu") |> 
-    select(all_of(site_cols), "otu") |> 
+    dplyr::select(all_of(site_cols), "otu") |> 
     column_to_rownames("otu") |> 
     as.data.frame()
 
 tax_table <- b_df |> 
     rownames_to_column("otu") |> 
-    select(all_of(clade_cols), "otu") |> 
+    dplyr::select(all_of(clade_cols), "otu") |> 
     column_to_rownames("otu") |> 
     as.data.frame()
 
@@ -100,7 +100,7 @@ mt_sylph$taxa_abund$p[1:5,1:5]
 mt_sylph$cal_alphadiv()
 
 # Calc Bray Curtis Dissimilarity
-mt_sylph$cal_betadiv(method = c("bray","aitchison","robust.aitchison"))
+mt_sylph$cal_betadiv(method = c("bray","aitchison","robust.aitchison", "jaccard"))
 mt_sylph$beta_diversity$bray
 
 # Import 16S data----------------------------------------------------------------------------
@@ -117,7 +117,7 @@ mt_sylph$beta_diversity$bray
         rename(any_of(names_vec))
       # Reorder columns
       mt_16s$otu_table <- mt_16s$otu_table |> 
-       select(order(colnames(mt_16s$otu_table)))
+       dplyr::select(order(colnames(mt_16s$otu_table)))
       colnames(mt_16s$otu_table)
       # rename rows
     mt_16s$sample_table <- mt_16s$sample_table |> 
@@ -134,6 +134,11 @@ mt_sylph$beta_diversity$bray
     # Rename Taxa
     taxa_names <- setNames( c("k", "p", "c", "o", "f", "g", "s"), colnames(mt_16s$tax_table))
     colnames(mt_16s$tax_table) <- taxa_names
+    # Add an "otu" column for later use
+    mt_16s$tax_table <- mt_16s$tax_table |> 
+      mutate(otu = rownames(mt_16s$tax_table))
+    # check to make sure it worked
+    rownames(mt_16s$tax_table) == mt_16s$tax_table$otu
     colnames(mt_16s$tax_table) 
   # Replace question marks with 'unknown'
     mt_16s |> tidy_taxonomy(pattern = "\\?", replacement = "unknown")
@@ -171,7 +176,7 @@ mt_sylph$beta_diversity$bray
   mt_16s
   mt_16s$tidy_dataset()
   mt_16s
-stop()
+
 mt_16s$sample_table$strat_season <- factor(mt_16s$sample_table$strat_season, 
   levels = c("summer", "fall", "winter", "spring"), 
   labels = c("Summer", "Fall", "Winter", "Spring"),
@@ -185,7 +190,7 @@ mt_16s$taxa_abund$p[1:5,1:5]
 mt_16s$cal_alphadiv()
 
 # Calc Bray Curtis Dissimilarity
-mt_16s$cal_betadiv(method = c("bray","aitchison","robust.aitchison"))
+mt_16s$cal_betadiv(method = c("bray","aitchison","robust.aitchison", "jaccard"))
 mt_16s$beta_diversity$bray
 
 # Import MAG data -----------------------------------------------------
@@ -221,7 +226,7 @@ col_keep <- colnames(de_coverage[str_which(colnames(de_coverage),
 col_keep
 # Remove columns we dont want and the first 'unmapped' row
 de_coverage_clean <- de_coverage |> 
-  select(genome, all_of(col_keep)) |> 
+  dplyr::select(genome, all_of(col_keep)) |> 
   slice(-1)
 
 # Create a vector of sites
@@ -262,6 +267,7 @@ otu_table <- de_coverage_clean |>
 head(otu_table)
 
 tax_table <- mag_df_clean |> 
+  mutate(bin = genome) |> 
     column_to_rownames("genome") |> 
     as.data.frame() |> 
   tidy_taxonomy()
@@ -290,7 +296,7 @@ mt_mag$taxa_abund
 mt_mag$cal_alphadiv()
 
 # Calc Bray Curtis Dissimilarity
-mt_mag$cal_betadiv(method = c("bray","aitchison","robust.aitchison"), unifrac = T)
+mt_mag$cal_betadiv(method = c("bray","aitchison","robust.aitchison", "jaccard"), unifrac = T)
 head(mt_mag$beta_diversity)
 
 # Save the tables we care about

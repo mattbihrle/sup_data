@@ -22,23 +22,32 @@ load("output/data/temp_df_long.RData")
 # Create environmental object
 
 ```{r}
-t1 <- trans_env$new(dataset = mt_mag, env_cols = c(6:18), standardize = F, complete_na = T)
-t1$data_env
-t1$data_env$chla_24h_avg[1] <- t1$data_env |> 
-    filter()
+t1 <- trans_env$new(dataset = mt_mag, env_cols = c(1:19), standardize = F, complete_na = T) 
+
+# Remove maestro temp which starts with NA
+t1$data_env <- t1$data_env |> 
+  dplyr::select(-matches("mtemp"))
+
+# t1$data_env$chla_24h_avg[1] <- t1$data_env |> 
+#     filter()
 # Calculate differences between variables at different sampling dates
 t1$cal_diff(group = "strat_season", method = "anova")
 view(t1$res_diff)
 
+tmp <- list()
+for(i in 1:length(colnames(t1$data_env))){
+    tmp[[i]] <- t1$plot_diff(measure = colnames(t1$data_env)[i], add_sig_text_size = 5, xtext_size = 12) + theme(plot.margin = unit(c(0.1, 0, 0, 1), "cm"))
+}
+plot(gridExtra::arrangeGrob(grobs = tmp, ncol = 3))
 # Calculate RDA plot
-t1$cal_ordination(method = "dbRDA", use_measure = "bray")
+t1$cal_ordination(method = "dbRDA", use_measure = "robust.aitchison")
 t1$trans_ordination()
 t1$plot_ordination(plot_color = "strat_season")
 # the main results of RDA are related with the projection and angles between arrows
 # adjust the length of the arrows to show them better
 t1$trans_ordination(adjust_arrow_length = TRUE, max_perc_env = 1.5)
 # t1$res_rda_trans is the transformed result for plotting
-t1$plot_ordination(plot_color = "strat_season")
+t1$plot_ordination(plot_color = "strat_season", add_sample_label = "sample")
 # Calculate correlation matrix
 t1$cal_autocor(group = "strat_season")
 
@@ -65,7 +74,7 @@ library(tidyverse)
 # Load metadata-------------------------------------------------------------------------
 sw_meta <- read_csv("data/sw_metadata.csv") |>
   mutate(date = mdy(date)) |> 
-  select(!day:year)
+  dplyr::select(!day:year)
 
 # Create secondary stratification season based on combining fall and winter toegether
 sw_meta <- sw_meta |> 
@@ -97,7 +106,7 @@ temp_df <- temp_df |>
     # round to nearest hour to make things easier
   mutate(dttm = round_date(dttm, unit = "hour"))
   #   # Select only columns less than 50m
-  # select(which(as.numeric(colnames(temp_df)) <= 50))
+  # dplyr::select(which(as.numeric(colnames(temp_df)) <= 50))
 # move dttm column out, convert to datetime and pivot long
 temp_df_long <- temp_df |> 
   # rownames_to_column(var = "dttm") |>
@@ -115,7 +124,7 @@ temp_df_long <- temp_df |>
 
 # First create temporary df of sample dates
   samp_dates <- sw_meta |> 
-    select(sample) |> 
+    dplyr::select(sample) |> 
     mutate(sample_date = as_date(sw_meta$date))
 
 ## Create a 14 day averaged temperature---------------------------------
@@ -165,7 +174,7 @@ temp_df_long <- temp_df_long |>
 # library(interp)
 # gridded_data <- temp_df_long |>
 #     ungroup() |> 
-#     select(dttm, depth, temp) |> 
+#     dplyr::select(dttm, depth, temp) |> 
 #     drop_na() |> 
 #     interp(x = temp_df_long$dttm, 
 #                        y = temp_df_long$depth, 
@@ -193,11 +202,11 @@ temp_labels <- paste0(temp_labels_1, "-", temp_labels_2)
   # Create temp plot
 temp_df_long |> 
     ungroup() |> 
-    # select(dttm, depth, temp) |> 
+    # dplyr::select(dttm, depth, temp) |> 
     drop_na(temp) |> 
     mutate(depth = as.numeric(depth)) |> 
     # filter(depth < 50) |> 
-        select(date, depth, temp, sample_date) |> 
+        dplyr::select(date, depth, temp, sample_date) |> 
         # drop_na(temp) |> 
         distinct() |> 
     ggplot(aes(x = date, y = depth, z = temp)) +
@@ -251,7 +260,7 @@ clean_long_m_df |>
     labs(color = "Variable", x = "Date", y = NULL)
 
   noon_midnight_plot <- maestro_df_clean |> 
-    select(round_date, matches("12h_med")) |> 
+    dplyr::select(round_date, matches("12h_med")) |> 
     pivot_longer(cols = ! "round_date", names_to = "var", values_to = "vals") |> 
     distinct() |> 
       ggplot(aes(round_date, vals, color = var)) +
@@ -263,7 +272,7 @@ clean_long_m_df |>
 noon_midnight_plot
 
 daily_plot <- maestro_df_clean |> 
-    select(date, matches("24h_avg"), -matches("mtemp_2_")) |> 
+    dplyr::select(date, matches("24h_avg"), -matches("mtemp_2_")) |> 
     pivot_longer(cols = !date, names_to = "var", values_to = "vals") |> 
     distinct() |>
       ggplot(aes(date, vals, color = var)) +
