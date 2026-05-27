@@ -1006,6 +1006,71 @@ Looks like this one can do denitrification which is pretty cool. Thinking about 
   I went through and looked at the gene cliques and honestly they weren't that interesting. I'm a little dissapointed. Maybe something will show up if I look more specifically at  CAZy genes or such. I also wrote some code to put the maestro data on the bottom of the genes. 
   ![genes and temp](output/plots/gene_cliques_temp_maestro.png)
 
+  Though another interpretation of this would be that although there are changes in community comoposition, the functional composition remains similar. It would then be interesting to think about how the growth rates and adaptability of the organisms changes in the different conditions. 
+
   I'm also going to try and rerun it to see how things change with 5 modules, but I will try that once I am done with other stuff because it takes a while to run properly. 
 
+  Another interesting finding is that the big change at WM03 comes with a big spike in CDOM. Possibly because of a DCM showing up? That would point to more particle associated folks hanging out there. 
+
+  # May 27, 2026
+
+
+On my list for today:
+[ ] Run aldex2 on 16s and decrease the number of taxa
+
+[x] Rerun through the modules and see what is up
+
+[x] Look at what genes dominate each clique
+
+[ ] update environmental data to fill in what is interpolated and what is not
   
+
+  Reran the modules and came out with 14 of them! But mostly just 4 that have actual numbers of foam genes in them. 
+
+  ![gene_cliques_temp](output/plots/module_gene_temp.png)
+
+  The gene cliques are not that interesting except for a couple of little bumps at WM03 in M4 and M2, WM12 there is a small bump. M1 seems to be inverse of M04 and M02 but they all are the same rank abundance.
+
+   Looking at the top 10 categories in level 1 of the foam genes:
+   - Amino acid utilization biosynthesis metabolism is the most abundant group over all which makes sense. Microbes gotta make DNA
+   - The top 8/ 10 are all about the same but in different orders
+   - M2 has a 04_Utilization of sugar, conversion of pentose to EMP pathway intermediates" which shows up in the 10th spot, but is pretty abundant
+   - M1 has a 20_hydrolysis of polymers group in addition to a larger CAZy abundance than the others. This suggests there might be more large polymers to cut up in M1? 
+   - M4 also had the 20_hydrolysis of polymers difference that seems interesting...
+
+
+Okay, now looking at the nested plots:
+
+![m1_l1_l2_bar](output/plots/m1_l1_l2_bar.png)
+![m2_l1_l2_bar](output/plots/m2_l1_l2_bar.png)
+![m3_l1_l2_bar](output/plots/m3_l1_l2_bar.png)
+![m4_l1_l2_bar](output/plots/m4_l1_l2_bar.png)
+
+Reminder that abundance of modules is M2>M4>M1>>M3
+
+M3 has a phosphotransferase system (pts) which none of the others have in 12_transporters.
+M3 also has less diversity of 06_amino acid utilization biosythesis metabolism
+M3 has response to cation stress within 21_cellular response to stress
+M1 has a lot of CAZy, M2 less, M3 a bit more, none in M4
+Fermentation is different for each. M1 has no fermentation in it's top 20
+M2 - mixed acid ferment and glutamate degredation
+M3 - bifidobacterium shunt, mixed acid
+M4 - Pyruvate fermentation (anaerobic)
+
+Bifidobacterium shunt is responsible for producing more ATP than typical carbohdrate fermentation. Found in high fiber conditions?
+
+**is fermentation alway anaerobic?**
+
+[ ] Next thing to do is create a new Microtable object with the same tax table and the otu table being just module abundance and see what LefSE has to say. 
+
+
+
+
+
+
+
+
+
+
+   
+   
