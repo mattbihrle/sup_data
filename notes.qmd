@@ -977,3 +977,35 @@ In the 16S data the RDA looks kinda wild but it also shows that chitinophages ar
 
 Ended the day trying to get the genes in as a microtable object. I think I need to try and treat each gene like an OTU and then take the abundances off of the bins to see how gene abundance changes. Honestly but also once 
 
+# May 22, 2026
+
+Starting to look at chitinophage genomes
+
+Genome
+
+tax information
+
+System
+
+Notes
+
+WM15_S10_008
+
+sediminibacterium
+
+Nitrogen cycle
+
+Looks like this one can do denitrification which is pretty cool. Thinking about how with all the nitrogen in the lake there is more nitrate to use up and so this would be useful. It also interestingly seems to be not super prevalent at the beginning and then gets more and more as the samples progress. I a little bit think that this could be because the bacterium were just left in the filters for that long and were changing that slowly. 
+
+  -  Finally got the gene abundances figured out I think. I ran and saved an ancombc2 and probably should do the same with lefse and a couple other DAs. That would be a good starting point for next week. 
+
+  # May 26, 2026
+
+  Back at it on a Tuesday. First things looking at the ancombc2 significant results. It looks like in fall the sulfur gene comD which is responsible for Sulfolacetate degredation. This occurs in methane metabolism which is interesting. If it is down regluated in the fall that would mean that there is possibly less methane metabolism happening in the fall because of overturn and oxygenation? That would make sense. 
+
+  I went through and looked at the gene cliques and honestly they weren't that interesting. I'm a little dissapointed. Maybe something will show up if I look more specifically at  CAZy genes or such. I also wrote some code to put the maestro data on the bottom of the genes. 
+  ![genes and temp](output/plots/gene_cliques_temp_maestro.png)
+
+  I'm also going to try and rerun it to see how things change with 5 modules, but I will try that once I am done with other stuff because it takes a while to run properly. 
+
+  

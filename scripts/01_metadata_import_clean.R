@@ -74,7 +74,7 @@ temp_df_long <- temp_df |>
     mutate(sample_date = as_date(sw_meta$date))
 
 ## Create a 14 day averaged temperature---------------------------------
-  
+  temp_df_long_full <- temp_df_long
   # Then create 14 day average
 temp_df_long <- temp_df_long |>
   # Force the date column to be a simple Date, dropping any hours/minutes/seconds
@@ -91,6 +91,8 @@ temp_df_long <- temp_df_long |>
   mutate(temp_c_14d_avg = mean(temp, na.rm = TRUE)) |> 
   ungroup()
 
+head(temp_df_long$dttm)
+tail(temp_df_long$dttm)
 # OLD VERSION
 # locs <- seaprocess::find_near(vec = as_date(temp_df_long$date), vals = as_date(sw_meta$date))
 # dates <- as_date(rep(NA, nrow(temp_df_long)))
@@ -633,6 +635,7 @@ sw_meta_output <- sw_meta_output |>
 save(file = "output/data/maestro_df_clean.RData", maestro_df_clean)
 save(file = "output/data/clean_long_m_df.RData", clean_long_m_df)
 save(file = "output/data/temp_df_long.RData", temp_df_long)
+save(file = "output/data/temp_df_long_full.RData", temp_df_long_full)
 # maestro_df_clean <- maestro_df_clean |> 
 #   write_csv("output/data/maestro_data_clean.csv")
 # # temp_df_long <- temp_df_long |> 

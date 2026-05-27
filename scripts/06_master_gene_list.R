@@ -285,3 +285,20 @@ cazy_df <- read_tsv("output/data/cazy_genes.tsv") |>
 #   # separate_wider_delim(name, ", ", names = c("name"), too_few = "align_start", too_many = "debug")
 
   
+kegg_files <- foam_rollup_df |> 
+  select(bin, id)
+
+all_bins <- kegg_files |> 
+  select(bin) |> 
+  unique()
+all_bins <- all_bins$bin |> 
+  as.vector()
+all_bins[1]
+
+dir.create("output/data/kegg_output")
+for(i in 1:length(all_bins)) {
+name <- paste0("output/data/kegg_output/", all_bins[i], "_kegg.tsv")
+  kegg_files |> 
+  filter(bin == all_bins[i]) |> 
+    write_tsv(file = name)
+}

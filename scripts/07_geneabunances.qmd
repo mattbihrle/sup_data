@@ -1,5 +1,5 @@
 ---
-title: "07_LefSE_gene_fams"
+title: "07_gene_abundance"
 format: html
 ---
 
@@ -20,6 +20,114 @@ library(ALDEx2)
 library(igraph)
 ```
 
+
+# Load Data
+
+```{r}
+load("output/data/mt_gene_mag.RData")
+```
+
+# Create Trans func and run ancomb
+
+```{r}
+# Run this line only if you need to recreate the gene object, it will take a long time. 
+# t1 <- trans_diff$new(dataset = mt_gene_mag, method = "ancombc2", group = "strat_season", fix_formula = "strat_season", alpha = 0.05, taxa_level = 'gene')
+```
+
+```{r}
+view(t1$res_diff)
+
+t2 <- clone(t1)
+
+t2$res_diff$Factors <- t2$res_diff$Factors |> 
+    str_replace("\\((i|I)ntercept\\)", "summer") |> 
+    str_replace("strat_season.L", "fall") |> 
+    str_replace("strat_season.Q", "winter") |> 
+    str_replace("strat_season.C", "spring")
+
+sig_taxa <- t2$res_diff |> 
+    filter (P.adj <=0.05) |> 
+    dplyr::select(Taxa, , Factors, Significance, lfc ) |> 
+    separate_wider_delim(Taxa, delim = "|", names = c("bin", "l1", "l2", "l3", "l4", "func", "id")) |> 
+    arrange(Factors, -abs(lfc), Significance)
+
+view(sig_taxa)
+
+t3 <- clone(t1)
+
+t3$res_diff$Factors <- t3$res_diff$Factors |> 
+    str_replace("\\((i|I)ntercept\\)", "summer") |> 
+    str_replace("strat_season.L", "fall") |> 
+    str_replace("strat_season.Q", "winter") |> 
+    str_replace("strat_season.C", "spring")
+
+t3$res_diff <- t3$res_diff |>  
+    dplyr::select(Taxa, Factors, Significance, lfc, P.adj ) |>
+    filter(P.adj <= 0.05) |> 
+    separate_wider_delim(Taxa, delim = "|", names = c("bin", "l1", "l2", "l3", "l4", "func", "id"))
+
+t3$plot_diff_bar(keep_full_name = TRUE, heatmap_cell = "P.adj", heatmap_sig = "Significance", heatmap_x = "Factors", heatmap_y = "id")
+
+fig_pair <- t2$res_diff |> 
+    filter(t2$res_diff$P.adj < 0.05) |> 
+    mutate(Taxa = str_remove(Taxa, "\\|WM.*")) |> 
+    mutate(Taxa = str_remove(Taxa, "d__Bacteria\\|")) |> 
+    mutate(Taxa = str_remove(Taxa, "\\|s__.*")) |> 
+    distinct(Taxa, .keep_all = T) |> 
+    ggplot(aes(x = Factors, y = Taxa, fill = lfc)) + 
+    geom_tile(color = "black") +
+    scale_fill_gradient2(low = "blue", high = "red", mid = "white", 
+                         na.value = "white",
+                         name = NULL) +
+    geom_text(aes(Factors, Taxa, label = lfc), size = 5, color = "black") +
+    scale_color_identity(guide = FALSE) +
+    labs(x = NULL, y = NULL, title = "Gene Log fold changes compared to summer, (p < 0.1)") +
+    theme_minimal() +
+    theme(plot.title = element_text(hjust = 0.5), text = element_text(color = "black", size = 15))
+fig_pair
+```
+
+# Run lefse (beware of lots of false positive)
+
+```{r}
+
+t1 <- trans_diff$new(dataset = mt_gene_mag, method = "lefse", group = "strat_season", fix_formula = "strat_season", alpha = 0.05, taxa_level = 'all', p_adjust_method = "none")
+view(t1$res_diff)
+
+```
+
+# Try to check out the aldex2 data
+
+```{r}
+alde <- clone(mt_gene_mag)
+alde$otu_table <- alde$otu_table |> 
+    mutate(across(everything(), ~ round(.x * 100000, digits = 0 )))
+view(alde$otu_table)
+
+
+t1 <- trans_diff$new(dataset = alde, method = "ALDEx2_k", group = "strat_season", fix_formula = "strat_season", alpha = 0.05, taxa_level = 'gene')
+view(t1$res_diff)
+
+```
+
+# Basic Abundance Graphs
+
+```{r}
+
+taxrank = "gene"
+ntaxa = 1
+
+t1 <- clone(mt_gene_mag)
+t1$tax_table <- t1$tax_table |> 
+    filter(gene == "K06034")
+
+t1$tidy_dataset()
+view(t1$otu_table)
+
+plot <- trans_abund$new(t1, taxrank = taxrank, ntaxa = ntaxa)$
+    plot_bar(facet = "strat_season")
+plot
+```
 ```{r, echo = F}
 # Load in data
 #FOAM data
@@ -132,8 +240,8 @@ foam_df <- read_tsv("output/data/metabolism/foam_rollup.tsv")
 load("output/data/mt_mag.RData")
 
 # Cut down the foam_df to only include bins that are in the mag dataset
-foam_df_cut <- foam_df |> 
-    slice(which(foam_df$bin %in% rownames(mt_mag$otu_table)))
+foam_df_cut <- foam_rollup_df |> 
+    slice(which(foam_rollup_df$bin %in% rownames(mt_mag$tax_table)))
 
 # Isolate just the nitrogen cycle genes
 foam_df_cut <- foam_df_cut |> 
@@ -286,6 +394,7 @@ library(magrittr)
 bin_abund <- mt_mag$otu_table
 sample_meta <- mt_mag$sample_table
 
+
 # -------------------------------------------------------------------
 # STEP 2: Prepare the FOAM gene table
 # -------------------------------------------------------------------
@@ -294,37 +403,58 @@ sample_meta <- mt_mag$sample_table
 # - Colnames are Bin IDs (must match the rownames of bin_abund)
 # - Values are gene copy numbers (or 1/0 for presence/absence)
 
-# To prevent matrix multiplication errors, ensure the bins align perfectly.
-# Find the intersecting bins between both tables:
-common_bins <- intersect(colnames(foam_genes), rownames(bin_abund))
 
-# Filter and order both tables to match the common bins exactly
-foam_genes_filtered <- foam_genes[, common_bins, drop = FALSE]
-bin_abund_filtered <- bin_abund[common_bins, , drop = FALSE]
+foam_table <- foam_df_cut |> 
+    group_by(bin, id) |> 
+    tally(count)
+foam_table |> 
+ggplot(aes(x = n)) +
+geom_histogram()
+
+# Okay it looks like there are not really many issues where need to worry about there being more than 1 gene copy.
+
+foam_table_wide <- foam_table |> 
+    pivot_wider(names_from = bin, values_from = n) |> 
+    column_to_rownames("id") |> 
+    # Make it a presence abesnce thing (change things here if I need to)
+    mutate(across(everything(), ~ifelse(is.na(.x), 0, 1)))
 
 # -------------------------------------------------------------------
 # STEP 3: Calculate Gene Abundances across samples
 # -------------------------------------------------------------------
 # Matrix multiplication: 
 # (Genes x Bins matrix) %*% (Bins x Samples matrix) = (Genes x Samples matrix)
-gene_abund_matrix <- as.matrix(foam_genes_filtered) %*% as.matrix(bin_abund_filtered)
+gene_abund_matrix <- as.matrix(foam_table_wide) %*% as.matrix(bin_abund)
 
 # Convert back to a dataframe for the microtable
 gene_abund <- as.data.frame(gene_abund_matrix)
+
+
+# Create a tax_table, but only keep one of the l1, l2, l3 explanations. Here we are losing some information about what gene pathways genes are being used for. 
+
+tax_table <- foam_df_cut |> 
+    select(bin, id, l1, l2, l3, l4, `function`) |> 
+    distinct() |> 
+    group_by(id) |> 
+    slice_head() |> 
+    mutate(gene = id) |> 
+    column_to_rownames("id")
+
 
 # -------------------------------------------------------------------
 # STEP 4: Create the new FOAM Gene microtable
 # -------------------------------------------------------------------
 # Instantiate a new microtable where the "OTUs" are now your FOAM genes
-meco_genes <- microtable$new(otu_table = gene_abund, 
-                             sample_table = sample_meta)
+mt_genes_mag <- microtable$new(otu_table = gene_abund, 
+                             sample_table = sample_meta, 
+                             tax_table = tax_table)
 
 # Optional but highly recommended: If you have a functional hierarchy/taxonomy 
 # for your FOAM genes (e.g., Level 1, Level 2, Gene), add it as the tax_table!
 # meco_genes$tax_table <- foam_hierarchy_df
 
 # Clean the dataset to remove any genes that have 0 abundance across all samples
-meco_genes$tidy_dataset()
+mt_genes_mag$tidy_dataset()
 
 # -------------------------------------------------------------------
 # STEP 5: Run Differential Abundance
@@ -333,9 +463,9 @@ meco_genes$tidy_dataset()
 # Replace "YourGroupColumn" with the actual column name in your sample_table.
 
 # Example using LEfSe (Linear discriminant analysis Effect Size)
-t_diff <- trans_diff$new(dataset = meco_genes, 
-                         method = "lefse", 
-                         group = "YourGroupColumn", 
+t_diff <- trans_diff$new(dataset = mt_genes_mag, 
+                         method = "ancombc2", 
+                         group = "strat_season", 
                          alpha = 0.05)
 
 # View the results

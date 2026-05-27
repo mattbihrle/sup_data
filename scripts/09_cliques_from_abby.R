@@ -162,23 +162,25 @@ module_rel_abund$strat_season <- mt_16s$sample_table$strat_season
 # module_rel_abund$Site <- mt_16s$sample_table$Site
 
 module_long <- pivot_longer(module_rel_abund,
-                            cols = c("M1", "M2", "M3", "M4", "M5", "M6", "M7", "M8"),
+                            cols = c("M1", "M2", "M3", "M4", "M5", "M6"),
                             names_to = "Module",
                             values_to = "relabund")
+save(module_long, file = "output/data/module_long_16s.RData")
 
 # Add modules to tax_table in 16s data
 
   # first turn modules vector into df
 modules_df <- data.frame(modules) |> 
   rownames_to_column("otu")
-mt_16s$tax_table <- mt_16s$tax_table |> 
-  rownames_to_column("otu") |> 
-  left_join(modules_df) |>
-  column_to_rownames("otu") |> 
-  mutate(otu = rownames(mt_16s$tax_table))
+mt_16s$tax_table <- mt_16s$tax_table |>  
+  rownames_to_column("otu_rows") |> 
+  left_join(modules_df, by = join_by(otu_rows == otu)) |>
+  column_to_rownames("otu_rows") |> 
+  mutate(otu = rownames(mt_16s$tax_table)) 
 
 mt_16s$cal_abund()
-
+save(mt_16s, file = "output/data/mt_16s.RData")
+save(t_network, file = "output/data/t_network_16s.RData")
 # Look at specifically M1
 mt_m1 <- clone(mt_16s)
 

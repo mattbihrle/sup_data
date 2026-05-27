@@ -11,6 +11,8 @@ format: html
     load("output/data/mt_16s.RData")
     load("output/data/mt_mag.RData")
     load("output/data/mt_sylph.RData")
+    load("output/data/mt_gene_mag.RData")
+    load("output/data/t1_gene_ancombc2.RData")
 ```
 
 # Load Required Libraries
@@ -85,7 +87,12 @@ Sediminibacterium is around a lot during the fall season?
 
 ```{r}
 t1 <- trans_diff$new(dataset = mt_16s, method = "ancombc2", group = "strat_season", fix_formula = "strat_season", alpha = 0.05, taxa_level = 'otu')
+save(t1, file = "output/data/t1_16s_ancombc2.RData")
 view(t1$res_diff)
+
+t1$res_diff <- 
+    t1$res_diff |> 
+    separate_wider_delim(Taxa, delim = "|", names = c("bin", "l1", "l2", "l3", "l4", "func", "gene"))
 sig_taxa <- t1$res_diff |> 
     filter (P.adj <=0.05)
 t2 <- clone(t1)
@@ -94,23 +101,17 @@ t2$res_diff$Factors <- t1$res_diff$Factors |>
     str_replace("strat_season.L", "fall") |> 
     str_replace("strat_season.Q", "winter") |> 
     str_replace("strat_season.C", "spring")
-t2$res_diff |> 
-    filter(P.adj < 0.05)$
-plot_diff_bar(keep_full_name = TRUE, heatmap_cell = "P.adj", heatmap_sig = "Significance", heatmap_x = "Factors", heatmap_y = "Taxa")
 
 
 fig_pair <- t2$res_diff |> 
     filter(t2$res_diff$P.adj < 0.05) |> 
-    mutate(Taxa = str_remove(Taxa, "\\|WM.*")) |> 
-    mutate(Taxa = str_remove(Taxa, "d__Bacteria\\|")) |> 
-    mutate(Taxa = str_remove(Taxa, "\\|s__.*")) |> 
-    distinct(Taxa, .keep_all = T) |> 
-    ggplot(aes(x = Factors, y = Taxa, fill = lfc)) + 
+    distinct(gene, .keep_all = T) |> 
+    ggplot(aes(x = Factors, y = gene, fill = lfc)) + 
     geom_tile(color = "black") +
     scale_fill_gradient2(low = "blue", high = "red", mid = "white", 
                          na.value = "white",
                          name = NULL) +
-    geom_text(aes(Factors, Taxa, label = lfc), size = 5, color = "black") +
+    geom_text(aes(Factors, gene, label = lfc), size = 5, color = "black") +
     scale_color_identity(guide = FALSE) +
     labs(x = NULL, y = NULL, title = "16S Log fold changes compared to summer, (p < 0.1)") +
     theme_minimal() +
@@ -118,6 +119,8 @@ fig_pair <- t2$res_diff |>
 fig_pair
 
 
+t1 <- trans_diff$new(dataset = mt_16s, method = "ALDEx2_k", group = "strat_season", fix_formula = "strat_season", alpha = 0.05, taxa_level = 'otu')
+save(t1, file = "output/data/t1_16s_aldex2.RData")
 
 ```
 ```{r}

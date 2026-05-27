@@ -1,12 +1,15 @@
 # Need temp labels and samp_dates from a previous script
-
-p1 <- temp_df_long |> 
+# Also need to import the network data
+load("output/data/temp_df_long_full.RData")
+load("output/data/module_long_16s.RData")
+load("output/data/maestro_df_clean.RData")
+p1 <- temp_df_long_full |> 
     ungroup() |> 
     # select(dttm, depth, temp) |> 
     drop_na(temp) |> 
     mutate(depth = as.numeric(depth)) |> 
     filter(depth < 50) |> 
-        dplyr::select(date, depth, temp, sample_date) |> 
+        dplyr::select(date, depth, temp) |> 
         # drop_na(temp) |> 
         distinct() |> 
     ggplot(aes(x = date, y = depth, z = temp)) +
@@ -39,5 +42,15 @@ p2 <- ggplot(module_long, aes(x = date, y = relabund, color = Module, group = Mo
   scale_x_date(expand = c(0,0), date_breaks = "1 month", date_label = "%b", limits = c(as_date("2024-07-20"), as_date("2025-08-05")))
 
 p2
-p1 / p2 + plot_layout(heights = c(1, 2))
+
+p3 <- maestro_df_clean |> 
+  select(dttm_local, matches(c("cdom_12"))) |> 
+  pivot_longer(cols = -dttm_local, names_to = "var", values_to = "value") |> 
+    ggplot(aes(dttm_local, value)) +
+  geom_point() + 
+  facet_grid(var ~ ., scales = "free") +
+  scale_x_date(expand = c(0,0), date_breaks = "1 month", date_label = "%b", 
+               limits = c(as_date("2024-07-10"), as_date("2025-08-05"))) +
+  theme_classic()
+p1 / p2 / p3 + plot_layout(heights = c(1, 2, 0.5))
 
