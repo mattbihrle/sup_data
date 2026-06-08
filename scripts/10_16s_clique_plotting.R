@@ -1,8 +1,20 @@
 # Need temp labels and samp_dates from a previous script
 # Also need to import the network data
+
+library(tidyverse)
+library(microeco)
+library(patchwork)
 load("output/data/temp_df_long_full.RData")
 load("output/data/module_long_16s.RData")
 load("output/data/maestro_df_clean.RData")
+
+
+# Add temp labels
+temp_labels_1 <- seq(0, 17, by = 1)
+temp_labels_2 <- seq(1, 18, by = 1)
+
+temp_labels <- paste0(temp_labels_1, "-", temp_labels_2)
+
 p1 <- temp_df_long_full |> 
     ungroup() |> 
     # select(dttm, depth, temp) |> 
@@ -18,7 +30,7 @@ p1 <- temp_df_long_full |>
         # scale_fill_brewer(palette = "RdBu", direction = -1) +
         scale_fill_viridis_d(option = "turbo", labels = temp_labels) +
   labs(x = "Date", y = "Depth (m)", fill = "Temperature (°C)") +
-  geom_point(data = samp_dates, aes(x = sample_date, y = 38, z = NULL), color = 'white') +
+  geom_point(data = mt_mag$sample_table, aes(x = date, y = 38, z = NULL), color = 'white') +
     theme_classic() +
     theme(
       text = element_text(size = 15),

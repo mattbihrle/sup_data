@@ -179,7 +179,7 @@ mt_16s$tax_table <- mt_16s$tax_table |>
   mutate(otu = rownames(mt_16s$tax_table)) 
 
 mt_16s$cal_abund()
-save(mt_16s, file = "output/data/mt_16s.RData")
+save(mt_16s, file = "output/data/mt_16s_cliques.RData")
 save(t_network, file = "output/data/t_network_16s.RData")
 # Look at specifically M1
 mt_m1 <- clone(mt_16s)

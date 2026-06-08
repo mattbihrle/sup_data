@@ -1,3 +1,7 @@
+# install extra packages
+
+devtools::install_github("rachelgriffard/micRoclean")
+
 
 # Load Packages ------------------------------
   # For analysis
@@ -16,6 +20,7 @@ library(GUniFrac) # for unifrac diversity
 # library(forcats)
 # library(paletteer)
 # library(plotly)
+library(micRoclean)
 library(tidyverse) #tidyverse last
 
 
@@ -52,7 +57,17 @@ b_df <- b_df %>% tidyr::separate_wider_delim(cols = clade_name, delim = "|", nam
 # Quick check to see if abundances are all still 100 
 colSums(b_df[9:ncol(b_df)])
 
+# Create df of all taxa found in the samples that weren't pumped to act as potential contamination
+con_df <- b_df |> 
+  select(!WM01:WM16) |> 
+  mutate(across(any_of(site_cols), ~ifelse(.x == 0.00, NA, .x))) |> 
+  drop_na()
 
+# Double check that there are no dupliated species
+nrow(con_df) == length(unique(con_df$t))
+
+# Great, now put all those taxa in a vector
+con_vec <- unique(con_df$t)
 
 #Create long df 
 long_b_df <- b_df %>% pivot_longer(cols = all_of(site_cols), 
@@ -61,7 +76,7 @@ long_b_df <- b_df %>% pivot_longer(cols = all_of(site_cols),
 long_b_df <- long_b_df %>% 
   mutate(date = sw_meta$date[match(long_b_df$sample, sw_meta$sample)]
   )
-long_b_df$date <- mdy(long_b_df$date)
+long_b_df$date <- ymd(long_b_df$date)
 
 # Turn the Sylph data into a microeco object ('mt_sylph')----------------------------------------------------------------------------------
 
@@ -90,6 +105,30 @@ mt_sylph$sample_table$strat_season <- factor(mt_sylph$sample_table$strat_season,
   levels = c("summer", "fall", "winter", "spring"), 
   labels = c("Summer", "Fall", "Winter", "Spring"),
    ordered = T)
+
+# Remove contamination ---------------------------------------------------------------
+# Create vector of sites that were not pumped
+  con_site_cols <- site_cols[12:19]
+
+# Create df of all taxa found in the samples that weren't pumped to act as potential contamination
+con_df <- b_df |> 
+  select(!WM01:WM16) |> 
+  mutate(across(any_of(site_cols), ~ifelse(.x == 0.00, NA, .x))) |> 
+  drop_na()
+
+# Double check that there are no dupliated species
+nrow(con_df) == length(unique(con_df$t))
+
+# Great, now put all those taxa in a vector
+con_vec <- unique(con_df$t)
+
+# Remove taxa that are contamination
+mt_sylph$filter_pollution(con_vec)
+
+# Now remove the samples that did not filter
+mt_sylph$sample_table <- mt_sylph$sample_table |> 
+  filter_out(sample %in% con_site_cols)
+# -------------------------------------------------------------------
 mt_sylph$tidy_dataset()
  # Calculations for later
 # Calculate relative abunance
@@ -170,6 +209,33 @@ mt_sylph$beta_diversity$bray
   mt_16s
   mt_16s$filter_pollution(taxa = c("mitochondria", "chloroplast", "metagenome"))
   mt_16s      
+
+## Remove contamination ---------------------------------------------------------------
+# Create vector of sites that were not pumped
+  con_site_cols <- site_cols[12:19]
+
+# Create df of all taxa found in the samples that weren't pumped to act as potential contamination
+con_df <- mt_16s$otu_table |> 
+  select(!matches("WM01"): matches("WM16")) |> 
+  mutate(across(everything(), ~ifelse(.x == 0.00, NA, .x))) |> 
+  drop_na() |> 
+  rownames_to_column("otu") |> 
+  mutate(id = otu) |> 
+  column_to_rownames("id")
+
+# Double check that there are no dupliated species
+nrow(con_df) == length(unique(con_df$otu))
+
+# Great, now put all those taxa in a vector
+con_vec <- unique(con_df$otu)
+
+# Remove taxa that are contamination
+mt_16s$filter_pollution(con_vec)
+
+# Now remove the samples that did not filter
+mt_16s$sample_table <- mt_16s$sample_table |> 
+  filter_out(sample %in% con_site_cols)
+# -------------------------------------------------------------------
 
   # Tidy dataset
   print("Tidying dataset")
@@ -281,12 +347,50 @@ mt_mag <-microtable$new(otu_table = otu_table, sample_table = sample_table,
 # mt_mag <- trans_norm$new(mt_mag)
 # mt_mag <- mt_mag$norm(method = "rclr")
 
+## Remove contamination ---------------------------------------------------------------
+# Create vector of sites that were not pumped
+  con_site_cols <- site_cols[12:19]
+
+# Create df of all taxa found in the samples that weren't pumped to act as potential contamination
+con_df <- mt_mag$otu_table |> 
+  select(!matches("WM01"): matches("WM16")) |> 
+  mutate(across(everything(), ~ifelse(.x == 0.00, NA, .x))) |> 
+  drop_na() |> 
+  rownames_to_column("bin") |> 
+  mutate(id = bin) |> 
+  column_to_rownames("id")
+
+# Double check that there are no dupliated species/otu/bin
+nrow(con_df) == length(unique(con_df$bin))
+
+# Great, now put all those taxa in a vector
+con_vec <- unique(con_df$bin)
+
+# Remove taxa that are contamination
+mt_mag$filter_pollution(con_vec)
+mt_mag$filter_pollution(con_site_cols)
+
+# also remove any bins that are WM17-WM24
+mt_mag$tax_table <- mt_mag$tax_table |> 
+  filter_out(bin %in% con_site_cols)
+
+# Now remove the bins from samples that didn't filter (eg WMxx_S17_021)
+  # First create a vector of those names
+contam_bins <- rownames(mt_mag$otu_table) |> 
+  str_subset("WM(2[0-9]{1}|1[7-9]{1}).*") 
+  # then filter_pollution to remove
+
+mt_mag$filter_pollution(contam_bins)
+
+#-----------------------------------------------------
+
 mt_mag$sample_table$strat_season <- factor(mt_mag$sample_table$strat_season, 
   levels = c("summer", "fall", "winter", "spring"), 
   labels = c("Summer", "Fall", "Winter", "Spring"),
    ordered = T)
+mt_mag
 mt_mag$tidy_dataset()
-
+mt_mag
  # Calculations for later
 # Calculate relative abunance
 mt_mag$cal_abund()

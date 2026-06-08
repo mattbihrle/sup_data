@@ -821,8 +821,14 @@ Also spent an annoying amount of time trying to figure out a lab
 calendar for the sheik lab and learning api stuff.
 
 ![temperature and cliques
-data](output/plots/temp_and_cliques_patches.png) This graph needs a bit
-of work on the axes and such but otherwise looks pretty good.
+data](output/plots/temp_and_cliques_patches.png)
+
+This graph needs a bit of work on the axes and such but otherwise looks
+pretty good.
+
+Here's another graph:
+
+![cdom_temp_cliques](output/plots/gene_cliques_temp_cdom.png)
 
 Re ran the cliques with a lower abundance threshold and got 5 cliques
 out of it. It looks like there are big shifts after mixing events that
@@ -957,25 +963,39 @@ the interpolated values** but it looks like there is some neat
 clustering going on. Something to look more into. ![dbRDA first
 pass](output/plots/dbrda_test.png)
 
-
 # May 21, 2026
 
-Starting today looking at the environmental data and seeing which were significant, 
-what I could use for a rDBA analysis. (*05_environmental_data.qmd*) Looking at a bunch of different stratification regimes it seems like do_sat, temp, and cond are the big ones with pco2 and cdom significant factors when splitting up by solar season and/or combining winter/fall into the same season. Hmm now that I'm thinking about it, **I should set up a stratification that is just (stratified, overturn, weak stratification)**pc
+Starting today looking at the environmental data and seeing which were
+significant, what I could use for a rDBA analysis.
+(*05_environmental_data.qmd*) Looking at a bunch of different
+stratification regimes it seems like do_sat, temp, and cond are the big
+ones with pco2 and cdom significant factors when splitting up by solar
+season and/or combining winter/fall into the same season. Hmm now that
+I'm thinking about it, **I should set up a stratification that is just
+(stratified, overturn, weak stratification)**pc
 
-- Working on wilcox ranking of the environmental data. It looks like chla is a big predictor along with temp, do and pco2. That's pretty cool to see and indicaates that particle associated taxa might be especially important. 
-![drba_loadings](output/plots/dbrda_arrows.png)
+- Working on wilcox ranking of the environmental data. It looks like
+  chla is a big predictor along with temp, do and pco2. That's pretty
+  cool to see and indicaates that particle associated taxa might be
+  especially important. ![drba_loadings](output/plots/dbrda_arrows.png)
 
-Okay, I made an RDA plot and it looks like there are a couple of families that are strongly associated with chla which is interesting. Chitinophages are a bit driver on one of the axes and the UBA taxa tend to be really common. 
+Okay, I made an RDA plot and it looks like there are a couple of
+families that are strongly associated with chla which is interesting.
+Chitinophages are a bit driver on one of the axes and the UBA taxa tend
+to be really common.
 
-In the 16S data the RDA looks kinda wild but it also shows that chitinophages are the major players in the microbial world here. 
+In the 16S data the RDA looks kinda wild but it also shows that
+chitinophages are the major players in the microbial world here.
 
 ![rda_mags_family](output/plots/rda_mt_mag_family.png)
 ![rda_16s_family](output/plots/rda_16s_family.png)
 
 **Maybe it is time to start looking at the chitinophages genomes**
 
-Ended the day trying to get the genes in as a microtable object. I think I need to try and treat each gene like an OTU and then take the abundances off of the bins to see how gene abundance changes. Honestly but also once 
+Ended the day trying to get the genes in as a microtable object. I think
+I need to try and treat each gene like an OTU and then take the
+abundances off of the bins to see how gene abundance changes. Honestly
+but also once
 
 # May 22, 2026
 
@@ -995,49 +1015,78 @@ sediminibacterium
 
 Nitrogen cycle
 
-Looks like this one can do denitrification which is pretty cool. Thinking about how with all the nitrogen in the lake there is more nitrate to use up and so this would be useful. It also interestingly seems to be not super prevalent at the beginning and then gets more and more as the samples progress. I a little bit think that this could be because the bacterium were just left in the filters for that long and were changing that slowly. 
+Looks like this one can do denitrification which is pretty cool.
+Thinking about how with all the nitrogen in the lake there is more
+nitrate to use up and so this would be useful. It also interestingly
+seems to be not super prevalent at the beginning and then gets more and
+more as the samples progress. I a little bit think that this could be
+because the bacterium were just left in the filters for that long and
+were changing that slowly.
 
-  -  Finally got the gene abundances figured out I think. I ran and saved an ancombc2 and probably should do the same with lefse and a couple other DAs. That would be a good starting point for next week. 
+- Finally got the gene abundances figured out I think. I ran and saved
+  an ancombc2 and probably should do the same with lefse and a couple
+  other DAs. That would be a good starting point for next week.
 
-  # May 26, 2026
+# May 26, 2026
 
-  Back at it on a Tuesday. First things looking at the ancombc2 significant results. It looks like in fall the sulfur gene comD which is responsible for Sulfolacetate degredation. This occurs in methane metabolism which is interesting. If it is down regluated in the fall that would mean that there is possibly less methane metabolism happening in the fall because of overturn and oxygenation? That would make sense. 
+Back at it on a Tuesday. First things looking at the ancombc2
+significant results. It looks like in fall the sulfur gene comD which is
+responsible for Sulfolacetate degredation. This occurs in methane
+metabolism which is interesting. If it is down regluated in the fall
+that would mean that there is possibly less methane metabolism happening
+in the fall because of overturn and oxygenation? That would make sense.
 
-  I went through and looked at the gene cliques and honestly they weren't that interesting. I'm a little dissapointed. Maybe something will show up if I look more specifically at  CAZy genes or such. I also wrote some code to put the maestro data on the bottom of the genes. 
-  ![genes and temp](output/plots/gene_cliques_temp_maestro.png)
+I went through and looked at the gene cliques and honestly they weren't
+that interesting. I'm a little disappointed. Maybe something will show
+up if I look more specifically at CAZy genes or such. I also wrote some
+code to put the maestro data on the bottom of the genes. ![genes and
+temp](output/plots/gene_cliques_temp_maestro.png)
 
-  Though another interpretation of this would be that although there are changes in community comoposition, the functional composition remains similar. It would then be interesting to think about how the growth rates and adaptability of the organisms changes in the different conditions. 
+Though another interpretation of this would be that although there are
+changes in community composition, the functional composition remains
+similar. It would then be interesting to think about how the growth
+rates and adaptability of the organisms changes in the different
+conditions.
 
-  I'm also going to try and rerun it to see how things change with 5 modules, but I will try that once I am done with other stuff because it takes a while to run properly. 
+I'm also going to try and rerun it to see how things change with 5
+modules, but I will try that once I am done with other stuff because it
+takes a while to run properly.
 
-  Another interesting finding is that the big change at WM03 comes with a big spike in CDOM. Possibly because of a DCM showing up? That would point to more particle associated folks hanging out there. 
+Another interesting finding is that the big change at WM03 comes with a
+big spike in CDOM. Possibly because of a DCM showing up? That would
+point to more particle associated folks hanging out there.
 
-  # May 27, 2026
+# May 27, 2026
 
+On my list for today: \[ \] Run aldex2 on 16s and decrease the number of
+taxa
 
-On my list for today:
-[ ] Run aldex2 on 16s and decrease the number of taxa
+\[x\] Rerun through the modules and see what is up
 
-[x] Rerun through the modules and see what is up
+\[x\] Look at what genes dominate each clique
 
-[x] Look at what genes dominate each clique
+\[ \] update environmental data to fill in what is interpolated and what
+is not
 
-[ ] update environmental data to fill in what is interpolated and what is not
-  
+Reran the modules and came out with 14 of them! But mostly just 4 that
+have actual numbers of foam genes in them.
 
-  Reran the modules and came out with 14 of them! But mostly just 4 that have actual numbers of foam genes in them. 
+![gene_cliques_temp](output/plots/module_gene_temp.png)
 
-  ![gene_cliques_temp](output/plots/module_gene_temp.png)
+The gene cliques are not that interesting except for a couple of little
+bumps at WM03 in M4 and M2, WM12 there is a small bump. M1 seems to be
+inverse of M04 and M02 but they all are the same rank abundance.
 
-  The gene cliques are not that interesting except for a couple of little bumps at WM03 in M4 and M2, WM12 there is a small bump. M1 seems to be inverse of M04 and M02 but they all are the same rank abundance.
-
-   Looking at the top 10 categories in level 1 of the foam genes:
-   - Amino acid utilization biosynthesis metabolism is the most abundant group over all which makes sense. Microbes gotta make DNA
-   - The top 8/ 10 are all about the same but in different orders
-   - M2 has a 04_Utilization of sugar, conversion of pentose to EMP pathway intermediates" which shows up in the 10th spot, but is pretty abundant
-   - M1 has a 20_hydrolysis of polymers group in addition to a larger CAZy abundance than the others. This suggests there might be more large polymers to cut up in M1? 
-   - M4 also had the 20_hydrolysis of polymers difference that seems interesting...
-
+Looking at the top 10 categories in level 1 of the foam genes: - Amino
+acid utilization biosynthesis metabolism is the most abundant group over
+all which makes sense. Microbes gotta make DNA - The top 8/ 10 are all
+about the same but in different orders - M2 has a 04_Utilization of
+sugar, conversion of pentose to EMP pathway intermediates" which shows
+up in the 10th spot, but is pretty abundant - M1 has a 20_hydrolysis of
+polymers group in addition to a larger CAZy abundance than the others.
+This suggests there might be more large polymers to cut up in M1? - M4
+also had the 20_hydrolysis of polymers difference that seems
+interesting...
 
 Okay, now looking at the nested plots:
 
@@ -1046,31 +1095,158 @@ Okay, now looking at the nested plots:
 ![m3_l1_l2_bar](output/plots/m3_l1_l2_bar.png)
 ![m4_l1_l2_bar](output/plots/m4_l1_l2_bar.png)
 
-Reminder that abundance of modules is M2>M4>M1>>M3
+Reminder that abundance of modules is M2\>M4\>M1\>\>M3
 
-M3 has a phosphotransferase system (pts) which none of the others have in 12_transporters.
-M3 also has less diversity of 06_amino acid utilization biosythesis metabolism
-M3 has response to cation stress within 21_cellular response to stress
-M1 has a lot of CAZy, M2 less, M3 a bit more, none in M4
-Fermentation is different for each. M1 has no fermentation in it's top 20
-M2 - mixed acid ferment and glutamate degredation
-M3 - bifidobacterium shunt, mixed acid
-M4 - Pyruvate fermentation (anaerobic)
+M3 has a phosphotransferase system (pts) which none of the others have
+in 12_transporters. M3 also has less diversity of 06_amino acid
+utilization biosythesis metabolism M3 has response to cation stress
+within 21_cellular response to stress M1 has a lot of CAZy, M2 less, M3
+a bit more, none in M4 Fermentation is different for each. M1 has no
+fermentation in it's top 20 M2 - mixed acid ferment and glutamate
+degredation M3 - bifidobacterium shunt, mixed acid M4 - Pyruvate
+fermentation (anaerobic)
 
-Bifidobacterium shunt is responsible for producing more ATP than typical carbohdrate fermentation. Found in high fiber conditions?
+Bifidobacterium shunt is responsible for producing more ATP than typical
+carbohdrate fermentation. Found in high fiber conditions?
 
 **is fermentation alway anaerobic?**
 
-[ ] Next thing to do is create a new Microtable object with the same tax table and the otu table being just module abundance and see what LefSE has to say. 
+\[ \] Next thing to do is create a new Microtable object with the same
+tax table and the otu table being just module abundance and see what
+LefSE has to say.
+
+# June 01,2026
+
+I set up a script (12_gene_samples_abundace.R) that will do all the
+differential analysis on the genes BUT I can't seem to get any
+information from WM22 and WM23 from metacerberus. My current next step
+is to try and troubleshoot to see what is going on. Tried running –super
+tag instead of –prodigal tag in my metacerberus script. Next I might try
+to run metacerberus on the already existing faa files
+
+Added a little thing to see what the interpolated values for the
+environmental data look like. I should ask Cody about whether the
+interpolation is valid. it looks like the issues are:
+
+- Conductivity
+
+- Chla
+
+- DO
+
+I could go back and interpolate earlier or just remove the data from
+those that don't have data OR I could probably input some CTD data.
+
+![interpolated values](output/plots/interpolated_values.png)
+
+Now moving forward to look at the data that Tim sent.
+
+Superior-PPS recover 2024-2025.txt file:
+
+It looks like it might have only sampled 17 times? the last sample
+recorded was on 3/30/2025, which corresponds with WM17. TThe machine
+flushed but it didn't record that a sample was pumped in. So potentially
+up to 16 is all the data that we have. There was a data stop line on
+March 30, 2025. It does look like in other years the sampler did record
+all 30 samples. Some years it didn't.
+
+There was also a fixative applied which would be an interesting thing to
+record and probably necessary for a methods section.
+
+After meeting with Cody I should start to look at heterotrophs vs
+autotrophs and start to look for cool types of metabolisms particularly
+carbon.
+
+Looking at the various pathways:
+
+01_fermentationwould be an interesting one to look at but not all that
+much difference through the year.
+
+05_fatty acid oxidation, fatty acid beta oxidation jumps at the weird
+ones at S3 and S12
+
+02_homoacetogenesis is an anaerobic pathway
+
+08_hydrocarbon degredation is interesting
+
+09_CAZy doesn't really seem to change that much
+
+10_TCA cycle is interesting especially the reductive TCA cycle changes
+throughout the winter
+
+11_nitrification goes up and down a lot
+
+12\_ hydrogren metabolism is also interesting it has more of a seasonal
+cycle which could be due to cyanos and such
+
+18)\_sulfur there is a late summer bump in chemoautotrophic sulfur
+compound folks (**who is that?**)
+
+Ones to remove:
+
+07 nucleic acid metabolism
+
+06 amino acid utilization biosynthesis metabolism
+
+21 cellular response to stress
+
+19
+
+
+# June 2, 2026
+
+**Do I need to redo any of the mapping and such becuase of the last few samples not being quality samples?**
+
+# June 3, 2026
+Installed WSL, installed hmmer, unzipped the microtrait.hmmdb file, then ran hmmpress on it. Then manually put the data into microtrait/extdata/hmm/hmmpress
+
+I am still missing the DBCAN data but I can maybe download it separately from the DBCAN github. For now am just ignoring it and seeing if microtrait will work. 
+
+I ran into an issue installing prodigal on the windows side of my computer so I am going back through and running R through my ubuntu side. Right now am installing devtools so I can go and install the other packages (gRodon and microtrait). Then I'll see if I can run microtrait. 
+
+Also created a master spreadsheet of all my samples that I have now. Tomorrow I should try to exctract some of them. 
+
+# June 4, 2026
+
+STILL working on getting microtrait and grodon to run. Now I am fighting with positron to try and run them on the msi servers. 
+
+I have a setup script but other things I need to do before running things in R:
+  -  Setup a new conda environment to download packages and R into
+  -  download R into that environment
+  -  Install devtools into that environment (through conda)
+  -  tell positron to look for R in the conda environment
+  -  tell positron not to abort kernels once they are inactive so I don't have to keep logging back on
+  -  Then can start installing packages, it will take a while. 
+  - But then you can do an Rscript myscript.R to run anything you want. Woo!
+
+  Finished the microtrait stuff and saved a local copy of my output under "genomeset_results.rds"
+
+  # June 8, 2026
+  
+  Working on filtering out pollution in my samples. That will entail filtering out all the taxa found in samples 17-24 that did not get pumped. 
+
+  Question:
+    - Do I need to run coverM again? probably I think.
+
+    For the 16S contamination: I should filter out the taxa from the Synmock community that are super prevalent in the other samples. Maybe I can add another row that is relative abundance of the other samples. 
+
+    Possible contamination OTUs from synmock:
+    OTU160
+    OTU412
+    OTU417
+    OTU891
+    OTU400
+    OTU589
+    OTU660
+    OTU355 - possibly not though
+    OTU230
+    OTU385
+    OTU421
+    OTU93
+    OTU71
+    
 
 
 
 
-
-
-
-
-
-
-   
-   
+    

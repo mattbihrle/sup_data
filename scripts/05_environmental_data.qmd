@@ -10,7 +10,7 @@ library(tidyverse)
 library(skimr)
 ```
 
-# Run previous scripts to load in microtable objects
+# Load in microtable objects
 
 ```{r}
 load("output/data/mt_mag.RData")
@@ -24,19 +24,30 @@ load("output/data/temp_df_long.RData")
 
 ```{r}
 
-# First add a "month" column to sample table 
-
-mt_mag$sample_table <- mt_mag$sample_table |> 
-  mutate(month = as.factor(month(date)))
-
-#Reorder months to be in order from 8 - 7
-
-mt_mag$sample_table$month <- mt_mag$sample_table$month |> 
-  factor(levels = c("8", "9", "10", "11", "12", "1", "2", "3", "4", "5", "6", "7"))
-mt_mag$sample_table$month
 cols <- ncol(mt_mag$sample_table)
 t1 <- trans_env$new(dataset = mt_mag, env_cols = c(1:cols), standardize = F, complete_na = T)
+t2 <- trans_env$new(dataset = mt_mag, env_cols = c(1:cols), standardize = F, complete_na = F)
 
+env_long_complete <- t1$data_env |> 
+  select(-c(depth, sample_date, use_maestro, strat_season_2, solar_season, mixing, month)) |> 
+  pivot_longer(cols = -c(date, strat_season, sample), names_to = "var", values_to = "value") |> 
+  mutate(date = ymd(as.character(date)))
+
+
+
+env_long_raw <- t2$data_env |> 
+  select(-c(depth, sample_date, use_maestro, strat_season_2, solar_season, mixing, month)) |> 
+  pivot_longer(cols = -c(date, strat_season, sample), names_to = "var", values_to = "value") |> 
+  mutate(interpolated = ifelse(is.na(value), TRUE, FALSE))
+
+env_long_complete <- env_long_complete |> 
+  mutate(interpolated = env_long_raw$interpolated)
+
+env_long_complete |> 
+  ggplot(aes(date, value, color = interpolated)) +
+  geom_point() +
+  facet_wrap(~var, scales = "free")
+# Look at which values are shared between the two
 #Check to see what values are missing and such
 sum_stats <- skim(t1$data_env)
 sum_stats

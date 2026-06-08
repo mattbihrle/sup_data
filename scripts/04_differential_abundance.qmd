@@ -131,7 +131,14 @@ save(t1, file = "output/data/t1_16s_aldex2.RData")
 
 # 16s abundances
 ```{r}
-t1 <- trans_diff$new(dataset = mt_16s, method = "lefse", group = "strat_season", alpha = 0.05, taxa_level = 'all', lefse_subgroup = NULL)
+
+clone_16s <- clone(mt_16s)
+clone_16s$filter_taxa(
+  rel_abund = 0.00001,  # At least 0.001% in any sample
+)
+clone_16s$tidy_dataset()
+t1 <- trans_diff$new(dataset = clone_16s, method = "ALDEx2_kw", group = "strat_season", alpha = 0.05, taxa_level = 'otu')
+save(t1, file = "output/data/16s_alde.RData")
 view(t1$res_diff)
 t1$plot_diff_cladogram()
 t1$plot_diff_bar(threshold = 4.5)
