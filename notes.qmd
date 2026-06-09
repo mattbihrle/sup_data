@@ -1247,6 +1247,18 @@ I have a setup script but other things I need to do before running things in R:
     
 
 
+# Jun 09, 2026
+
+Goals for today in R:
+[ ] Finish going through Cody's paper and pull out the list of contaminants. 
+[ ] Try running microclean and see where that gets me
+[ ] Check out other R packages for contamination
+
+Also would like to do a bit of research to see if I am okay to do the bead beating, freeze and then extract at a later date.
+
+After talking with Emma it seems like I should just do them all in one go. I am going to maybe try 6 this next time and see how that goes. 
+Need to look for control types
 
 
-    
+
+Worked through a bit of micRoclean and it filtered out 94% of the usual data -- oops. I might have had too many blanks. Tomorrow I should take a look at just doing one blank and seeing how things work. 

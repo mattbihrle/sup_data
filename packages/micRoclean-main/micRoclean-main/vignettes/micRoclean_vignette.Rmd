@@ -1,0 +1,312 @@
+---
+title: "micRoclean: Decontamination for low-biomass microbiome data"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{micRoclean: Decontamination for low-biomass microbiome data}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r options, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  cache = TRUE
+)
+```
+
+# Set-up
+
+## About micRoclean
+
+micRoclean contains two pipelines for decontaminating low-biomass microbiome data.
+
+For issues with installation or usage, please submit an issue or discussion via [GitHub](https://github.com/rachelgriffard/micRoclean/issues).  
+
+To run this vignette, it is suggested to download the whole "vignettes" file folder and set working directory to file location by choosing:  
+**Session > Set working directory > To source file location**
+
+## Package loading
+
+First, we need to load the *micRoclean* package as well as a few others.
+
+```{r library, silent = TRUE}
+# required for analysis
+library(micRoclean)
+library(tidyverse) # %>%
+
+# for vignette
+library(knitr) # kable
+library(kableExtra) # scrollbox
+```
+
+## Data import
+
+Next, we are going to load our count and metadata matrix. These come from a mock dilution series from Hulspusch et al. (2023) and the original data can be found [here](https://github.com/lakarstens/ControllingContaminants16S/tree/master/Analyses). Users can see how counts and metadata were create through the R file [here](https://github.com/rachelgriffard/micRoclean/tree/main/vignettes/original_data_structure).
+
+```{r}
+data(pipeline1_data, package = 'micRoclean')
+data(pipeline2_data, package = 'micRoclean')
+```
+
+
+### Counts matrix
+
+The *count matrix* is A samples (n) by features (p) matrix.  
+
+The following is the count matrix for micRoclean() with research_goal = 'orig.composition'.
+
+```{r import-counts-1}
+# counts_1 = read.csv('counts_pipeline1.csv', row.names = 1)
+
+counts_1 %>% kable()  %>%
+  kable_styling("striped", full_width = T) %>% 
+ scroll_box(width = '100%', height = "300px")
+```
+
+The following is the counts matrix for micRoclean() with research_goal = 'biomarker'.
+
+```{r import-counts-2}
+# counts_2 = read.csv('counts_pipeline2.csv', row.names = 1)
+
+counts_2 %>% kable() %>%
+  kable_styling("striped", full_width = T) %>% 
+ scroll_box(width = '100%', height = "300px")
+```
+
+
+### Metadata
+
+The *metadata* is a matrix with samples (n) as rows and two required columns *is_control* and *sample_type*. Two optional columns can be included named *batch* and *sample_well*. It is important that the naming scheme of the columns for the metadata match as seen below.
+
+-   *is_control* - Boolean variable where *TRUE* indicates a extraction negative control sample and *FALSE* otherwise.
+
+-   *sample_type* - Sample types named by string, indicating which samples should be read together.
+
+-   (optional) *batch* - String indicating batch.
+
+-   (optional) *sample_well* - String that indicates the well location of the sample. Must be in LETTER-NUMBER format, e.g. A1.
+
+The following is the metadata for orig.composition.
+
+```{r import-meta-1}
+# metadata_1 = read.csv('metadata_pipeline1.csv', row.names = 1)
+
+# append batch data
+metadata_1$batch = rep('A')
+
+metadata_1 %>% kable()  %>%
+  kable_styling("striped", full_width = T) %>% 
+ scroll_box(width = '100%', height = "300px")
+```
+
+The following is the metadata for biomarker.
+
+```{r import-meta2}
+# metadata_2 = read.csv('metadata_pipeline2.csv', row.names = 1)
+
+metadata_2 %>% kable() %>%
+  kable_styling("striped", full_width = T) %>% 
+ scroll_box(width = '100%', height = "300px")
+```
+
+
+We can use these data to see how our pipelines work.
+
+# Pipelines
+
+## research_goal = 'orig.composition'
+
+This pipeline should be used when the user:
+
+1.  Has sample well location information available
+
+2.  Wants to primarily characterize the original composition of the sample prior to contamination
+
+3.  Has only one batch, or has multiple batches *if* negative controls are present in each
+
+Users must have control samples present in each batch for this method to be used.
+
+This pipeline implements the [SCRuB method](https://www.nature.com/articles/s41587-023-01696-w) for decontamination (Austin et al., 2023). To run this pipeline, the user can input their data as such:
+
+```{r orig.composition}
+orig.composition_results = micRoclean(counts = counts_1,
+                               research_goal = 'orig.composition',
+                               meta = metadata_1,
+                               control_name = 'Blank')
+```
+
+Once run, the pipeline will return a list object with:
+
+1.  *Decontaminated counts matrix (decontaminated_count)* - A samples (n) by features (q) matrix with the decontaminated counts
+
+```{r p1-decount}
+orig.composition_results$decontaminated_count %>% kable()  %>%
+  kable_styling("striped", full_width = T) %>% 
+ scroll_box(width = '100%', height = "300px")
+```
+
+
+2.  *Filtering loss value (FL)* - A numeric value between 0 and 1 indicating the contribution of the removed counts to the overall covariance. High values would be a sign of potential over-filtering. For more detailed information, users are encouraged to read the manuscript associated with this package.
+
+```{r p1-fl}
+orig.composition_results$filtering_loss
+```
+
+
+Other notes:
+
+-   If there are multiple batches, they will be decontaminated through SCRuB separately as suggested by the method and then appended back together into a full decontaminated count matrix
+
+## research_goal = 'biomarker'
+
+This pipeline should be used when the user: 1. Wants to primarily identify potential biomarkers
+
+Pipeline 2 contains multiple steps to identify potential contaminants, as visualized here: <img src="https://github.com/rachelgriffard/micRoclean/assets/95938614/f7c3290e-026a-4d53-9939-e737ea400da1" align="center" height="400"/>
+
+To run this pipeline, first the user must input a list of known contaminants as a "blocklist":
+
+```{r blocklist}
+# blocklist
+data(blocklist, package = 'micRoclean')
+
+# bl = c('Actinomyces','Corynebacterium','Arthrobacter',
+#        'Rothia','Propionibacterium','Atopobium',
+#        'Sediminibacterium','Porphyromonas','Prevotella',
+#        'Chryseobacterium','Capnocytophaga','Chryseobacterium',
+#        'Flavobacterium','Pedobacter','UnclassifiedTM7',
+#        'Bacillus','Geobacillus','Brevibacillus','Paenibacillus',
+#        'Staphylococcus','Abiotrophia','Granulicatella',
+#        'Enterococcus','Lactobacillus','Streptococcus',
+#        'Clostridium','Coprococcus','Anaerococcus','Dialister','Megasphaera',
+#        'Veillonella','Fusobacterium','Leptotrichia','Brevundimonas','Afipia',
+#        'Bradyrhizobium','Devosia','Methylobacterium','Mesorhizobium','Phyllobacterium',
+#        'Rhizobium','Methylobacterium','Phyllobacterium','Roseomonas','Novosphingobium	',
+#        'Sphingobium','Sphingomonas','Achromobacter','Burkholderia','Acidovorax',
+#        'Comamonas','Curvibacter','Pelomonas','Cupriavidus','Duganella',
+#        'Herbaspirillum','Janthinobacterium','Massilia','Oxalobacter','Ralstonia',
+#        'Leptothrix','kingella','Neisseria','Escherichia','Haemophilus',
+#        'Acinetobacter','Enhydrobacter','Pseudomonas','Stenotrophomonas','Xanthomonas')
+
+
+bl %>% kable() %>%
+  kable_styling("striped", full_width = T) %>% 
+ scroll_box(width = '100%', height = "300px")
+```
+
+The blocklist used above is directly from the publicly available blocklist in the study by [Eisenhofer et al. (2019)](https://www.sciencedirect.com/science/article/pii/S0966842X18302531?via%3Dihub) which is suggested for use if the users do not have their own blocklist.  
+
+Next, the user must specify technical replicates across batches using sample names and columns for each batch. Notice the columns are named based on the metadata, in this case as batches are named 'F' and 'G'.  
+
+```{r tech-repl}
+# technical replicates
+tr = data.frame('F' = c("037_25_10_17_KIT1","049_16_11_16_KIT1","050_19_06_15_KIT1",
+               "060_09_06_15_KIT1","075_23_06_15_KIT1","079_22_06_15_KIT1",
+               "094_05_06_15_KIT1","103_30_05_17_KIT1","109_26_05_17_KIT1",
+               "117_19_06_15_KIT1","128_18_11_16_KIT1","137_30_05_17_KIT1",
+               "138_17_11_16_KIT1","139_25_10_17_KIT1","159_23_05_17_KIT1",
+               "PM00995_KIT1","PM01011_KIT1","PM01016_KIT1","PM01043_KIT1",     
+               "PM01054_KIT1","PM01057_KIT1","PM01060_KIT1","PM01064_KIT1",     
+               "PM01070_KIT1","PM01074_KIT1","PM01075_KIT1","PM01087_KIT1",   
+               "PM01088_KIT1","PM01093_KIT1","PM1009_KIT1"),
+       'G' = c("037_25_10_17_KIT2","049_16_11_16_KIT2","050_19_06_15_KIT2",
+               "060_09_06_15_KIT2","075_23_06_15_KIT2","079_22_06_15_KIT2",
+               "094_05_06_15_KIT2","103_30_05_17_KIT2","109_26_05_17_KIT2",
+               "117_19_06_15_KIT2","128_18_11_16_KIT2","137_30_05_17_KIT2",
+               "138_17_11_16_KIT2","139_25_10_17_KIT2","159_23_05_17_KIT2",
+               "PM00995_KIT2","PM01011_KIT2","PM01016_KIT2",    
+               "PM01043_KIT2","PM01054_KIT2","PM01057_KIT2","PM01060_KIT2",
+               "PM01064_KIT2","PM01070_KIT2","PM01074_KIT2","PM01075_KIT2",
+               "PM01087_KIT2","PM01088_KIT2","PM01093_KIT2","PM1009_KIT2"))
+tr %>% kable() %>%
+  kable_styling("striped", full_width = T) %>% 
+ scroll_box(width = '100%', height = "300px")
+```
+
+Then the user can input their data as such:
+
+```{r biomarker, eval = FALSE}
+# remove eval = FALSE for individual use
+biomarker_results = micRoclean(counts = counts_2,
+                               meta = metadata_2,
+                               research_goal = 'biomarker',
+                               blocklist = bl,
+                               control_name = 'DENC',
+                               technical_replicates = tr,
+                               remove_if = 1, #optional
+                               step2_threshold = 0.5) #optional
+```
+When used, this will return a warning indicating that the data has evidence of well to well contamination. The user in this case has chosen to continue using the function.
+
+```{r echo = FALSE}
+# for knitting purposes only
+# save(biomarker_results, file = 'ignore/biomarker_results.RData')
+
+data(pipeline2_results, package = 'micRoclean')
+biomarker_results = pipeline_2_results
+```
+
+
+Where:
+
+-   *blocklist* - character string
+
+-   *technical_replicates* - Data frame indicating pairs of technical replicates across batches by sample name. See example below where Sample 1 and Sample 6 are technical replicates.  
+
+We can see that in this case, the sample appears to have evidence of high well to well contamination. The function prompts the user to decide whether to continue the run. For this vignette, we choose to continue to use biomarker.  
+
+Once run, the pipeline will return a list object with:
+
+1.  *Decontaminated counts matrix (decontaminated_count)* - A samples (n) by non-contaminant features (q) matrix with the decontaminated counts
+
+```{r p2-decount}
+biomarker_results$decontaminated_count %>% kable()  %>%
+  kable_styling("striped", full_width = T) %>% 
+ scroll_box(width = '100%', height = "300px")
+```
+
+2.  *Filtering loss value (FL)* - A numeric value between 0 and 1 indicating the contribution of the removed counts to the overall covariance. High values would be a sign of potential over-filtering.
+
+```{r p2-fl}
+biomarker_results$filtering_loss
+```
+
+3.  *Contaminant ID (contaminant_id)* - Dataframe with features (p) by removal steps and boolean value indicating TRUE if tagged as contaminant in that step, FALSE otherwise.
+
+4.  *Removed (removed)* - Character vector of all samples tagged as contaminants and removed from the decontaminated count matrix
+
+Optionally, users can input their results list object from biomarker into the *visualize_pipeline* function. If *interactive* is set to true, the resulting visualization is interactive.
+
+```{r p2-visualize, out.width = "75%"}
+visualize_pipeline(biomarker_results,
+                   interactive = FALSE)
+```
+
+# Filtering Loss (FL)
+
+First introduced for use in a filtering method PERfect by Smirnova, Huzurbazar, and Jafari (2019), the filtering loss (FL) statistic is implemented in the micRoclean package to quantify the impact due to filtering features out in the above pipelines. The filtering loss value is between zero and one, indicating low to high contribution respectively from the removed reads to the total convariance structure. As the filtering loss value gets closer to one, users should be concerned about potential overfiltering.
+
+Filtering loss for removal of reads $J$ is defined as
+
+$$FL(J) = 1 - \frac{\|Y^T Y\|_F^2}{\|X^TX\|_F^2}$$
+
+where the filtering loss represents a ratio of the unfiltered ($X$) and filtered ($Y$) covariance matrices.
+
+In our example for orig.composition, we see that the filtering loss is:
+
+```{r filtering-loss}
+paste0('Filtering loss: ', round(orig.composition_results$filtering_loss, 4))
+```
+
+Indicating that there is a low contribution for the removed counts, about 22% of the covariance. We do not see evidence of overfiltering using this method.
+
+For more detailed information, users are suggested to read the methods section 2.1 of the [Smirnova, Huzurbazar, and Jafari (2109)](https://doi.org/10.1093/biostatistics/kxy020) publication.
+
+# References
+
+Austin, G. I., Park, H., Meydan, Y., Seeram, D., Sezin, T., Lou, Y. C., Firek, B. A., Morowitz, M. J., Banfield, J. F., Christiano, A. M., Pe'er, I., Uhlemann, A. C., Shenhav, L., & Korem, T. (2023). Contamination source modeling with SCRuB improves cancer phenotype prediction from microbiome data. Nature biotechnology, 41(12), 1820–1828. <https://doi.org/10.1038/s41587-023-01696-w>
+
+Davis, N.M., Proctor, D.M., Holmes, S.P. et al. Simple statistical identification and removal of contaminant sequences in marker-gene and metagenomics data. Microbiome 6, 226 (2018). <https://doi.org/10.1186/s40168-018-0605-2>
+
+Eisenhofer, R., Minich, J. J., Marotz, C., Cooper, A., Knight, R., & Weyrich, L. S. (2019). Contamination in Low Microbial Biomass Microbiome Studies: Issues and Recommendations. Trends in microbiology, 27(2), 105–117. <https://doi.org/10.1016/j.tim.2018.11.003>  
+
+Smirnova, E., Huzurbazar, S., & Jafari, F. (2019). PERFect: PERmutation Filtering test for microbiome data. Biostatistics (Oxford, England), 20(4), 615–631. <https://doi.org/10.1093/biostatistics/kxy020>

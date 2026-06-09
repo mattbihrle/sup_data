@@ -1,0 +1,16 @@
+# ignore files in the ignore directory
+ignore/
+micRoclean_vignette_files/
+micRoclean_vignette_cache/
+
+# ignore RData and environment
+.RData
+.Rhistory
+.Rproj.user
+inst/doc
+.Rbuildignore
+.Rproj
+README.md
+
+# ignore gitattributes
+.gitattributes

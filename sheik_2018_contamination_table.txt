@@ -1,0 +1,104 @@
+p	c	g	Extraction	Water	Microbiome
+Proteobacteria	Alphaproteobacteria	Afipia	TRUE	FALSE	FALSE
+Proteobacteria	Alphaproteobacteria	Aquabacterium	TRUE	FALSE	FALSE
+Proteobacteria	Alphaproteobacteria	Asticcacaulis	TRUE	FALSE	FALSE
+Proteobacteria	Alphaproteobacteria	Aurantimonas	TRUE	FALSE	FALSE
+Proteobacteria	Alphaproteobacteria	Beijerinckia	TRUE	FALSE	FALSE
+Proteobacteria	Alphaproteobacteria	Bosea	TRUE	FALSE	FALSE
+Proteobacteria	Alphaproteobacteria	Bradyrhizobium	TRUE	FALSE	FALSE
+Proteobacteria	Alphaproteobacteria	Brevundimonas	TRUE	FALSE	FALSE
+Proteobacteria	Alphaproteobacteria	Caulobacter	TRUE	FALSE	FALSE
+Proteobacteria	Alphaproteobacteria	Craurococcus	TRUE	FALSE	FALSE
+Proteobacteria	Alphaproteobacteria	Devosia	TRUE	FALSE	FALSE
+Proteobacteria	Alphaproteobacteria	Hoefleae	TRUE	FALSE	FALSE
+Proteobacteria	Alphaproteobacteria	Mesorhizobium	TRUE	FALSE	FALSE
+Proteobacteria	Alphaproteobacteria	Methylobacterium	TRUE	FALSE	FALSE
+Proteobacteria	Alphaproteobacteria	Novosphingobium	TRUE	FALSE	FALSE
+Proteobacteria	Alphaproteobacteria	Ochrobactrum	TRUE	FALSE	FALSE
+Proteobacteria	Alphaproteobacteria	Paracoccus	TRUE	FALSE	FALSE
+Proteobacteria	Alphaproteobacteria	Pedomicrobium	TRUE	FALSE	FALSE
+Proteobacteria	Alphaproteobacteria	Phyllobacterium	TRUE	FALSE	FALSE
+Proteobacteria	Alphaproteobacteria	Rhizobium	TRUE	FALSE	FALSE
+Proteobacteria	Alphaproteobacteria	Roseomonas	TRUE	FALSE	FALSE
+Proteobacteria	Alphaproteobacteria	Sphingobium	TRUE	FALSE	FALSE
+Proteobacteria	Alphaproteobacteria	Sphingomonas	TRUE	TRUE	FALSE
+Proteobacteria	Alphaproteobacteria	Sphingopyxis	TRUE	FALSE	FALSE
+Proteobacteria	Betaproteobacteria	Acidovorax	TRUE	FALSE	FALSE
+Proteobacteria	Betaproteobacteria	Azoarcus	TRUE	FALSE	FALSE
+Proteobacteria	Betaproteobacteria	Azospira	TRUE	FALSE	FALSE
+Proteobacteria	Betaproteobacteria	Burkholderia	TRUE	TRUE	FALSE
+Proteobacteria	Betaproteobacteria	Comamonas	TRUE	FALSE	FALSE
+Proteobacteria	Betaproteobacteria	Cupriavidus	TRUE	FALSE	FALSE
+Proteobacteria	Betaproteobacteria	Curvibacter	TRUE	FALSE	FALSE
+Proteobacteria	Betaproteobacteria	Delftiae	TRUE	FALSE	FALSE
+Proteobacteria	Betaproteobacteria	Duganella	TRUE	FALSE	FALSE
+Proteobacteria	Betaproteobacteria	Herbaspirillum	TRUE	FALSE	FALSE
+Proteobacteria	Betaproteobacteria	Janthinobacterium	TRUE	FALSE	FALSE
+Proteobacteria	Betaproteobacteria	Kingella	TRUE	FALSE	FALSE
+Proteobacteria	Betaproteobacteria	Leptothrix	TRUE	FALSE	FALSE
+Proteobacteria	Betaproteobacteria	Limnobacter	TRUE	FALSE	FALSE
+Proteobacteria	Betaproteobacteria	Massilia	TRUE	FALSE	FALSE
+Proteobacteria	Betaproteobacteria	Methylophilus	TRUE	FALSE	FALSE
+Proteobacteria	Betaproteobacteria	Methyloversatilis	TRUE	FALSE	FALSE
+Proteobacteria	Betaproteobacteria	Neisseria	FALSE	FALSE	TRUE
+Proteobacteria	Betaproteobacteria	Oxalobacter	TRUE	FALSE	FALSE
+Proteobacteria	Betaproteobacteria	Pelomonas	TRUE	FALSE	FALSE
+Proteobacteria	Betaproteobacteria	Polaromonas	TRUE	FALSE	FALSE
+Proteobacteria	Betaproteobacteria	Ralstonia	TRUE	TRUE	FALSE
+Proteobacteria	Betaproteobacteria	Schlegelella	TRUE	FALSE	FALSE
+Proteobacteria	Betaproteobacteria	Sulfuritalea	TRUE	FALSE	FALSE
+Proteobacteria	Betaproteobacteria	Undibacterium	TRUE	FALSE	FALSE
+Proteobacteria	Betaproteobacteria	Variovorax	TRUE	FALSE	FALSE
+Proteobacteria	Gammaproteobacteria	Acinetobactera	TRUE	FALSE	FALSE
+Proteobacteria	Gammaproteobacteria	Enhydrobacter	TRUE	FALSE	FALSE
+Proteobacteria	Gammaproteobacteria	Enterobacter	TRUE	FALSE	FALSE
+Proteobacteria	Gammaproteobacteria	Escherichia	TRUE	FALSE	FALSE
+Proteobacteria	Gammaproteobacteria	Nevskia	TRUE	FALSE	FALSE
+Proteobacteria	Gammaproteobacteria	Pasteurella	TRUE	FALSE	TRUE
+Proteobacteria	Gammaproteobacteria	Pseudomonas	TRUE	FALSE	FALSE
+Proteobacteria	Gammaproteobacteria	Pseudoxanthomonas	TRUE	FALSE	FALSE
+Proteobacteria	Gammaproteobacteria	Psychrobacter	TRUE	FALSE	FALSE
+Proteobacteria	Gammaproteobacteria	Stenotrophomonas	TRUE	FALSE	FALSE
+Proteobacteria	Gammaproteobacteria	Xanthomonas	TRUE	FALSE	FALSE
+Acidobacteria		Predominantly unclassified Acidobacteria Gp2	TRUE	FALSE	FALSE
+Actinobacteria		Aeromicrobium	TRUE	FALSE	FALSE
+Actinobacteria		Actinomyces	TRUE	FALSE	TRUE
+Actinobacteria		Arthrobacter	TRUE	FALSE	FALSE
+Actinobacteria		Beutenbergia	TRUE	FALSE	FALSE
+Actinobacteria		Brevibacterium	TRUE	FALSE	FALSE
+Actinobacteria		Corynebacterium	TRUE	FALSE	TRUE
+Actinobacteria		Curtobacterium	TRUE	FALSE	FALSE
+Actinobacteria		Dietzia	TRUE	FALSE	FALSE
+Actinobacteria		Geodermatophilus	TRUE	FALSE	FALSE
+Actinobacteria		Janibacter	TRUE	FALSE	FALSE
+Actinobacteria		Kocuria	TRUE	FALSE	FALSE
+Actinobacteria		Microbacterium	TRUE	FALSE	FALSE
+Actinobacteria		Micrococcus	TRUE	FALSE	FALSE
+Actinobacteria		Microlunatus	TRUE	FALSE	FALSE
+Actinobacteria		Patulibacter	TRUE	FALSE	FALSE
+Actinobacteria		Propionibacterium	TRUE	FALSE	TRUE
+Actinobacteria		Rhodococcus	TRUE	FALSE	FALSE
+Actinobacteria		Tsukamurella	TRUE	FALSE	FALSE
+Bacteroidetes		Chryseobacterium	TRUE	FALSE	FALSE
+Bacteroidetes		Dyadobacter	TRUE	FALSE	FALSE
+Bacteroidetes		Flavobacterium	TRUE	TRUE	FALSE
+Bacteroidetes		Hydrotalea	TRUE	FALSE	FALSE
+Bacteroidetes		Niastella	TRUE	FALSE	FALSE
+Bacteroidetes		Olivibacter	TRUE	FALSE	FALSE
+Bacteroidetes		Parabacteroides	FALSE	FALSE	TRUE
+Bacteroidetes		Pedobacter	TRUE	FALSE	FALSE
+Bacteroidetes		Prevotella	FALSE	FALSE	TRUE
+Bacteroidetes		Wautersiella	TRUE	FALSE	FALSE
+Deinococcus-Thermus		Deinococcus	TRUE	FALSE	FALSE
+Firmicutes		Abiotrophia	TRUE	FALSE	FALSE
+Firmicutes		Bacillus	TRUE	FALSE	FALSE
+Firmicutes		Brevibacillus	TRUE	FALSE	FALSE
+Firmicutes		Brochothrix	TRUE	FALSE	FALSE
+Firmicutes		Facklamia	TRUE	FALSE	FALSE
+Firmicutes		Lactobacillus	FALSE	FALSE	TRUE
+Firmicutes		Paenibacillus	TRUE	FALSE	FALSE
+Firmicutes		Ruminococcus	FALSE	FALSE	TRUE
+Firmicutes		Staphylococcus	TRUE	FALSE	TRUE
+Firmicutes		Streptococcus	TRUE	FALSE	TRUE
+Firmicutes		Veillonella	FALSE	FALSE	TRUE
+Fusobacteria		Fusobacterium	TRUE	TRUE	FALSE

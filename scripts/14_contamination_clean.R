@@ -1,35 +1,39 @@
 # Contamination 
-
+# devtools::install_github("rachelgriffard/micRoclean")
+# devtools::load_all("packages/micRoclean-main/micRoclean-main/micRoclean.Rproj")
+# devtools::load_all("packages/SCRuB-Latest/SCRuB-Latest/SCRuB.Rproj")
+# devtools::inst
 library(microeco)
+library(file2meco)
 library(tidyverse)
-
+library(micRoclean)
 # MAG contamination -------------------------------------------------------
 
-# Load in the MAG data
+# # Load in the MAG data
 
-bac_df <- readr::read_tsv("data/gtdb_bin_tax/gtdbtk.bac120.summary.tsv", na = "N/A")
-arc_df <- read_tsv("data/gtdb_bin_tax/gtdbtk.ar53.summary.tsv", na = "N/A")
-all_bins_qual <- read_tsv("data/derep_bins/all_bins_quality_report.tsv") |> 
-  rename_with(tolower)
+# bac_df <- readr::read_tsv("data/gtdb_bin_tax/gtdbtk.bac120.summary.tsv", na = "N/A")
+# arc_df <- read_tsv("data/gtdb_bin_tax/gtdbtk.ar53.summary.tsv", na = "N/A")
+# all_bins_qual <- read_tsv("data/derep_bins/all_bins_quality_report.tsv") |> 
+#   rename_with(tolower)
 
-mag_df <- bind_rows(bac_df, arc_df) |> 
-  left_join(all_bins_qual, by = join_by(user_genome == name)) |> 
-  mutate(sample = str_extract(user_genome, "WM.{2}"), .after = user_genome) |> 
-    mutate(genome = str_remove(user_genome, "MAGScoT_cleanbin_000")) |> 
-  separate_wider_delim(
-  cols = classification, delim = ";", names = clade_cols, too_few = "align_start") |> 
-  select(-user_genome)
+# mag_df <- bind_rows(bac_df, arc_df) |> 
+#   left_join(all_bins_qual, by = join_by(user_genome == name)) |> 
+#   mutate(sample = str_extract(user_genome, "WM.{2}"), .after = user_genome) |> 
+#     mutate(genome = str_remove(user_genome, "MAGScoT_cleanbin_000")) |> 
+#   separate_wider_delim(
+#   cols = classification, delim = ";", names = clade_cols, too_few = "align_start") |> 
+#   select(-user_genome)
 
-# Create a list of contaminated samples
-con_samp <- unique(mag_df$sample) |> 
-  str_subset("WM(2.{1}|1[7-9]{1})")
-con_samp
-mag_contam <- mag_df |> 
-  filter(sample %in% con_samp) |> 
-  select(sample, genome, completeness, contamination, everything())
+# # Create a list of contaminated samples
+# con_samp <- unique(mag_df$sample) |> 
+#   str_subset("WM(2.{1}|1[7-9]{1})")
+# con_samp
+# mag_contam <- mag_df |> 
+#   filter(sample %in% con_samp) |> 
+#   select(sample, genome, completeness, contamination, everything())
 
-mag_contam <- mag_contam |> 
-  write_tsv("output/data/mag_contamination.tsv")
+# mag_contam <- mag_contam |> 
+#   write_tsv("output/data/mag_contamination.tsv")
 
 # 16S contamination ------------------------------------------------------------------------------
 # Import 16S data----------------------------------------------------------------------------
@@ -72,7 +76,67 @@ mag_contam <- mag_contam |>
   # Replace question marks with 'unknown'
     mt_16s |> tidy_taxonomy(pattern = "\\?", replacement = "unknown")
     mt_16s$tax_table[1:5,]
-    
+
+# Okay here start working with the micRoclean package ------------------------------------------------------------
+      # First thing is to create a sequence of well numbers
+wells <- c(LETTERS[1:8], LETTERS[1:8], LETTERS[1:4])
+wells_num <- rep(1:3, each = 8)[1:length(wells)] |> 
+  str_pad(width = 2, side = "left", pad = 0)
+wells <- paste0(wells, wells_num)
+
+wells <- c(
+  "D03",  # Position 1: SynMock control
+  paste0(rep(LETTERS[1:8], 2), rep(sprintf("%02d", 1:2), each = 8)),  # Positions 2-17
+  paste0(LETTERS[1:3], "03")  # Positions 18-20
+)
+# Now add that to the mt_16s$sample_table with the D4 being the synmock
+mt_16s$sample_table <- mt_16s$sample_table |> 
+  mutate(sample_well = wells)
+
+# Now add the control and sample type
+ control_samps <- mt_16s$sample_table$sample[13:20]
+
+mt_16s$sample_table <- mt_16s$sample_table |> 
+  mutate(is_control = ifelse(sample %in% control_samps, TRUE, FALSE), 
+         is_control = ifelse(sample == "SynM", TRUE, is_control),
+        sample_type = ifelse(is_control == TRUE, "blank", "DNA"), 
+        batch = "a")
+
+
+# mt_16s$sample_table <- mt_16s$sample_table |> 
+#   mutate( 
+#          is_control = ifelse(sample == "SynM", TRUE, FALSE),
+#         sample_type = ifelse(is_control == TRUE, "blank", "DNA"), 
+#       batch = "a")
+# Now extract that as the required metadata file
+
+meta <- mt_16s$sample_table |> 
+  select(sample_type, is_control, sample_well, batch) |>
+  rownames_to_column("sample") |> 
+  arrange(desc(is_control), sample) |> 
+  column_to_rownames("sample")
+
+
+
+head(meta)
+# Okay, now pull out the count data
+
+count <- mt_16s$otu_table |> 
+  t() |> 
+  as.data.frame() |>
+  rownames_to_column("sample") |>
+  slice(match(rownames(meta), sample)) |>
+  column_to_rownames("sample") |> 
+  as.matrix()
+all(rownames(count) == rownames(meta))
+
+head(count)
+# Run it!
+control_names <- c(rownames(count)[1], rownames(count)[13:20])
+# browser()
+mclean_results <-
+  micRoclean(counts = count, meta = meta, research_goal = 'orig.composition', control_name = control_names)
+#-----------------------------------------------------------------
 # Look for OTUs only in the synmock 
     syn <- clone(mt_16s)
 
@@ -89,14 +153,6 @@ syn$tax_table <- syn$tax_table |>
 
 syn$tidy_dataset()
 syn$cal_abund()
-view(syn$taxa_abund$otu)
-
-# syn$taxa_abund$otu <- syn$taxa_abund$otu |> 
-#   rowwise() |> 
-#   mutate(mean_abund = sum(c_across(starts_with("WM"))/19)) |> 
-#   ungroup() |> 
-#   select(matches("Syn"), mean_abund, everything())
-# view(syn$taxa_abund$otu)
 
 # Calculate test statistics and thngs
 syn_table <- syn$otu_table |> 
@@ -112,39 +168,38 @@ syn_table <- syn$otu_table |>
   ungroup() |> 
 
   select(otu, t_test_diff, matches("Syn"), matches("mean_abund"), everything())
-view(syn_table)
+# view(syn_table)
 
 # Now remove taxa where the mean abundance of reads across samples is larger than the reads
 # in the synthetic community
 
 syn_table <- syn_table |> 
   filter_out(mean_abund > `SynMock-Sheik_S1`)
-syn_table |> 
-  view()
+# syn_table |> 
+  # view()
 
 # Now filter out taxa that had a significant t_test statistic (there is a significant difference
 # between the real samples and the contamination samples)
-
 syn_table <- syn_table |> 
   filter(t_test_diff > 0.05)
 nrow(syn_table)
 
-view(syn_table)
+# view(syn_table)
 
 # Okay save this list as possible contaminants
-
-syn_contam_table <- syn$tax_table |> 
-  filter(otu %in% paste0("o__", syn_table$otu))
-
-syn_contam <- syn_contam_table |> 
+syn_contam <- syn_table |> 
+  mutate(otu = paste0("o__", otu)) |> 
   select(otu) |> 
-  as_vector() |> 
-  str_remove("o__")
+  as_vector()
 
 head(syn_contam)
 # ----------------------------------------------------
 
+# Try micRoclean --------------------------------------------------------------------------------
+library(micRoclean)
 
+
+# ----------------------------------------------------------------------------------------------
 # Now back to the original 
 # Clean unneeded data
   # Remove 'Syn Mock' sample 

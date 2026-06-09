@@ -1,7 +1,7 @@
 # install extra packages
 
-devtools::install_github("rachelgriffard/micRoclean")
-
+remotes::install_github("rachelgriffard/micRoclean", build_vignettes = TRUE, force = TRUE)
+pak::pak("rachelgriffard/micRoclean")
 
 # Load Packages ------------------------------
   # For analysis
@@ -28,6 +28,14 @@ library(tidyverse) #tidyverse last
 sw_meta <- read_csv("output/data/metadata_supwinter.csv") |> 
   dplyr::select(!matches(c("12h_med", "round_date")))|> 
   distinct()
+
+# Import list of contaminants from Sheik et al 2018 Supplemental Material
+
+contam_genus <- read_tsv("sheik_2018_contamination_table.txt") |> 
+  rename_with(tolower) |>  
+  filter_out(extraction == FALSE & water == FALSE) |> 
+  select(g) |> 
+  as_vector()
 # Load in and clean sylph data-----------------------------------------------------------------------------------
 
 b_df <- readr::read_tsv("data/superior_sylph/Sylph_TaxAbund_out.tsv")
@@ -182,7 +190,59 @@ mt_sylph$beta_diversity$bray
   # Replace question marks with 'unknown'
     mt_16s |> tidy_taxonomy(pattern = "\\?", replacement = "unknown")
     mt_16s$tax_table[1:5,]
-    
+  # Create syn_mock contamination list --------------------------------------------------------------
+# Look for OTUs only in the synmock 
+    syn <- clone(mt_16s)
+
+    syn_taxa <- syn$otu_table |> 
+      select(matches("syn", ignore.case = TRUE)) |> 
+      mutate(across(everything(), ~ifelse(.x == 0, NA, .x))) |> 
+      drop_na() |> 
+      rownames()
+
+syn_taxa <- paste0("o__", syn_taxa)
+head(syn_taxa)
+syn$tax_table <- syn$tax_table |> 
+  filter(otu %in% syn_taxa)
+
+syn$tidy_dataset()
+syn$cal_abund()
+
+# Calculate test statistics and thngs
+syn_table <- syn$otu_table |> 
+  rownames_to_column("otu") |> 
+  rowwise() |> 
+  mutate(mean_abund = sum(c_across(starts_with("WM")))/19, 
+        mean_abund_samp = sum(c_across(WM01_S2:WM16_S12))/11,
+        mean_abund_contam = sum(c_across(WM17_S13:WM24_S20))/8)  |>
+  mutate(
+    t_test_diff = t.test(c_across(WM01_S2:WM16_S12), 
+                        c_across(WM17_S13:WM24_S20), alternative = "g")$p.value
+                      ) |> 
+  ungroup() |> 
+  select(otu, t_test_diff, matches("Syn"), matches("mean_abund"), everything())
+# Now remove taxa where the mean abundance of reads across samples is larger than the reads
+# in the synthetic community
+
+syn_table <- syn_table |> 
+  filter_out(mean_abund > `SynMock-Sheik_S1`) |> 
+    # Now filter out taxa that had a significant t_test statistic (there is a significant difference
+    # between the real samples and the contamination samples)
+  filter(t_test_diff > 0.05)
+
+nrow(syn_table)
+
+
+# Okay save this list as possible contaminants
+syn_contam <- syn_table |> 
+
+  mutate(otu = paste0("o__", otu)) |> 
+  select(otu) |> 
+  as_vector()
+
+head(syn_contam)
+# ----------------------------------------------------
+
 # Clean unneeded data
   # Remove 'Syn Mock' sample 
   mt_16s$sample_table <- mt_16s$sample_table |> 
@@ -214,23 +274,30 @@ mt_sylph$beta_diversity$bray
 # Create vector of sites that were not pumped
   con_site_cols <- site_cols[12:19]
 
-# Create df of all taxa found in the samples that weren't pumped to act as potential contamination
-con_df <- mt_16s$otu_table |> 
-  select(!matches("WM01"): matches("WM16")) |> 
-  mutate(across(everything(), ~ifelse(.x == 0.00, NA, .x))) |> 
-  drop_na() |> 
-  rownames_to_column("otu") |> 
-  mutate(id = otu) |> 
-  column_to_rownames("id")
+  # Create df of all taxa found in the samples that weren't pumped to act as potential contamination
+  con_df <- mt_16s$otu_table |> 
+    select(!matches("WM01"): matches("WM16")) |> 
+    mutate(across(everything(), ~ifelse(.x == 0.00, NA, .x))) |> 
+    drop_na() |> 
+    rownames_to_column("otu") |> 
+    mutate(id = otu) |> 
+    column_to_rownames("id")
 
 # Double check that there are no dupliated species
 nrow(con_df) == length(unique(con_df$otu))
 
 # Great, now put all those taxa in a vector
 con_vec <- unique(con_df$otu)
-
-# Remove taxa that are contamination
-mt_16s$filter_pollution(con_vec)
+length(con_vec)
+mt_16s
+# Add contaminant columns to tax_table
+mt_16s$tax_table <- mt_16s$tax_table |> 
+  mutate(contam_sheik = ifelse(mt_16s$tax_table$g %in% paste0("g__", contam_genus), TRUE, FALSE), 
+         contam_syn = ifelse(mt_16s$tax_table$otu %in% syn_contam, TRUE, FALSE), 
+         contam_blanks = ifelse(mt_16s$tax_table$otu %in% paste0("o__", con_vec), TRUE, FALSE)) |> 
+  filter_out(contam_sheik == TRUE | contam_syn == TRUE | contam_blanks == TRUE) |> 
+  select(-matches("contam"))
+mt_16s
 
 # Now remove the samples that did not filter
 mt_16s$sample_table <- mt_16s$sample_table |> 
