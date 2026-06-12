@@ -37,7 +37,7 @@ p1 <- temp_df_long_full |>
       panel.border = element_rect(colour = "black", fill = "red", linewidth = 3)
     ) +
   scale_y_reverse(expand = c(0,0), n.breaks = 10) +
-  scale_x_date(expand = c(0,0), date_breaks = "1 month", date_label = "%b", limits = c(as_date("2024-07-20"), as_date("2025-08-05"))) +
+  scale_x_date(expand = c(0,0), date_breaks = "1 month", date_label = "%b", limits = c(as_date("2024-07-20"), as_date("2025-04-05"))) +
     guides(fill = guide_legend(ncol = 1, reverse = T)) 
 p1
 p2 <- ggplot(module_long, aes(x = date, y = relabund, color = Module, group = Module, label = rownames(module_long))) +
@@ -51,12 +51,12 @@ p2 <- ggplot(module_long, aes(x = date, y = relabund, color = Module, group = Mo
   labs(title = "Module Abundance Over Time",
        y = "Relative Abundance") +
   theme_bw() +
-  scale_x_date(expand = c(0,0), date_breaks = "1 month", date_label = "%b", limits = c(as_date("2024-07-20"), as_date("2025-08-05")))
+  scale_x_date(expand = c(0,0), date_breaks = "1 month", date_label = "%b", limits = c(as_date("2024-07-20"), as_date("2025-04-05")))
 
 p2
 
 p3 <- maestro_df_clean |> 
-  select(dttm_local, matches(c("cdom_12"))) |> 
+  dplyr::select(dttm_local, matches("cdom_12")) |> 
   pivot_longer(cols = -dttm_local, names_to = "var", values_to = "value") |> 
     ggplot(aes(dttm_local, value)) +
   geom_point() + 

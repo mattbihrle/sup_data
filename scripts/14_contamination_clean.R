@@ -77,6 +77,12 @@ library(micRoclean)
     mt_16s |> tidy_taxonomy(pattern = "\\?", replacement = "unknown")
     mt_16s$tax_table[1:5,]
 
+  # Remove mitochondria and chloroplasts
+  print("removing mitochontria and chloroplast")
+  mt_16s
+  mt_16s$filter_pollution(taxa = c("mitochondria", "chloroplast", "metagenome"))
+  mt_16s      
+
 # Okay here start working with the micRoclean package ------------------------------------------------------------
       # First thing is to create a sequence of well numbers
 wells <- c(LETTERS[1:8], LETTERS[1:8], LETTERS[1:4])
@@ -126,17 +132,125 @@ count <- mt_16s$otu_table |>
   as.data.frame() |>
   rownames_to_column("sample") |>
   slice(match(rownames(meta), sample)) |>
-  column_to_rownames("sample") |> 
-  as.matrix()
+  column_to_rownames("sample") 
 all(rownames(count) == rownames(meta))
 
 head(count)
 # Run it!
 control_names <- c(rownames(count)[1], rownames(count)[13:20])
-# browser()
-mclean_results <-
-  micRoclean(counts = count, meta = meta, research_goal = 'orig.composition', control_name = control_names)
-#-----------------------------------------------------------------
+
+mclean_results <-  micRoclean(counts = count, 
+      meta = meta, 
+      research_goal = 'orig.composition', 
+      control_name = rownames(count)[1:9])
+mclean_results$blank <- "all"
+
+# remove the taxa that are all 0s 
+  mclean_results$decontaminated_count <- 
+    mclean_results$decontaminated_count |> 
+    as_data_frame() |> 
+    setNames(colnames(count)) |> 
+    select(where(~ !all(.x == 0)))
+# Here I want to set it up so it will run through the control samps one by one
+# so there is not so much contamination taken out. 
+
+results_list <- list()
+
+for(i in 1:8){
+  counts_new <- count |> 
+    t() |> 
+    as_data_frame() |> 
+    select(control_names[1], matches(control_samps[i]), !matches(control_samps)) |> 
+    t()
+
+  meta_new <- meta |> 
+    rownames_to_column("sample") |> 
+      filter(sample %in% rownames(counts_new)) |> 
+        column_to_rownames("sample")
+      results_list[[i]] <-
+        micRoclean(counts = counts_new, 
+      meta = meta_new, 
+      research_goal = 'orig.composition', 
+      control_name = rownames(count_new)[1:2])
+
+# List what the blank was
+  results_list[[i]]$blank <- c(control_samps[i], "SynMock")
+# Filter out the taxa that are all zeros across the board
+  results_list[[i]]$decontaminated_count <- 
+    results_list[[i]]$decontaminated_count |> 
+    as_data_frame() |> 
+    setNames(colnames(count)) |> 
+    select(where(~ !all(.x == 0)))
+
+}
+# Create new rows where TRUE is that the taxa was not removed when the sample in the column title
+# was set as the blank
+mt_16s$tax_table <- mt_16s$tax_table |> 
+  mutate(
+    wm17_blank = ifelse(otu %in% paste0("o__", colnames(results_list[[1]]$decontaminated_count)), TRUE, FALSE),
+    wm18_blank = ifelse(otu %in% paste0("o__", colnames(results_list[[2]]$decontaminated_count)), TRUE, FALSE),
+    wm19_blank = ifelse(otu %in% paste0("o__", colnames(results_list[[3]]$decontaminated_count)), TRUE, FALSE),
+    wm20_blank = ifelse(otu %in% paste0("o__", colnames(results_list[[4]]$decontaminated_count)), TRUE, FALSE),
+    wm21_blank = ifelse(otu %in% paste0("o__", colnames(results_list[[5]]$decontaminated_count)), TRUE, FALSE),
+    wm22_blank = ifelse(otu %in% paste0("o__", colnames(results_list[[6]]$decontaminated_count)), TRUE, FALSE),
+    wm23_blank = ifelse(otu %in% paste0("o__", colnames(results_list[[7]]$decontaminated_count)), TRUE, FALSE),
+    wm24_blank = ifelse(otu %in% paste0("o__", colnames(results_list[[8]]$decontaminated_count)), TRUE, FALSE),
+    all_blank = ifelse(otu %in% paste0("o__", colnames(mclean_results$decontaminated_count)), TRUE, FALSE)
+  )
+
+# Okay now filter out all the taxa that are FALSE for all of the blank samples
+clean_mt_16s <- clone(mt_16s)
+
+clean_mt_16s$tax_table <- clean_mt_16s$tax_table |> 
+  filter(if_any(matches("blank")) == TRUE)
+
+# Import list of contaminants from Sheik et al 2018 Supplemental Material
+
+contam_genus <- read_tsv("sheik_2018_contamination_table.txt") |> 
+  rename_with(tolower) |>  
+  filter_out(extraction == FALSE & water == FALSE) |> 
+  select(g) |> 
+  as_vector()
+
+clean_mt_16s
+clean_mt_16s$tax_table <- clean_mt_16s$tax_table |> 
+  filter_out(g %in% paste0("g__", contam_genus))
+clean_mt_16s
+
+
+# Okay now finish cleaning out the rest of the table
+
+# ----------------------------------------------------------------------------------------------
+# Now back to the original 
+# Clean unneeded data
+  # Remove 'Syn Mock' sample and add other metadata 
+  clean_mt_16s$sample_table <- clean_mt_16s$sample_table |> 
+    slice(
+    str_which(mt_16s$sample_table$fastqFile, "Syn.*", negate = T)
+      ) |> 
+    rownames_to_column(var = "rownames") |> 
+      # Add in the other metadata
+    left_join(y = sw_meta) |> 
+      # move rownames back
+    column_to_rownames(var = "rownames")
+
+  nrow(clean_mt_16s$sample_table)
+# Remove anything not Archaea or Bacteria
+   clean_mt_16s$tax_table <- clean_mt_16s$tax_table |> 
+    dplyr::slice(
+    stringr::str_which(clean_mt_16s$tax_table$k, ".*Bacteria|.*Archaea")
+   )
+# Check to be sure we removed them
+    clean_mt_16s$tax_table$k |> 
+      unique()
+   # Remove the samples that are blanks
+   clean_mt_16s$sample_table <- clean_mt_16s$sample_table |> 
+     filter_out(sample %in% control_samps)
+clean_mt_16s
+clean_mt_16s$tidy_dataset()
+clean_mt_16s
+
+# --------------------------------------------------------
 # Look for OTUs only in the synmock 
     syn <- clone(mt_16s)
 
@@ -199,36 +313,7 @@ head(syn_contam)
 library(micRoclean)
 
 
-# ----------------------------------------------------------------------------------------------
-# Now back to the original 
-# Clean unneeded data
-  # Remove 'Syn Mock' sample 
-  mt_16s$sample_table <- mt_16s$sample_table |> 
-    slice(
-    str_which(mt_16s$sample_table$fastqFile, "Syn.*", negate = T)
-      ) |> 
-    rownames_to_column(var = "rownames") |> 
-      # Add in the other metadata
-    left_join(y = sw_meta) |> 
-      # move rownames back
-    column_to_rownames(var = "rownames")
 
-  nrow(mt_16s$sample_table)
-# Remove anything not Archaea or Bacteria
-   mt_16s$tax_table <- mt_16s$tax_table |> 
-    dplyr::slice(
-    stringr::str_which(mt_16s$tax_table$k, ".*Bacteria|.*Archaea")
-   )
-# Check to be sure we removed them
-    mt_16s$tax_table$k |> 
-      unique()
-  # Remove mitochondria and chloroplasts
-  print("removing mitochontria and chloroplast")
-  mt_16s
-  mt_16s$filter_pollution(taxa = c("mitochondria", "chloroplast", "metagenome"))
-  mt_16s      
-mt_16s$tidy_dataset()
-mt_16s
 mt_16s_contam <- clone(mt_16s)
 ## Remove contamination ---------------------------------------------------------------
 # Create vector of sites that were not pumped

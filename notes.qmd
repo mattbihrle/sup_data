@@ -1250,9 +1250,9 @@ I have a setup script but other things I need to do before running things in R:
 # Jun 09, 2026
 
 Goals for today in R:
-[ ] Finish going through Cody's paper and pull out the list of contaminants. 
-[ ] Try running microclean and see where that gets me
-[ ] Check out other R packages for contamination
+[x] Finish going through Cody's paper and pull out the list of contaminants. 
+[x] Try running microclean and see where that gets me
+[x] Check out other R packages for contamination
 
 Also would like to do a bit of research to see if I am okay to do the bead beating, freeze and then extract at a later date.
 
@@ -1262,3 +1262,24 @@ Need to look for control types
 
 
 Worked through a bit of micRoclean and it filtered out 94% of the usual data -- oops. I might have had too many blanks. Tomorrow I should take a look at just doing one blank and seeing how things work. 
+
+# June 10, 2026
+
+Today want to go through and see what 16S model to use. I ended up running cliques and taking only the taxa that were in 3 or more of the filtered samples. 
+M1 - sediminibacterium seems to be a big one. BUT it is also possibly a contaminent. I should double check and see if it is possible that it a real sample. 
+
+M2 - LD29 in verruca seems to be really prevalent. Can't find much information on it. Again some more sediminibacterium. One of them is around in 8/9 samples though so that is good. 
+
+M3 - g__Bacteroidetes bacterium UKL13-3 could possibly be cyanobacterial associated. Seems to be with M3 becoming more common in the winter. 
+
+# June 12, 2026
+So far have done WM01-WM15 for superior 21-22. Will continue to work on those next week. Looking at contaminents in the data:
+
+For the contaminents based on whether that taxa was filtered out by micRoclean in the 16s data, it seems like there isn't much of a trend. I might have to be more careful of these samples and it does look about 50/50. 
+!(16s_contaminents_in_MAGS)[output/plots/16s_contaminents.png]
+
+However, looking at the list of contaminents based on whether they were found in the blank sammples or not, it looks like there is a pretty distinct community of dudes found more so in the blanks than in others. That leads me to believe that I can filter those out and may have some actual trends to look at. 
+
+!(blanks_contaminents)[output/plots/blanks_contaminents.png]
+
+I will try to remove those taxa and move forward. **START HERE NEXT WEEK**

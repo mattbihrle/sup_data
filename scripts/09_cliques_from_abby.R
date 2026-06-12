@@ -34,6 +34,7 @@ library(patchwork)
 # mt_16s <- readRDS("/Users/abbysmason/SeaGrant2024/SeaGrant2024/outputs/estuary_microtableall.rds")
 
 load("output/data/mt_16s.RData")
+
 load("output/data/temp_df_long.RData")
 #I'm just going to use my normal microtable that has everything and then use the contaminants list they have instead of just using cyanos
 #if i only did cyanos i would revisit the contaminant list and see what's still applicable
@@ -51,9 +52,15 @@ load("output/data/temp_df_long.RData")
 
 #stopped at line 227. going to skip to cliques
 
+# filter taxa that are only in 1 or two of the samples
+mt_16s
+mt_16s$tax_table <- mt_16s$tax_table |> 
+  filter(true_sum > 2)
+mt_16s$tidy_dataset()
+mt_16s
 #filter by prevalence
 mt_16s$filter_taxa(
-  rel_abund = 0.0001,  # At least 0.01% in any sample
+  rel_abund = 0.001,  # At least 0.1% in any sample
 )
 
 #separate out taxa and counts here
@@ -71,7 +78,7 @@ t_network <- trans_network$new(dataset = mt_16s,
 
 #filtering correlations
 #this step corresponds to `bac.cor[bac.cor < 0.7] = 0` in the original script
-t_network$cal_network(COR_p_thres = 0.01, COR_cut = 0.7)
+t_network$cal_network(COR_p_thres = 0.05, COR_optimization = TRUE)
 
 
 # Calculate modules/cliques using the Louvain algorithm
@@ -141,6 +148,8 @@ names(modules) <- taxa_names
 #ok.... how about summing up the abundance of the modules and plotting them over time?
 #i need to figure out the best way to do relative abundance - there's no clear way with cal_abund
 
+# First clean out the mt_16s table
+
 otu_matrix <- mt_16s$otu_table  # Taxa as rows, samples as columns
 
 # Convert to relative abundance (percentage)
@@ -162,7 +171,7 @@ module_rel_abund$strat_season <- mt_16s$sample_table$strat_season
 # module_rel_abund$Site <- mt_16s$sample_table$Site
 
 module_long <- pivot_longer(module_rel_abund,
-                            cols = c("M1", "M2", "M3", "M4", "M5", "M6"),
+                            cols = c("M1", "M2", "M3", "M4", "M5", "M6", "M7"),
                             names_to = "Module",
                             values_to = "relabund")
 save(module_long, file = "output/data/module_long_16s.RData")
@@ -181,7 +190,7 @@ mt_16s$tax_table <- mt_16s$tax_table |>
 mt_16s$cal_abund()
 save(mt_16s, file = "output/data/mt_16s_cliques.RData")
 save(t_network, file = "output/data/t_network_16s.RData")
-# Look at specifically M1
+# Look at specifically M1-----------------------------------------------------
 mt_m1 <- clone(mt_16s)
 
 mt_m1$tax_table <- mt_m1$tax_table |> 
@@ -190,7 +199,7 @@ mt_m1$tax_table <- mt_m1$tax_table |>
 mt_m1$tidy_dataset()$cal_abund()
 # Plot abundances
 
-rank = "otu"
+rank = "f"
 ntaxa = 30
 # Get vector of 20 most abundant families
 
@@ -208,7 +217,7 @@ mt_m2$tax_table <- mt_m2$tax_table |>
 mt_m2$tidy_dataset()$cal_abund()
 # Plot abundances
 
-rank = "otu"
+rank = "g"
 ntaxa = 30
 # Get vector of 20 most abundant families
 
@@ -225,7 +234,7 @@ mt_m3$tax_table <- mt_m3$tax_table |>
 mt_m3$tidy_dataset()$cal_abund()
 # Plot abundances
 
-rank = "otu"
+rank = "g"
 ntaxa = 30
 # Get vector of 20 most abundant families
 
@@ -246,8 +255,8 @@ rank = "otu"
 ntaxa = 30
 # Get vector of 20 most abundant families
 
-trans_abund$new(dataset = mt_m4, taxrank = rank, ntaxa = ntaxa)$
-  plot_bar(facet = "strat_season") +
+trans_abund$new(dataset = mt_m4, taxrank = rank, ntaxa = ntaxa, high_level = "g")$
+  plot_bar(facet = "strat_season", ggnested = TRUE) +
      ggtitle("16S", subtitle = paste("top", ntaxa, rank, "in M4"))
 
 # Create dates for season starts
