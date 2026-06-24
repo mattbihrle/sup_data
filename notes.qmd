@@ -938,3 +938,7 @@ For MAGs:
 6\) I filtered just to keep the bins that had abunance calculated. 
 
 Also starting working through the microtrait results. I should continue to look at these tomorrow. For now, I have two good microtables and some data to move forward with. 
+
+**NEXT PLACE TO START:**
+  -  Continue script to clean and make sylph data nice
+  -  Continue working through microtrait data
