@@ -30,7 +30,7 @@ p1 <- temp_df_long_full |>
         # scale_fill_brewer(palette = "RdBu", direction = -1) +
         scale_fill_viridis_d(option = "turbo", labels = temp_labels) +
   labs(x = "Date", y = "Depth (m)", fill = "Temperature (°C)") +
-  geom_point(data = mt_mag$sample_table, aes(x = date, y = 38, z = NULL), color = 'white') +
+  geom_point(data = mt_16s$sample_table, aes(x = date, y = 38, z = NULL), color = 'white') +
     theme_classic() +
     theme(
       text = element_text(size = 15),
@@ -66,3 +66,4 @@ p3 <- maestro_df_clean |>
   theme_classic()
 p1 / p2 / p3 + plot_layout(heights = c(1, 2, 0.5))
 
+p1 / p2 + plot_layout(heights = c(0.5, 1))

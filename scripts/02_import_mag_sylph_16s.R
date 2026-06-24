@@ -261,7 +261,7 @@ count <- mt_16s$otu_table |>
   column_to_rownames("sample") 
 all(rownames(count) == rownames(meta))
 
-head(count)
+# head(count)
 # Run it!
 control_names <- c(rownames(count)[1], rownames(count)[13:20])
 
@@ -270,7 +270,7 @@ mclean_results <-  micRoclean(counts = count,
       research_goal = 'orig.composition', 
       control_name = rownames(count)[1:9])
 mclean_results$blank <- "all"
-
+mclean_results$filtering_loss
 # remove the taxa that are all 0s 
   mclean_results$decontaminated_count <- 
     mclean_results$decontaminated_count |> 
@@ -532,9 +532,8 @@ mt_mag$tidy_dataset()
 mt_mag
  # Calculations for later
 # Calculate relative abunance
-mt_mag$cal_abund()
-mt_mag$taxa_abund
-
+mt_mag$cal_abund(select_cols = clade_cols)
+head(mt_mag$taxa_abund)
 # Calc Alpha Diversity
 mt_mag$cal_alphadiv()
 

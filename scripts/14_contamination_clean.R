@@ -145,9 +145,20 @@ mclean_results <-  micRoclean(counts = count,
       control_name = rownames(count)[1:9])
 mclean_results$blank <- "all"
 
+control_names <- c(rownames(count)[13:20])
+new_count <- count |> 
+  slice(-1)
+new_meta <- meta |> 
+  slice(-1)
+mclean_results_no_syn <-  micRoclean(counts = new_count, 
+      meta = new_meta, 
+      research_goal = 'orig.composition', 
+      control_name = rownames(count)[1:9])
+mclean_results_no_syn$blank <- "all_no_syn"
+
 # remove the taxa that are all 0s 
-  mclean_results$decontaminated_count <- 
-    mclean_results$decontaminated_count |> 
+  mclean_results_no_syn$decontaminated_count <- 
+    mclean_results_no_syn$decontaminated_count |> 
     as_data_frame() |> 
     setNames(colnames(count)) |> 
     select(where(~ !all(.x == 0)))
@@ -183,6 +194,34 @@ for(i in 1:8){
     select(where(~ !all(.x == 0)))
 
 }
+
+for(i in 1:8){
+  counts_new <- count |> 
+    t() |> 
+    as_data_frame() |> 
+    select(matches(control_samps[i]), !matches(control_samps), -control_names[1]) |> 
+    t()
+
+  meta_new <- meta |> 
+    rownames_to_column("sample") |> 
+      filter(sample %in% rownames(counts_new)) |> 
+        column_to_rownames("sample")
+      results_list[[i+8]] <-
+        micRoclean(counts = counts_new, 
+      meta = meta_new, 
+      research_goal = 'orig.composition', 
+      control_name = rownames(count_new)[1:2])
+
+# List what the blank was
+  results_list[[i+8]]$blank <- c(control_samps[i])
+# Filter out the taxa that are all zeros across the board
+  results_list[[i+8]]$decontaminated_count <- 
+    results_list[[i+8]]$decontaminated_count |> 
+    as_data_frame() |> 
+    setNames(colnames(count)) |> 
+    select(where(~ !all(.x == 0)))
+
+}
 # Create new rows where TRUE is that the taxa was not removed when the sample in the column title
 # was set as the blank
 mt_16s$tax_table <- mt_16s$tax_table |> 
@@ -195,6 +234,14 @@ mt_16s$tax_table <- mt_16s$tax_table |>
     wm22_blank = ifelse(otu %in% paste0("o__", colnames(results_list[[6]]$decontaminated_count)), TRUE, FALSE),
     wm23_blank = ifelse(otu %in% paste0("o__", colnames(results_list[[7]]$decontaminated_count)), TRUE, FALSE),
     wm24_blank = ifelse(otu %in% paste0("o__", colnames(results_list[[8]]$decontaminated_count)), TRUE, FALSE),
+    wm17_blank_no_syn = ifelse(otu %in% paste0("o__", colnames(results_list[[9]]$decontaminated_count)), TRUE, FALSE),
+    wm18_blank_no_syn = ifelse(otu %in% paste0("o__", colnames(results_list[[10]]$decontaminated_count)), TRUE, FALSE),
+    wm19_blank_no_syn = ifelse(otu %in% paste0("o__", colnames(results_list[[11]]$decontaminated_count)), TRUE, FALSE),
+    wm20_blank_no_syn = ifelse(otu %in% paste0("o__", colnames(results_list[[12]]$decontaminated_count)), TRUE, FALSE),
+    wm21_blank_no_syn = ifelse(otu %in% paste0("o__", colnames(results_list[[13]]$decontaminated_count)), TRUE, FALSE),
+    wm22_blank_no_syn = ifelse(otu %in% paste0("o__", colnames(results_list[[14]]$decontaminated_count)), TRUE, FALSE),
+    wm23_blank_no_syn = ifelse(otu %in% paste0("o__", colnames(results_list[[15]]$decontaminated_count)), TRUE, FALSE),
+    wm24_blank_no_syn = ifelse(otu %in% paste0("o__", colnames(results_list[[16]]$decontaminated_count)), TRUE, FALSE),
     all_blank = ifelse(otu %in% paste0("o__", colnames(mclean_results$decontaminated_count)), TRUE, FALSE)
   )
 
@@ -268,7 +315,7 @@ syn$tax_table <- syn$tax_table |>
 syn$tidy_dataset()
 syn$cal_abund()
 
-# Calculate test statistics and thngs
+# Calculate test statistics and things
 syn_table <- syn$otu_table |> 
   rownames_to_column("otu") |> 
   rowwise() |> 

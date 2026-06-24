@@ -9,7 +9,7 @@ library(tidyverse)
 test <- microtrait_results
 for(i in 1:length(microtrait_results)){
   test[[i]]$rds_file <- microtrait_results[[i]]$rds_file |> 
-    str_replace_all("../all_bins", "msi_downloads/all_bins/rds_files") |> 
+    str_replace_all("../clean_bins_6_19", "msi_downloads/rds_files") |> 
     str_replace_all( "/", "\\\\") 
 }
 # Extract individual file names
@@ -20,6 +20,8 @@ genomeset_results = make.genomeset.results(rds_files = rds_files,
                                            ncores = 1)
 
 save(genomeset_results, file = "genomeset_results.rds")
+
+# Start here
 # Test
 
 base_dir = system.file("extdata/precomputed",package = "microtrait")

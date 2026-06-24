@@ -165,7 +165,7 @@ sample_table <- mt_16s_contam$sample_table |>
   select(-old_names)
 # -----------------------------------------------------
 head(sample_table)
-mt_mag <-microtable$new(otu_table = otu_table, sample_table = sample_table, 
+mt_mag <-microtable$new(otu_table = otu_table, sample_table =$sample_table, 
                         tax_table = tax_table, phylo_tree = tree)
 mt_mag$sample_table$strat_season <- factor(mt_mag$sample_table$strat_season, 
   levels = c("summer", "fall", "winter", "spring"), 
