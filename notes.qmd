@@ -942,3 +942,9 @@ Also starting working through the microtrait results. I should continue to look 
 **NEXT PLACE TO START:**
   -  Continue script to clean and make sylph data nice
   -  Continue working through microtrait data
+
+  # June 25, 20206
+
+  Did another round of extractions. Only 18 to go! Will only do 6 each time from now on. Hopefully I can prep and send samples on July 6th or 7th. 
+
+  Cleaned up some of my r work and started working through the microtrait stuff. I think I need to take some longer time to go through that and set up functions to look at all the different options. link is here: https://github.com/ukaraoz/microtrait

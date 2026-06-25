@@ -2,6 +2,7 @@
 
 # Load Libraries
 library(microeco)
+library(stringdist)
 library(tidyverse)
 
 # # Import sample table -------------------------------------------------------------
@@ -103,15 +104,89 @@ table(mt_sylph$tax_table$poss_fuzzy_contaminant)
 manual_check <- mt_sylph$tax_table |> 
   filter(poss_16s_contaminant != poss_fuzzy_contaminant)
 
-view(manual_check)
+# view(manual_check)
 
 # Listing out genomes that do match genus and family in contam_tax_16s to label as poss contaminants
-extra_contam_genomes <- 
-  c()
-#START HERE NEXT TIME
-# Set those genomes as TRUE in the possible contaminant column 
-mag_df_clean <- mag_df_clean |> 
-  mutate(poss_16s_contaminant = ifelse(genome %in% extra_contam_genomes, TRUE, poss_16s_contaminant))
+extra_contam_taxa <- 
+  c("t__GCF_000702605.1", #all from exiguobacteraceae 
+    "t__GCF_001939065.1", 
+    "t__GCF_014524545.1", 
+    "t__GCA_902363455.1",
+    "t__GCA_945860265.1", # from spirosomaceae family
+    "t__GCA_003259005.1",
+    "t__GCA_030653545.1", # from nitrospira genus
+    "t__GCA_021300015.1", # from planktomycetes, pirellula genus
+    "t__GCA_021736575.1",
+    "t__GCA_945900945.1", 
+    "t__GCA_020718185.1", # removed from paracaedibacterium
+    "t__GCF_014138435.1", # removed from rhizobiales
+    "t__GCA_903842455.1",
+    "t__GCA_002336985.1", # remove from sphingomonas
+    "t__GCF_009768975.1", 
+    "t__GCA_013823985.1",
+    "t__GCF_029865925.1",
+    "t__GCF_945890115.1", 
+    "t__GCA_945903445.1", # removed from burkolderiaceae
+    "t__GCA_945878355.1", 
+    "t__GCA_009693505.1",
+    "t__GCA_937897495.1",
+    "t__GCA_945901045.1",
+    "t__GCA_947447245.1",
+    "t__GCF_900182955.1",
+    "t__GCF_006974105.1",
+    "t__GCA_004293725.1",
+    "t__GCA_016463455.1",
+    "t__GCF_006364715.1",
+    "t__GCA_903914945.1",
+    "t__GCA_947499625.1",
+    "t__GCF_900103875.1",     # removed from psuedomonas
+    "t__GCF_902498065.1",
+    "t__GCF_900105495.1",
+    "t__GCF_025397885.1",
+    "t__GCF_900106065.1",
+    "t__GCF_015461845.1",
+    "t__GCF_021602155.1",
+    "t__GCF_004683905.1",
+    "t__GCF_007858255.1",
+    "t__GCF_019145195.1",
+    "t__GCF_002836515.1",
+    "t__GCF_010095445.2",
+    "t__GCF_900187425.1")
 
-mag_df_clean_small <- mag_df_clean |> 
+# Set those genomes as TRUE in the possible contaminant column 
+mt_sylph$tax_table <- mt_sylph$tax_table |> 
+  mutate(poss_16s_contaminant = ifelse(t %in% extra_contam_taxa, TRUE, poss_16s_contaminant))
+
+table(mt_sylph$tax_table$poss_16s_contaminant)
+mt_sylph$tax_table <- mt_sylph$tax_table |> 
   filter(poss_16s_contaminant == FALSE)
+
+# Okay now remove the stations that are contamination (WM17-WM24)
+
+mt_sylph$sample_table <- mt_sylph$sample_table |> 
+  filter_out(str_detect(sample, "WM(1[7-9]{1}|2[0-9]{1})"))
+#Tidy dataset 
+mt_sylph
+mt_sylph$tidy_dataset()
+mt_sylph
+
+
+# Calculations for later -----------------------------------------------------------
+# Calculate relative abunance
+mt_sylph$cal_abund(select_cols = clade_cols)
+head(mt_sylph$taxa_abund)
+
+# Calc Alpha Diversity
+mt_sylph$cal_alphadiv()
+
+# Calc Bray Curtis Dissimilarity
+mt_sylph$cal_betadiv(method = c("bray","aitchison","robust.aitchison", "jaccard"))
+head(mt_sylph$beta_diversity)
+
+save(mt_sylph, file = "output/data/mt_sylph.RData")
+
+remove <- ls() |> 
+  str_subset("mt_.*", negate = T)
+
+rm(list = remove)
+rm(remove)

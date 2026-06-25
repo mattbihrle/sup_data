@@ -72,7 +72,6 @@ kegg_df <- gene_df
 
 # Microtable------------------------------------------------------------------------------------------------------------------------------
 
-
 # Now create mt object with genes, each gene is an otu and the levels are the taxa, otu table is counts
 
 # Load required other data
@@ -115,7 +114,8 @@ mt_gene_sample <- microtable$new(otu_table = otu_table,
 save(mt_gene_sample, file = "output/data/mt_gene_sample.RData")
 
 # # Remove unneeded data----------------------------------------------------
-remove <- ls()
+remove <- ls() |> 
+  str_subset("mt_.*", negate = TRUE )
 
 rm(list = remove)
 
@@ -123,7 +123,7 @@ rm(remove)
 
 
 load("output/data/mt_gene_sample.RData")
-
+stop()
 
 # Create Trans func and run ancomb
 test <- "test"

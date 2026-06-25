@@ -216,9 +216,10 @@ all_bins_qual <- read_tsv("msi_downloads/all_bins_quality_report.tsv") |>
   mutate(bin = paste0("b__", str_remove(Name, "MA.*_000")))
 
 mt_mag$tax_table <- mt_mag$tax_table |> 
-  left_join(all_bins_qual, "bin")
-
-
+  left_join(all_bins_qual, "bin") |> 
+  # reinsert proper rownames
+  mutate(rows = str_remove(mt_mag$tax_table$bin, "b__")) |> 
+  column_to_rownames("rows")
 # Calculations for later -----------------------------------------------------------
 # Calculate relative abunance
 mt_mag$cal_abund(select_cols = clade_cols)
