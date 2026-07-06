@@ -948,3 +948,52 @@ Also starting working through the microtrait results. I should continue to look 
   Did another round of extractions. Only 18 to go! Will only do 6 each time from now on. Hopefully I can prep and send samples on July 6th or 7th. 
 
   Cleaned up some of my r work and started working through the microtrait stuff. I think I need to take some longer time to go through that and set up functions to look at all the different options. link is here: https://github.com/ukaraoz/microtrait
+
+# July 01, 2026
+
+Made it to july! 
+
+TODO:
+[x] Split the MAGs into heterotrophs and autotrophs
+[ ] Look for nitrogen genes
+[ ] Look for phosphorous genes
+[x] Look for CAZy genes for possible particle associated-ness
+cazy genes/carbon breakdown can be found using [16] "g1_Resource Acquisition:Substrate degradation:complex carbohydrate depolymerization" and
+[17] "g1_Resource Acquisition:Substrate degradation:simple compound degradation" 
+
+
+Question for Cody: Does the normalized trait matter? I think I really am just working on presence/absence. 
+
+Didn't see much of a difference looking at how heterotrophs, phototrophs and chemotrophs changed between summer and winter.
+**NEED to deal with samples 02 and 04 possibly being contaminated.**
+
+
+# July 06, 2026
+
+Back from a weekend break. Looking at the split between heterotrophs chemotrophs and autotrophs. 
+
+![mags_phototrophs](output/plots/mags_phototrophs.png)
+
+Looks like the phototrophs get relatively less abundant in the later season. That could make sense with less light in general
+
+![mags_chemotrophs](output/plots/mags_chemotrophs.png)
+
+Chemotrophs don't show much difference I have to say
+
+![mags_heterotrophs](output/plots/mags_heterotrophs.png)
+
+It does look like there are more heterotrophs moving towards the later months. That would make sense to me. 
+
+**Look at how heterotrophs and phototrophs change abundances throughout the year**
+
+Looking at complex carbohydrate depolymerization it seems like all of them are true which is not super helpful. 
+
+**Tomorrow:**
+  - Keep looking at nitrogen genes
+  - Find a new way to differentiate CAzy genes
+  - See if I can remove the columns that are all TRUE from the tax table. 
+
+  
+
+  
+  

@@ -95,6 +95,11 @@ mt_gene_mag <- microtable$new(otu_table = gene_abund,
                              sample_table = sample_meta, 
                              tax_table = tax_table)
 
+
+# Now do it again with the microtrait in formation 
+
+load(mt_mag_large)
+
 # Save microtable object
 
 save(mt_gene_mag, file = "output/data/mt_gene_mag.RData")

@@ -1,0 +1,713 @@
+#
+#
+#
+#
+#
+#
+#
+#
+# source("scripts/01_metadata_import_clean.R") # Run only if changes made to metadata
+# source("scripts/02_import_mag_sylph_16s.R")
+
+load("output/data/mt_16s.RData")
+load("output/data/mt_mag.RData")
+load("output/data/mt_sylph.RData")
+#
+#
+#
+#
+#
+library(plotly)
+library(ggalluvial)
+library(ggarrow)
+library(tidyverse)
+library(microeco)
+library(ggrepel)
+#
+#
+#
+#
+#
+
+# 16S, Robust Aitchison, NMDS and stressplot
+
+  tb2 <- trans_beta$new(mt_16s, group = "strat_season_2", measure = "bray")
+tb2$cal_ordination(method = "NMDS")
+tb2$cal_manova(manova_all = TRUE)
+print(tb2$res_manova)
+
+stress <- vegan::stressplot(tb2$res_ordination$model)
+stress
+
+plot <- tb2$plot_ordination(plot_color = "strat_season_2", plot_type = c("point", "ellipse"), NMDS_stress_pos = NULL, ellipse_level = 0.95, add_sample_label = "sample") +
+  geom_arrow_chain(colour = "black") + 
+    ggtitle("NMDS Ordination of WM Data", subtitle = paste("Stress = ", round(tb2$res_ordination$model$stress, 2))) + 
+    geom_label_repel(label = mt_16s$sample_table$sample, color = "black") +
+    labs(color = "Season") +
+    guides(fill = "none") +
+    theme_classic() +
+    theme(
+      text = element_text(size = 15),
+      panel.border = element_rect(colour = "black", fill = NA, linewidth = 3)
+    )
+  plot
+#
+#
+#
+#
+#
+# 16S and MAGS PCoA and NMDS with a bunch of different measures. To generate all plots to compare, run this whole block. 
+
+measures <- c("robust.aitchison", "bray", "aitchison")
+methods <- c("NMDS", "PCoA")
+data <- c("mt_mag","mt_16s")
+
+for(i in 1:length(methods)) {
+  for(ii in 1:length(measures)) {
+tb2 <- trans_beta$new(mt_16s, group = "strat_season", measure = measures[ii])
+tb2$cal_ordination(method = methods[i])
+tb2$cal_manova(manova_all = TRUE)
+print(tb2$res_manova)
+
+title <- paste("mt_16s", methods[i], measures[ii])
+plot <- tb2$plot_ordination(plot_color = "strat_season", plot_type = c("point", "ellipse"), ellipse_level = 0.95, loading_arrow = TRUE, loading_text_italic = TRUE) +
+  geom_arrow_chain(colour = "black") + 
+    ggtitle(title) + 
+    geom_label_repel(label = mt_16s$sample_table$sample, color = "black") +
+    labs(color = "Season") +
+    guides(fill = "none") +
+    theme_classic() +
+    theme(
+      text = element_text(size = 15),
+      panel.border = element_rect(colour = "black", fill = NA, linewidth = 3)
+    )
+print(plot)
+path <- paste0("output/plots/beta_div/", title, ".png")
+ggsave(path, plot)
+  }
+}
+
+# MAGs R aitchison, PCoA
+
+measures <- c("robust.aitchison", "bray", "aitchison", "wei_unifrac")
+methods <- c("NMDS", "PCoA")
+data <- c("mt_mag","mt_16s")
+
+for(i in 1:length(methods)) {
+  for(ii in 1:length(measures)) {
+tb2 <- trans_beta$new(mt_mag, group = "strat_season", measure = measures[ii])
+tb2$cal_ordination(method = methods[i])
+tb2$cal_manova(manova_all = TRUE)
+print(tb2$res_manova)
+
+title <- paste("mt_mag", methods[i], measures[ii])
+plot <- tb2$plot_ordination(plot_color = "strat_season", plot_type = c("point", "ellipse"), ellipse_level = 0.95, loading_arrow = TRUE, loading_text_italic = TRUE) +
+  geom_arrow_chain(colour = "black") + 
+    ggtitle(title) + 
+    geom_label_repel(label = mt_16s$sample_table$sample, color = "black") +
+    labs(color = "Season") +
+    guides(fill = "none") +
+    theme_classic() +
+    theme(
+      text = element_text(size = 15),
+      panel.border = element_rect(colour = "black", fill = NA, linewidth = 3)
+    )
+print(plot)
+path <- paste0("output/plots/beta_div/", title, ".png")
+ggsave(path, plot)
+  }
+}
+#
+#
+#
+#
+#
+
+# Set rank (k, p, c, etc) and number of taxa to include
+rank <- "c"
+n <- 20
+
+# Create abundance object
+ts1 <- trans_abund$new(mt_mag, taxrank = rank, ntaxa = n)
+ts1$sample_table$strat_season <- factor(ts1$sample_table$strat_season, 
+  levels = c("summer", "fall", "winter", "spring"), 
+  labels = c("Summer", "Fall", "Winter", "Spring"),
+   ordered = T)
+# Plot abunances
+abund_s <- ts1$plot_bar(others_color = "grey70", xtext_keep = TRUE, legend_text_italic = FALSE, facet = "strat_season") +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1, vjust = 1, size=9)) +
+  ggtitle("MAGs Data", subtitle = paste(n, "most abundant", rank))
+abund_s
+
+plotly_build(abund_s)
+mt_16s$sample_table$strat_season <- factor(mt_16s$sample_table$strat_season, 
+  levels = c("summer", "fall", "winter", "spring"), 
+  labels = c("Summer", "Fall", "Winter", "Spring"),
+   ordered = T)
+# Do the same but for 16s data
+
+rank <- "g"
+n <- 30
+ts1 <- trans_abund$new(mt_16s, taxrank = rank, ntaxa = n)
+ts1$sample_table$strat_season <- factor(ts1$sample_table$strat_season, 
+  levels = c("summer", "fall", "winter", "spring"), 
+  labels = c("Summer", "Fall", "Winter", "Spring"),
+   ordered = T)
+# Plot abunances
+abund_16 <- ts1$plot_bar(others_color = "grey70", xtext_keep = TRUE, legend_text_italic = FALSE, facet = "strat_season") +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1, vjust = 1, size=9)) +
+  ggtitle("16s Data", subtitle = paste(n, "most abundant", rank))
+abund_16
+
+plotly_build(abund_16)
+
+subset <- clone(mt_16s) 
+
+subset$tax_table <- subset$tax_table|> 
+  filter(c == "c__Bacteroidia")
+
+subset$tidy_dataset()$cal_abund()
+
+t1 <- trans_abund$new(dataset = subset, taxrank = "g", ntaxa = n, show = 0, high_level = "o", high_level_fix_nsub = 10)
+t1$plot_bar(ggnested = T)
+#
+#
+#
+#
+#
+#
+#
+# Clone dataset
+taxa <- "Planctomycetia" # taxa of interest
+n <- 20 # Number of taxa to included in final graph
+mt_sylph_subset <- clone(mt_sylph)
+
+###mt_sylph_subset include the taxa below
+mt_sylph_subset$tax_table <- mt_sylph_subset$tax_table |> 
+  filter(c == taxa)
+mt_sylph_subset$tidy_dataset()
+
+# check
+mt_sylph_subset # OK
+head(mt_sylph_subset$tax_table)
+
+# recalculate abundances (needed?)
+mt_sylph_subset$cal_abund()
+mt_sylph_subset$taxa_abund
+
+# plot:
+
+# t1 <- trans_abund$new(dataset = mt_sylph_subset, taxrank = "f", ntaxa = n)
+# t1$plot_bar() |> ggplotly()
+
+# Nested plot
+t1 <- trans_abund$new(dataset = mt_sylph_subset, taxrank = "f", ntaxa = n, show = 0, high_level = "o", high_level_fix_nsub = 10)
+t1$plot_bar(ggnested = T) |> ggplotly()
+#
+#
+#
+#
+#
+rank = "o"
+ntaxa = 30
+# Get vector of 20 most abundant families
+t1 <- trans_abund$new(dataset = mt_mag, taxrank = rank, ntaxa = ntaxa)
+t1$plot_bar(facet = "strat_season") +
+     ggtitle("MAGs", subtitle = paste("top", ntaxa, rank))
+taxa_names <- t1$data_taxanames
+taxa_names
+
+# Get vector of 20 most abundant families
+t1 <- trans_abund$new(dataset = mt_16s, taxrank = rank, ntaxa = ntaxa)
+t1$plot_bar(facet = "strat_season") +
+     ggtitle("16s", subtitle = paste("top", ntaxa, rank))
+taxa_names <- t1$data_taxanames
+taxa_names
+
+for (i in 1:length(taxa_names)) {
+    subset <- clone(mt_16s)
+    #subset include the taxa below
+    subset$tax_table <- subset$tax_table |> 
+    filter(f == paste0(rank, "__",taxa_names[i]))
+    # filter(f == taxa_names[i])
+    subset$tidy_dataset()
+
+    # recalculate abundances (needed?)
+    subset$cal_abund()
+    subset$taxa_abund
+
+    # plot:
+
+    t1 <- trans_abund$new(dataset = subset, taxrank = "g", ntaxa = 20)
+    plot <- t1$plot_bar(facet = "strat_season") +
+    ggtitle(taxa_names[i], subtitle = "16s")
+    print(plot) 
+        }
+
+    # Get vector of 20 most abundant families
+t1 <- trans_abund$new(dataset = mt_sylph, taxrank = rank, ntaxa = ntaxa)
+taxa_names <- t1$data_taxanames
+taxa_names
+t1$plot_bar(facet = "strat_season") +
+  ggtitle("MAGs", subtitle = paste("top", ntaxa, rank))
+
+for (i in 1:length(taxa_names)) {
+    subset <- clone(mt_sylph)
+    #subset include the taxa below
+    subset$tax_table <- subset$tax_table |> 
+    filter(f == taxa_names[i])
+    subset$tidy_dataset()
+
+    # recalculate abundances (needed?)
+    subset$cal_abund()
+    subset$taxa_abund
+
+    # plot:
+
+    t1 <- trans_abund$new(dataset = subset, taxrank = "g", ntaxa = 20)
+    plot <- t1$plot_bar(facet = "strat_season") +
+    ggtitle(taxa_names[i], subtitle = "MAG")
+    print(plot) 
+        }
+#
+#
+#
+# Miscellaneous tests
+
+abundant_taxa(mt_16s, 20, rank = "f", plot = T)
+abundant_taxa <- function(meco_table, ntaxa = NULL, rank = "f", plot = F) {
+    t1 <- trans_abund$new(dataset = meco_table, taxrank = rank, ntaxa = ntaxa)
+    taxa_names <- t1$data_taxanames
+    if(!plot) {
+        next
+    } else {
+        for (i in 1:length(taxa_names)) {
+            subset <- clone(meco_table)
+
+    #subset include the taxa below
+    subset$tax_table <- subset$tax_table |> 
+    filter(o == taxa_names[i])
+    subset$tidy_dataset()
+
+    # recalculate abundances (needed?)
+    mt_sylph_subset$cal_abund()
+    mt_sylph_subset$taxa_abund
+
+    # plot:
+
+    t1 <- trans_abund$new(dataset = subset, taxrank = "g", ntaxa = 20)
+    t1$plot_bar(facet = "strat_season") +
+    ggtitle(taxa_name[i])
+            }
+        }
+    return(taxa_names)
+    }
+
+
+taxa <- abundant_taxa(mt_sylph, 20, "f")
+#
+#
+#
+# Clone dataset
+taxa <- "Rhodoglobus" # taxa of interest
+n <- 5 # Number of taxa to included in final graph
+mt_sylph_subset <- clone(mt_sylph)
+
+###mt_sylph_subset include the taxa below
+mt_sylph_subset$tax_table <- mt_sylph_subset$tax_table |> 
+  filter(g == taxa)
+mt_sylph_subset$tidy_dataset()
+
+# check
+mt_sylph_subset # OK
+head(mt_sylph_subset$tax_table)
+
+# recalculate abundances (needed?)
+mt_sylph_subset$cal_abund()
+mt_sylph_subset$taxa_abund
+
+# plot:
+
+t1 <- trans_abund$new(dataset = mt_sylph_subset, taxrank = "s", ntaxa = n)
+t1$plot_bar(facet = "strat_season") +
+  ggtitle(taxa)
+#
+#
+#
+# Plot alluvial
+
+ts1$plot_bar(bar_full = F, use_alluvium = T, others_color = "grey70", xtext_keep = TRUE, legend_text_italic = FALSE, clustering = T) +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1, vjust = 1, size=9))
+
+# Double Abudances plot
+  # Sylph data
+ts2 <- trans_abund$new(dataset = mt_sylph, taxrank = "f", ntaxa = 20)
+#  show = 0, high_level = "p", high_level_fix_nsub = 2)
+
+ts2$plot_bar(ggnested = F, xtext_angle = 45) |> 
+    ggplotly()
+    # 16S data
+  t2 <- trans_abund$new(dataset = mt_16s, taxrank = "f", ntaxa = 20, show = 0, high_level = "p", high_level_fix_nsub = 6)
+
+t2$plot_bar(ggnested = T, xtext_angle = 45) +
+    ggtitle("16S") |> 
+    ggplotly()
+
+# Heat Map
+
+t3 <- trans_abund$new(dataset = mt, taxrank = "g", ntaxa = 40)
+g1 <- t3$plot_heatmap(xtext_keep = T, withmargin = FALSE, plot_breaks = c(0.01, 0.1, 1, 10))
+g1
+g1 + theme(axis.text.y = element_text(face = 'italic'), axis.text.x = element_text(angle = 45, hjust = 1, vjust = 1, size=9))
+#
+#
+#
+#
+#
+
+mt_sylph$alpha_diversity |>
+  rownames_to_column("sample") |> 
+  ggplot(aes(sample, Simpson, group = 1)) +
+  geom_point() +
+  geom_line()
+#
+#
+#
+#
+#
+#Add in quantiles?
+mt_sylph$sample_table <- mt_sylph$sample_table |> 
+  mutate(temp_quant = cut_number(temp_c_24h_med, n = 4))
+tb2 <- trans_beta$new(mt_sylph, group = "strat_season", measure = "bray")
+tb2$cal_ordination(method = "NMDS")
+tb2$cal_manova(manova_all = TRUE)
+print(tb2$res_manova)
+
+tb2$plot_ordination(plot_color = "strat_season", plot_shape = "strat_season", plot_type = c("point", "ellipse"), NMDS_stress_text_prefix = "", ellipse_level = 0.95) +
+  #   geom_text(
+  #   data = tb2$dataset$otu_table, # Filter data for the label layer
+  #   aes(label = sample),
+  #   vjust = -1.1, # Adjust vertical position
+  #   hjust = 0.5,  # Adjust horizontal position
+  #   color = "black"
+  # ) +
+  # geom_arrow_chain(colour = "black") + 
+    ggtitle("Sylph NMDS") +
+  # scale_color_viridis_b() +
+  NULL
+
+tb2 <- trans_beta$new(mt_16s, group = "strat_season", measure = "robust.aitchison")
+tb2$cal_ordination(method = "NMDS")
+tb2$cal_manova(manova_all = TRUE)
+print(tb2$res_manova)
+
+tb2$plot_ordination(plot_color = "strat_season", plot_shape = "strat_season", NMDS_stress_text_prefix = "",plot_type = c("point", "ellipse"), ellipse_level = 0.95) +
+  geom_arrow_chain(colour = "black") + 
+    ggtitle("16s NMDS") +
+  #  scale_color_viridis_b() +
+  NULL
+
+vegan::stressplot(tb2$res_ordination$model)
+  # Microeco PCoA
+
+tb2 <- trans_beta$new(mt_16s, group = "strat_season", measure = "robust.aitchison")
+tb2$cal_ordination(method = "PCoA")
+tb2$cal_manova(manova_all = TRUE)
+print(tb2$res_manova)
+
+test <- tb2$plot_ordination(plot_color = "strat_season", plot_shape = "strat_season", plot_type = c("point", "ellipse"), ellipse_level = 0.95) +
+  #   geom_text(
+  #   data = tb2$dataset$otu_table, # Filter data for the label layer
+  #   aes(label = colnames(tb2$dataset$otu_table)),
+  #   vjust = -1.1, # Adjust vertical position
+  #   hjust = 0.5,  # Adjust horizontal position
+  #   color = "black"
+  # ) +
+  geom_arrow_chain(colour = "black") + 
+    ggtitle(paste0("aitchison-  MAGs PCoA")) +
+  # scale_color_viridis_b() +
+  NULL
+test
+
+  tb2 <- trans_beta$new(mt_mag, group = "strat_season", measure = "bray")
+tb2$cal_ordination(method = "PCoA")
+tb2$cal_manova(manova_all = TRUE)
+print(tb2$res_manova)
+
+test <- tb2$plot_ordination(plot_color = "strat_season", plot_shape = "strat_season", plot_type = c("point", "ellipse"), ellipse_level = 0.95) +
+  #   geom_text(
+  #   data = tb2$dataset$otu_table, # Filter data for the label layer
+  #   aes(label = colnames(tb2$dataset$otu_table)),
+  #   vjust = -1.1, # Adjust vertical position
+  #   hjust = 0.5,  # Adjust horizontal position
+  #   color = "black"
+  # ) +
+  geom_arrow_chain(colour = "black") + 
+    ggtitle(paste0("bray-  MAGs PCoA")) +
+  # scale_color_viridis_b() +
+  NULL
+test
+
+  tb2 <- trans_beta$new(mt_sylph, group = "strat_season", measure = "bray")
+tb2$cal_ordination(method = "NMDS")
+tb2$cal_manova(manova_all = TRUE)
+print(tb2$res_manova)
+
+test <- tb2$plot_ordination(plot_color = "strat_season", plot_shape = "strat_season", plot_type = c("point", "ellipse"), ellipse_level = 0.95) +
+  #   geom_text(
+  #   data = tb2$dataset$otu_table, # Filter data for the label layer
+  #   aes(label = colnames(tb2$dataset$otu_table)),
+  #   vjust = -1.1, # Adjust vertical position
+  #   hjust = 0.5,  # Adjust horizontal position
+  #   color = "black"
+  # ) +
+  geom_arrow_chain(colour = "black") + 
+    ggtitle(paste0("bray- sylphs NMDS")) +
+  # scale_color_viridis_b() +
+  NULL
+test
+
+
+  tb2 <- trans_beta$new(mt_mag, group = "strat_season", measure = "bray")
+tb2$cal_ordination(method = "NMDS")
+tb2$cal_manova(manova_all = TRUE)
+print(tb2$res_manova)
+
+test <- tb2$plot_ordination(plot_color = "strat_season", plot_shape = "strat_season", plot_type = c("point", "ellipse"), ellipse_level = 0.95) +
+  geom_arrow_chain(colour = "black") + 
+      geom_text(
+    aes(label = tb2$sample_table$sample),
+    vjust = -1.1, # Adjust vertical position
+    hjust = 0.5,  # Adjust horizontal position
+    color = "black"
+  ) +
+    ggtitle(paste0("bray-  16s NMDS")) +
+  # scale_color_viridis_b() +
+  NULL
+test
+
+  tb2 <- trans_beta$new(mt_mag, group = "strat_season", measure = "unwei_unifrac")
+tb2$cal_ordination(method = "NMDS")
+tb2$cal_manova(manova_all = TRUE)
+print(tb2$res_manova)
+#
+#
+#
+#
+#
+
+#Add in quantiles?
+mt_sylph$sample_table <- mt_sylph$sample_table |> 
+  mutate(temp_quant = cut_number(temp_c_24h_med, n = 4))
+tb2 <- trans_beta$new(mt_sylph, group = "temp_quant", measure = "bray")
+tb2$cal_ordination(method = "NMDS")
+tb2$cal_manova(manova_all = TRUE)
+print(tb2$res_manova)
+
+tb2$plot_ordination(plot_color = "strat_season", plot_shape = "temp_quant", plot_type = c("point", "ellipse"), NMDS_stress_text_prefix = "", ellipse_level = 0.95) +
+  #   geom_text(
+  #   data = tb2$dataset$otu_table, # Filter data for the label layer
+  #   aes(label = sample),
+  #   vjust = -1.1, # Adjust vertical position
+  #   hjust = 0.5,  # Adjust horizontal position
+  #   color = "black"
+  # ) +
+  # geom_arrow_chain(colour = "black") + 
+    ggtitle("Sylph NMDS") +
+  # scale_color_viridis_b() +
+  NULL
+#
+#
+#
+#
+#
+
+#Add in quantiles?
+mt_16s$sample_table <- mt_16s$sample_table |> 
+  mutate(temp_quant = cut_number(temp_c_24h_med, n = 4))
+tb2 <- trans_beta$new(mt_16s, group = "temp_quant", measure = "robust.aitchison")
+tb2$cal_ordination(method = "NMDS")
+tb2$cal_manova(manova_all = TRUE)
+print(tb2$res_manova)
+
+tb2$plot_ordination(plot_color = "strat_season", plot_shape = "temp_quant", plot_type = c("point", "ellipse"), NMDS_stress_text_prefix = "", ellipse_level = 0.95) +
+  #   geom_text(
+  #   data = tb2$dataset$otu_table, # Filter data for the label layer
+  #   aes(label = sample),
+  #   vjust = -1.1, # Adjust vertical position
+  #   hjust = 0.5,  # Adjust horizontal position
+  #   color = "black"
+  # ) +
+  # geom_arrow_chain(colour = "black") + 
+    ggtitle("Sylph NMDS") +
+  # scale_color_viridis_b() +
+  NULL
+#
+#
+#
+#
+#
+
+tb2 <- trans_beta$new(mt_16s, group = "strat_season", measure = "robust.aitchison")
+tb2$cal_ordination(method = "NMDS")
+tb2$cal_manova(manova_all = TRUE)
+print(tb2$res_manova)
+
+plot <- tb2$plot_ordination(plot_color = "strat_season", NMDS_stress_text_prefix = "Stress: ", plot_type = c("point", "ellipse"), ellipse_level = 0.95, add_sample_label = "sample") +
+  # geom_arrow_chain(colour = "black") + 
+        ggtitle("NMDS Ordination of WM Data", subtitle = paste("Stress = ", round(tb2$res_ordination$model$stress, 2))) + 
+    # geom_label_repel(label = mt_mag$sample_table$sample, color = "black") +
+    labs(color = "strat_season") +
+    guides(fill = "none") +
+    theme_classic() +
+    theme(
+      text = element_text(size = 15),
+      panel.border = element_rect(colour = "black", fill = NA, linewidth = 3)
+    )
+  plot
+
+plot + labs(color = "Season", shape = "test")
+  class(plot)
+
+  #  scale_color_viridis_b() 
+
+  tb2 <- trans_beta$new(mt_16s, group = "strat_season", measure = "bray")
+tb2$cal_ordination(method = "NMDS")
+tb2$cal_manova(manova_all = TRUE)
+print(tb2$res_manova)
+
+plot <- tb2$plot_ordination(plot_color = "strat_season", NMDS_stress_text_prefix = "Stress: ", plot_type = c("point", "ellipse"), ellipse_level = 0.95, add_sample_label = "sample") +
+  geom_arrow_chain(colour = "black") + 
+    ggtitle("16s NMDS-bray")
+
+  plot
+
+  tb2 <- trans_beta$new(mt_16s, group = "strat_season", measure = "aitchison")
+tb2$cal_ordination(method = "NMDS")
+tb2$cal_manova(manova_all = TRUE)
+print(tb2$res_manova)
+
+plot <- tb2$plot_ordination(plot_color = "strat_season", NMDS_stress_text_prefix = "Stress: ", plot_type = c("point", "ellipse"), ellipse_level = 0.95, add_sample_label = "sample") +
+  geom_arrow_chain(colour = "black") + 
+    ggtitle("16s NMDS - aitchison")
+  plot
+
+  tb2 <- trans_beta$new(mt_16s, group = "strat_season", measure = "robust.aitchison")
+tb2$cal_ordination(method = "NMDS")
+tb2$cal_manova(manova_all = TRUE)
+print(tb2$res_manova)
+
+plot <- tb2$plot_ordination(plot_color = "strat_season", plot_type = c("point", "ellipse"), NMDS_stress_pos = NULL, ellipse_level = 0.95) +
+  geom_arrow_chain(colour = "black") + 
+    ggtitle("NMDS Ordination of WM Data", subtitle = paste("Stress = ", round(tb2$res_ordination$model$stress, 2))) + 
+    geom_label_repel(label = mt_16s$sample_table$sample, color = "black") +
+    labs(color = "Season") +
+    guides(fill = "none") +
+    theme_classic() +
+    theme(
+      text = element_text(size = 15),
+      panel.border = element_rect(colour = "black", fill = NA, linewidth = 3)
+    )
+  plot
+
+
+
+plot <- tb2$plot_ordination(plot_color = "strat_season", plot_type = c("point", "ellipse"), NMDS_stress_pos = NULL, ellipse_level = 0.95) +
+  # geom_arrow_chain(colour = "black") + 
+    ggtitle("NMDS Ordination of WM Data", subtitle = paste("Stress = ", round(tb2$res_ordination$model$stress, 2))) + 
+    # geom_label_repel(label = mt_mag$sample_table$sample, color = "black") +
+    labs(color = "Season") +
+    guides(fill = "none") +
+    theme_classic() +
+    theme(
+      text = element_text(size = 15),
+      panel.border = element_rect(colour = "black", fill = NA, linewidth = 3)
+    )
+  plot
+
+  plot <- tb2$plot_ordination(plot_type = "point", NMDS_stress_pos = NULL, ellipse_level = 0.95) +
+  # geom_arrow_chain(colour = "black") + 
+    ggtitle("NMDS Ordination of WM Data", subtitle = paste("Stress = ", round(tb2$res_ordination$model$stress, 2))) + 
+    # geom_label_repel(label = mt_mag$sample_table$sample, color = "black") +
+    labs(color = "Season") +
+    guides(fill = "none") +
+    theme_classic() +
+    theme(
+      text = element_text(size = 15),
+      panel.border = element_rect(colour = "black", fill = NA, linewidth = 3)
+    )
+  plot
+stressplot(tb2$res_ordination$model)
+screeplot(tb2$res_ordination$model)
+
+#
+#
+#
+
+  read_tsv
+  nrow(read_tsv("data/gtdb_bin_tax/gtdbtk.ar53.summary.tsv"))
+#
+#
+#
+# Test to see how it works to pull in the microtrait data here
+
+load("output/data/mt_mag_large.RData")
+library(microeco)
+library(tidyverse)
+library(ggpattern)
+# mt_mag_large$cal_abund()
+
+
+# Plot abundances
+
+# subset$tax_table <- subset$tax_table|> 
+#   filter(c == "c__Bacteroidia")
+
+# subset$tidy_dataset()$cal_abund()
+
+# t1 <- trans_abund$new(dataset = subset, taxrank = "g", ntaxa = n, show = 0, high_level = "o", high_level_fix_nsub = 10)
+# t1$plot_bar(ggnested = T)
+
+
+trans_abund$new(mt_mag_large, taxrank = "f", ntaxa = 50, high_level = "poss_heterotroph")$plot_bar(ggnested = TRUE) +
+  geom_col_pattern(color = "black", alpha = 0.7, aes(pattern = poss_heterotroph))
+
+mt_mag_large$tax_table <- mt_mag_large$tax_table |> 
+  mutate(stripes = ifelse(poss_heterotroph == TRUE, "stripe", "none"))
+trans_abund$new(mt_mag_large, taxrank = "f", ntaxa = 50)$plot_bar() +
+  geom_col_pattern(color = "black", alpha = 0.7, aes(pattern = mt_mag_large$tax_table$poss_heterotroph))
+view(mt_mag_large$otu_table)
+view(mt_mag_large$tax_table)
+
+mt_mag_sliced <- clone(mt_mag_large)
+
+mt_mag_sliced$tax_table <- mt_mag_sliced$tax_table |> 
+  select(matches("g1_"))
+
+mt_mag_sliced$tidy_dataset()
+mt_mag_sliced$cal_abund()
+cols <- mt_mag_sliced$tax_table |> 
+  select(matches("g1_")) |> 
+  colnames() 
+t1 <- trans_diff$new(dataset = mt_mag_sliced, method = "lefse", group = "strat_season_2", alpha = 0.05, taxa_level = 'all', lefse_subgroup = NULL)
+
+view(t1$res_diff)
+sig_taxa <- t1$res_diff |> 
+    filter (P.adj <=0.05)
+
+save(t1, file = "t1_mag_large_lefse.RData")
+
+load("t1_mag_large_lefse.RData")
+t1$plot_diff_bar(threshold = 4.5)
+# we show 20 taxa with the highest LDA (log10)
+t1$plot_diff_bar(use_number = 1:30, width = 0.8, add_sig = T)
+
+stop()
+mt_mag_large$tax_table |> 
+  colnames()
+
+
+#
+#
+#
+#

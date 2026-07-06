@@ -221,7 +221,7 @@ mt_mag$tax_table <- mt_mag$tax_table |>
   mutate(rows = str_remove(mt_mag$tax_table$bin, "b__")) |> 
   column_to_rownames("rows")
 # Calculations for later -----------------------------------------------------------
-# Calculate relative abunance
+# Calculate relative abundance
 mt_mag$cal_abund(select_cols = clade_cols)
 head(mt_mag$taxa_abund)
 

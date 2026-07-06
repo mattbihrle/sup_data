@@ -272,3 +272,27 @@ mt_mag$cal_alphadiv()
 mt_mag$cal_betadiv(method = c("bray","aitchison","robust.aitchison", "jaccard"), unifrac = T)
 head(mt_mag$beta_diversity)
 
+
+
+load("output/data/mt_mag_large.RData")
+
+# Expand foam_rollup function 
+
+foam_rollup_df <- foam_rollup_df |> 
+  # rename(func = `function`) |> 
+  separate_wider_delim(col = func, delim = ";", names = c("abbrev", "long_name"))
+
+foam_rollup_df <- foam_rollup_df |> 
+  separate_wider_delim(abbrev, delim = ",", 
+                       names = c("abbrev_1", "abbrev_2", "abbrev_3", "abbrev_4",
+                                 "abbrev_5", "abbrev_6"), 
+                       too_few = "align_start")
+genes <- colnames(mt_mag_large$tax_table)[162:length(colnames(mt_mag_large$tax_table))]
+
+
+foam_rollup_df <- foam_rollup_df |> 
+  mutate(across(matches("abbrev.*"), ~ .x %in% genes, .names = "in_mt_{col}"))
+
+foam_rollup_df <- foam_rollup_df |> 
+  mutate(in_mt = if_any((matches("in_mt_abb.*"))))
+

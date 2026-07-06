@@ -4,6 +4,7 @@ format: html
 ---
 
 # Run intro scripts
+
 ```{r}
 # source("scripts/01_metadata_import_clean.R") # Run only if changes made to metadata
 # source("scripts/02_import_mag_sylph_16s.R")
@@ -119,6 +120,7 @@ ggsave(path, plot)
 ```
 
 ## Abundance Plots
+
 ```{r}
 
 # Set rank (k, p, c, etc) and number of taxa to include
@@ -173,7 +175,6 @@ t1$plot_bar(ggnested = T)
 ## Plot single taxa abundance
 
 # Plot just a single taxa abundance
-
 
 ```{r}
 # Clone dataset
@@ -331,6 +332,7 @@ t1 <- trans_abund$new(dataset = mt_sylph_subset, taxrank = "s", ntaxa = n)
 t1$plot_bar(facet = "strat_season") +
   ggtitle(taxa)
 ```
+
 ```{r}
 # Plot alluvial
 
@@ -518,7 +520,6 @@ tb2$plot_ordination(plot_color = "strat_season", plot_shape = "temp_quant", plot
 
 Try the same thing with 16s data
 
-
 ```{r}
 
 #Add in quantiles?
@@ -641,12 +642,88 @@ screeplot(tb2$res_ordination$model)
 
 ```
 
-
-
 ```{r}
 
   read_tsv
   nrow(read_tsv("data/gtdb_bin_tax/gtdbtk.ar53.summary.tsv"))
 ```
 
+```{r}
+# Test to see how it works to pull in the microtrait data here
 
+load("output/data/mt_mag_large.RData")
+library(microeco)
+library(tidyverse)
+library(ggpattern)
+# mt_mag_large$cal_abund()
+
+
+# Plot abundances
+
+# subset$tax_table <- subset$tax_table|> 
+#   filter(c == "c__Bacteroidia")
+
+# subset$tidy_dataset()$cal_abund()
+
+# t1 <- trans_abund$new(dataset = subset, taxrank = "g", ntaxa = n, show = 0, high_level = "o", high_level_fix_nsub = 10)
+# t1$plot_bar(ggnested = T)
+
+# Get rid of spaces in the column names
+mt_mag_large$tax_table <- mt_mag_large$tax_table |> 
+  rename_with(~str_replace_all(., " ", "_")) |> 
+  rename_with(~str_replace_all(., ":", "_"))
+
+colnames(mt_mag_large$tax_table)
+
+trans_abund$new(mt_mag_large, taxrank = "f", ntaxa = 50, high_level = "poss_heterotroph")$plot_bar(ggnested = TRUE) +
+  ggtitle("50 most abundant families, split by possible heterotroph based on microtrait (T/F)")
+
+trans_abund$new(mt_mag_large, taxrank = "f", ntaxa = 50, high_level = "poss_chemotroph")$plot_bar(ggnested = TRUE) +
+  ggtitle("50 most abundant families, split by possible chemotroph based on microtrait (T/F)")
+
+trans_abund$new(mt_mag_large, taxrank = "f", ntaxa = 50, high_level = "poss_phototroph")$plot_bar(ggnested = TRUE) +
+  ggtitle("50 most abundant families, split by possible phototroph based on microtrait (T/F)")
+
+
+trans_abund$new(mt_mag_large, taxrank = "f", ntaxa = 50, high_level = "g1_Resource_Acquisition_Substrate_degradation_complex_carbohydrate_depolymerization")$plot_bar(ggnested = TRUE) +
+  ggtitle("50 most abundant families, split by possible carbohydrate depolymerization based on microtrait (T/F)")
+
+# Hmmm okay those are all true that's not super helpful, lets see what we can do with nitrate next
+
+
+
+# mt_mag_large$tax_table <- mt_mag_large$tax_table |> 
+#   mutate(stripes = ifelse(poss_heterotroph == TRUE, "stripe", "none"))
+
+view(mt_mag_large$otu_table)
+view(mt_mag_large$tax_table)
+
+mt_mag_sliced <- clone(mt_mag_large)
+
+mt_mag_sliced$tax_table <- mt_mag_sliced$tax_table |> 
+  select(matches("g1_"))
+
+mt_mag_sliced$tidy_dataset()
+mt_mag_sliced$cal_abund()
+cols <- mt_mag_sliced$tax_table |> 
+  select(matches("g1_")) |> 
+  colnames() 
+t1 <- trans_diff$new(dataset = mt_mag_sliced, method = "lefse", group = "strat_season_2", alpha = 0.05, taxa_level = 'all', lefse_subgroup = NULL)
+
+view(t1$res_diff)
+sig_taxa <- t1$res_diff |> 
+    filter (P.adj <=0.05)
+
+save(t1, file = "t1_mag_large_lefse.RData")
+
+load("t1_mag_large_lefse.RData")
+t1$plot_diff_bar(threshold = 4.5)
+# we show 20 taxa with the highest LDA (log10)
+t1$plot_diff_bar(use_number = 1:30, width = 0.8, add_sig = T)
+
+stop()
+mt_mag_large$tax_table |> 
+  colnames()
+
+
+```
