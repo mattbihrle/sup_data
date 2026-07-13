@@ -202,3 +202,30 @@ meco_module_func$cal_func(prok_database = "FAPROTAX")
 meco_module_func$cal_func_FR(abundance_weighted = FALSE, perc = TRUE)
 meco_module_func$plot_func_FR()
 ```
+
+
+Differential abundance from all genes
+```{r}
+
+load("output/data/mt_all_genes.RData")
+t2 <- trans_diff$new(dataset = mt_all_genes, method = "ancombc2", 
+                     fix_formula = "strat_season", alpha = 0.05)
+View(t2$res_diff)
+save(t2, file = "output/data/t2_ancombc_all_genes.RData")
+st2$res_diff$Taxa |> 
+  str_which("^microtrait")
+
+sig_taxa_ancombc2 <- t2$res_diff |> 
+  separate_wider_delim(cols = Taxa, delim = "|", 
+                       names = c(),
+                       too_few = "align_start") |>
+  # mutate(level = 8 - rowSums(is.na(across(matches("l[0-9]{1}"))))) |>
+  select(Significance, everything()) |> 
+  filter(P.adj < 0.05) |> 
+  arrange(Significance)
+
+View(sig_taxa_ancombc2)
+write_tsv(sig_taxa_ancombc2, file = "output/data/sig_taxa_all_genes_ancom.RData")
+
+```
+

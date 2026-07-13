@@ -23,9 +23,9 @@ length(unique(foam_rollup_df$bin))
 # for(i in 1:length(foam_files)){
 # bin_name <- str_extract(foam_files[i], "WM.*_.*_.*_.*_[0-9]{6}") |> 
 #   str_remove('MAGScoT_cleanbin_000')
-  
+
 # print(bin_name)
-  
+
 #   int_df <- read_tsv(foam_files[i]) |> 
 #       mutate(bin = bin_name, .before = Id) |> 
 #       rename_with(tolower)
@@ -35,7 +35,7 @@ length(unique(foam_rollup_df$bin))
 #   #         "step_10-visualizeData",paste0("prodigal_",bin_name), "/")
 #   # path
 #   # Select the file you want with the regex here
-  
+
 #   if(i == 1){
 #     gene_df <- int_df
 #   } else {
@@ -45,27 +45,27 @@ length(unique(foam_rollup_df$bin))
 # foam_df <- gene_df
 # Cut out to retain the bins that are in the mag tax table
 foam_df_cut <- foam_rollup_df |> 
-    slice(which(foam_rollup_df$bin %in% rownames(mt_mag$tax_table)))
+  slice(which(foam_rollup_df$bin %in% rownames(mt_mag$tax_table)))
 
-  
-  foam_table <- foam_df_cut |> 
-    group_by(bin, id) |> 
-      tally(count)
-    foam_table |> 
-      ggplot(aes(x = n)) +
-        geom_histogram()
-      
+
+foam_table <- foam_df_cut |> 
+  group_by(bin, id) |> 
+  tally(count)
+foam_table |> 
+  ggplot(aes(x = n)) +
+  geom_histogram()
+
 # check to make sure that I have the correct bins
-      
+
 length(unique(foam_df_cut$bin))
-      
+
 # Okay it looks like there are not really many issues where need to worry about there being more than 1 gene copy.
 
 foam_table_wide <- foam_table |> 
-    pivot_wider(names_from = bin, values_from = n) |> 
-    column_to_rownames("id") |> 
-    # Make it a presence abesnce thing (change things here if I need to)
-    mutate(across(everything(), ~ifelse(is.na(.x), 0, 1)))
+  pivot_wider(names_from = bin, values_from = n) |> 
+  column_to_rownames("id") |> 
+  # Make it a presence abesnce thing (change things here if I need to)
+  mutate(across(everything(), ~ifelse(is.na(.x), 0, 1)))
 
 # -------------------------------------------------------------------
 # STEP 3: Calculate Gene Abundances across samples
@@ -82,18 +82,18 @@ gene_abund <- as.data.frame(gene_abund_matrix)
 
 tax_table <- foam_df_cut |> 
   mutate(func = `function`) |> 
-    select(bin, id, l1, l2, l3, l4, func) |> 
-    distinct() |> 
-    group_by(id) |> 
-    slice_head() |> 
-    mutate(gene = id) |> 
-    column_to_rownames("id")
+  select(bin, id, l1, l2, l3, l4, func) |> 
+  distinct() |> 
+  group_by(id) |> 
+  slice_head() |> 
+  mutate(gene = id) |> 
+  column_to_rownames("id")
 
 
 # Create new mt object
 mt_gene_mag <- microtable$new(otu_table = gene_abund, 
-                             sample_table = sample_meta, 
-                             tax_table = tax_table)
+                              sample_table = sample_meta, 
+                              tax_table = tax_table)
 
 
 # Now do it again with the microtrait in formation 

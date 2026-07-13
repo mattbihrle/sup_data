@@ -935,42 +935,35 @@ For MAGs:
 
 5\) Afterwards was left with \~300 bins for CoverM and dereplication
 
-6\) I filtered just to keep the bins that had abunance calculated. 
+6\) I filtered just to keep the bins that had abunance calculated.
 
-Also starting working through the microtrait results. I should continue to look at these tomorrow. For now, I have two good microtables and some data to move forward with. 
+Also starting working through the microtrait results. I should continue to look at these tomorrow. For now, I have two good microtables and some data to move forward with.
 
 **NEXT PLACE TO START:**
-  -  Continue script to clean and make sylph data nice
-  -  Continue working through microtrait data
 
-  # June 25, 20206
+- Continue script to clean and make sylph data nice
 
-  Did another round of extractions. Only 18 to go! Will only do 6 each time from now on. Hopefully I can prep and send samples on July 6th or 7th. 
+- Continue working through microtrait data
 
-  Cleaned up some of my r work and started working through the microtrait stuff. I think I need to take some longer time to go through that and set up functions to look at all the different options. link is here: https://github.com/ukaraoz/microtrait
+# June 25, 20206
+
+Did another round of extractions. Only 18 to go! Will only do 6 each time from now on. Hopefully I can prep and send samples on July 6th or 7th.
+
+Cleaned up some of my r work and started working through the microtrait stuff. I think I need to take some longer time to go through that and set up functions to look at all the different options. link is here: https://github.com/ukaraoz/microtrait
 
 # July 01, 2026
 
-Made it to july! 
+Made it to july!
 
-TODO:
-[x] Split the MAGs into heterotrophs and autotrophs
-[ ] Look for nitrogen genes
-[ ] Look for phosphorous genes
-[x] Look for CAZy genes for possible particle associated-ness
-cazy genes/carbon breakdown can be found using [16] "g1_Resource Acquisition:Substrate degradation:complex carbohydrate depolymerization" and
-[17] "g1_Resource Acquisition:Substrate degradation:simple compound degradation" 
+TODO: \[x\] Split the MAGs into heterotrophs and autotrophs \[ \] Look for nitrogen genes \[ \] Look for phosphorous genes \[x\] Look for CAZy genes for possible particle associated-ness cazy genes/carbon breakdown can be found using \[16\] "g1_Resource Acquisition:Substrate degradation:complex carbohydrate depolymerization" and \[17\] "g1_Resource Acquisition:Substrate degradation:simple compound degradation"
 
+Question for Cody: Does the normalized trait matter? I think I really am just working on presence/absence.
 
-Question for Cody: Does the normalized trait matter? I think I really am just working on presence/absence. 
-
-Didn't see much of a difference looking at how heterotrophs, phototrophs and chemotrophs changed between summer and winter.
-**NEED to deal with samples 02 and 04 possibly being contaminated.**
-
+Didn't see much of a difference looking at how heterotrophs, phototrophs and chemotrophs changed between summer and winter. **NEED to deal with samples 02 and 04 possibly being contaminated.**
 
 # July 06, 2026
 
-Back from a weekend break. Looking at the split between heterotrophs chemotrophs and autotrophs. 
+Back from a weekend break. Looking at the split between heterotrophs chemotrophs and autotrophs.
 
 ![mags_phototrophs](output/plots/mags_phototrophs.png)
 
@@ -982,18 +975,501 @@ Chemotrophs don't show much difference I have to say
 
 ![mags_heterotrophs](output/plots/mags_heterotrophs.png)
 
-It does look like there are more heterotrophs moving towards the later months. That would make sense to me. 
+It does look like there are more heterotrophs moving towards the later months. That would make sense to me.
 
 **Look at how heterotrophs and phototrophs change abundances throughout the year**
 
-Looking at complex carbohydrate depolymerization it seems like all of them are true which is not super helpful. 
+Looking at complex carbohydrate depolymerization it seems like all of them are true which is not super helpful.
 
-**Tomorrow:**
-  - Keep looking at nitrogen genes
-  - Find a new way to differentiate CAzy genes
-  - See if I can remove the columns that are all TRUE from the tax table. 
+**Tomorrow:** - Keep looking at nitrogen genes - Find a new way to differentiate CAzy genes - See if I can remove the columns that are all TRUE from the tax table.
 
-  
+# July 07, 2026
 
-  
-  
+Today looking at nitrogen genes
+
+![Interestingly the nitrogen/nitrate transport genes are less common in the later months. I wonder why that would be?](images/clipboard-538614598.png)
+
+![](images/clipboard-2381324623.png)
+
+Nitrite oxidation becomes wayyyy more common in the later months with it looks like UBA2100 becoming a huge player. That is one to look at. **UBA2100**
+
+![Again the UBA2100 taxa really dominates here](images/clipboard-2793546764.png)
+
+Assimilatory nitrate reduction
+
+![](images/clipboard-4239558823.png)
+
+So it looks like this is all the UBA2100 family. They are using nitrate a lot it seems.
+
+Ammonium doesn't seem to be that interesting
+
+## Phosphorous
+
+Carbohydrate phosphate transport
+
+![](images/clipboard-2056585558.png)
+
+Here it loos like the LD1 family has some differential abundance in the later samples. Seems like it is all the genus "Bog-950 of the bacteriodetes. That makes me a little suspicious that it is a contaminant. But it was found in arctic permafrost soil so could be something that likes cold sediments?
+
+**Bog-950**
+
+```         
+WM11_S6_008 d__Bacteria p__Bacteroidota c__Bacteroidia o__Chitinophagales f__LD1                      g   s WM11_S6_008 g__Bog-950 s__
+```
+
+Organophosphorus compound transport – again it seems like UBA2100 is the culprit for the differences here.
+
+## All of them
+
+ros_scavenging_enzymes - lots more in the summer
+
+atp_dependent_proteases
+
+synthesis_of_compatible_solutes
+
+cold_sensing_two_component_system
+
+fatty_acid_desaturase
+
+heat_shock_proteins
+
+oh_spheroidenone
+
+betacarotene
+
+bacteriochlorophyll_g
+
+chlorophyll_a
+
+anoxygenic_photosystem_ii
+
+sulfite_oxidation
+
+hydrogenotrophic_methanogenesis
+
+denitrification_to_nitrogen
+
+etc_complex_iv
+
+etc_complex_ii
+
+fermentation_of_pyruvate_to_alcohols
+
+fermentation_of_pyruvate_to_lactate_and_ethanol
+
+assimilatory_sulfate_reduction
+
+assimilatory_nitrate_reduction
+
+trehalose_degradation
+
+chitin_breakdown
+
+xyloglucan_breakdown
+
+xylan_and_heteroxylan_breakdown
+
+cellulose_breakdown
+
+Stopped here. Continue tomorrow.
+
+Try to see if I can make it factor where TRUE is on the bottom instead of false
+
+# July 08, 2026
+
+Things to continue to look at:
+
+```         
+"g1_resource_acquisition__substrate_uptake__carboxylate_transport"
+```
+
+```         
+ "g1_resource_acquisition__substrate_uptake__lipid_transport"
+```
+
+```         
+"g1_resource_acquisition__substrate_uptake__n_compound_transport"
+```
+
+```         
+"g1_resource_acquisition__substrate_uptake__organophosphorus_transport"
+```
+
+```         
+"g1_resource_acquisition__substrate_uptake__s_compound_transport"
+```
+
+```         
+"g1_resource_acquisition__substrate_assimilation__n_compounds"
+```
+
+```         
+"g1_resource_acquisition__substrate_assimilation__s_compounds"
+```
+
+**UKL13-3** possibily cyanobacterially associated. Found more in the winter months
+
+```         
+"g1_resource_use__chemotrophy__chemoorganoheterotrophy__aerobic_respiration"
+```
+
+```         
+"g1_resource_use__chemotrophy__chemolithoheterotrophy__anaerobic_respiration"
+```
+
+```         
+"g1_resource_use__phototrophy__photosystem"
+```
+
+**UBA 2100** has some with photosystem genes and some not. That's really interesting. Both more common in the later samples.
+
+```         
+"g1_stress_tolerance__specific__temperature__low"
+```
+
+```         
+"g2_resource_acquisition__substrate_uptake__biopolymer_transport"
+```
+
+```         
+"g2_resource_acquisition__substrate_uptake__carbohydrate_transport__carbohydrate_acid_transport"
+```
+
+```         
+"g2_resource_acquisition__substrate_uptake__n_compound_transport__ammonium_transport"
+```
+
+```         
+"g2_resource_acquisition__substrate_uptake__n_compound_transport__nitrate_transport"
+```
+
+```         
+"g2_resource_acquisition__substrate_uptake__n_compound_transport__nitrite_transport"
+```
+
+```         
+"g2_resource_acquisition__substrate_uptake__nucleic_acid_component_transport__nucleobase_transport"
+```
+
+```         
+"g2_resource_acquisition__substrate_uptake__nucleic_acid_component_transport__nucleotide_transport"
+```
+
+```         
+"g2_resource_acquisition__substrate_degradation__complex_carbohydrate_depolymerization__cellulose_breakdown"
+```
+
+```         
+"g2_resource_acquisition__substrate_degradation__complex_carbohydrate_depolymerization__chitin_breakdown"
+```
+
+```         
+"g2_resource_acquisition__substrate_degradation__simple_compound_degradation__sugar_acid_degradation"
+```
+
+```         
+"g2_resource_acquisition__substrate_assimilation__c1_compounds__co2_fixation"
+```
+
+```         
+"g2_resource_acquisition__substrate_assimilation__n_compounds__assimilatory_nitrate_reduction"
+```
+
+![](images/clipboard-3095679199.png)
+
+```         
+"g2_resource_acquisition__substrate_assimilation__c1_compounds__methanotrophy"
+```
+
+```         
+"g2_resource_acquisition__substrate_assimilation__n_compounds__ammonia_assimilation"
+```
+
+```         
+"g2_resource_acquisition__substrate_assimilation__s_compounds__assimilatory_sulfate_reduction"
+```
+
+```         
+"g2_resource_use__chemotrophy__chemolithoheterotrophy__anaerobic_respiration__n__denitrification_"
+```
+
+```         
+"g2_resource_use__chemotrophy__chemolithoautotrophy__n_compounds_as_electron_donor__nitrite_oxidation"
+```
+
+```         
+"g2_resource_use__chemotrophy__chemolithoautotrophy__s_compounds_as_electron_donor"
+```
+
+```         
+"g2_resource_use__phototrophy__photosystem__oxygenic"
+```
+
+```         
+"g2_resource_use__phototrophy__photosystem__anoxygenic"
+```
+
+```         
+"g2_resource_use__phototrophy__pigments__core__anoxygenic"
+```
+
+```         
+"g2_resource_use__phototrophy__pigments__accessory__carotenoid__carotene"
+```
+
+```         
+"g2_resource_use__phototrophy__pigments__accessory__carotenoid__xanthophyll"
+```
+
+```         
+"g2_stress_tolerance__general__scavenging_of_reactive_oxygen_species"
+```
+
+```         
+"g2_stress_tolerance__general__biofilm_formation"
+```
+
+```         
+"g2_stress_tolerance__specific__temperature__low__destabilization_of_secondary_structures_in_mrnas"
+```
+
+```         
+"g2_stress_tolerance__specific__desiccation_osmotic_salt_stress__accumulation_of_compatible_solutes"
+```
+
+```         
+"g2_stress_tolerance__specific__desiccation_osmotic_salt_stress__enhancement_of_microenvironment"
+```
+
+**Palsa-965**
+
+```         
+"g2_stress_tolerance__specific__envelope_stress__phage_resistance"
+```
+
+```         
+"g3_resource_acquisition__substrate_uptake__carbohydrate_transport__carbohydrate_acid_transport"
+```
+
+```         
+"g3_resource_acquisition__substrate_uptake__carboxylate_transport__monocarboxylate_transport"
+```
+
+```         
+"g3_resource_acquisition__substrate_uptake__nucleic_acid_component_transport__nucleobase_transport"
+```
+
+```         
+"g3_resource_acquisition__substrate_uptake__organophosphorus_compound_transport"
+```
+
+```         
+"g3_resource_acquisition__substrate_uptake__secondary_metabolite_transport__siderophore_based_transport"
+```
+
+```         
+"g3_resource_acquisition__substrate_uptake__vitamin_transport__vitamin_b_transport"
+```
+
+```         
+"g3_resource_acquisition__substrate_uptake__vitamin_transport__vitamin_c_transport"
+```
+
+Notes from Cody Meeting:
+
+- Look more at UBA2100 family
+
+  - Look for nitrate reduction for possibly helping cyanos use nitrogen
+
+  - Look for vitamins
+
+  - Run it through Keggmapper
+
+- Look at growth rates and temperature overall
+
+- Email Stormi about the class in the fall
+
+- See if I can align the GTDB and sylva databases so I can associate the 16S genes with the MAGs
+
+- Should also look at the relative abundances of traits to see how those track across seasons.
+
+### UBA2100 Info
+
+The bins are:
+
+- WM12_S7_038
+
+  - Present during summer
+
+- WM12_S7_050
+
+  - Not very present
+
+- WM15_S10_035
+
+  - Present fall/winter
+
+  - Has one gene for Assimilatory sulfate reduction but not the whole pathway (K00956, CysN)
+
+  - Glyoxylate and dicarboxylate metabolism nearly the whole pathway
+
+  - ![](images/clipboard-1693864441.png)
+
+  - From here it looks like it is doing some stuff to move carbon compounds around
+
+  - There is one gene for swapping between ammonia and L-glutamate.
+
+  - Genes for converting methane to methanol and breaking down phenol groups
+
+  - Look out for genes involved in peptidoglycan biosynthesis (that's basically just a cell wall)
+
+  - Has genes for sensing phosphate limitation (PhoR) and temperature (VicK)
+
+  - Has a number of genes available to help with folate (vitamin B9)
+
+- WM14_S9_032
+
+  - Present fall/winter
+
+  - This one has nearly a full pathway from sulfate to ATP just missing 1/3 of the genes.
+
+  - Has one lobe of the calvin cycle that is pretty complete.
+
+  - Simile sorts of genes as the other
+
+  - Again, has a lot of folate genes
+
+- WM14_S9_031
+
+  - Present during summer
+
+List of traits that are present more in the two winter taxa than the summer taxa:
+
+```         
+"g1_resource_acquisition__substrate_uptake__aromatic_acid_transport"                "g1_resource_acquisition__substrate_uptake__osmolyte_transport"                                                                     "g1_resource_acquisition__substrate_assimilation__c1_compounds"                                                                     "g1_resource_use__chemotrophy__chemoorganoheterotrophy__fermentation"                                                               "g1_resource_use__chemotrophy__chemolithoheterotrophy__anaerobic_respiration"                                                       "g1_resource_use__phototrophy__photosystem"                                                                                         "g1_resource_use__phototrophy__pigments__core"                                                                                      "g1_stress_tolerance__specific__oxygen_limitation"                                                                                  "g2_resource_acquisition__substrate_uptake__aromatic_acid_transport"                                                               "g2_resource_acquisition__substrate_uptake__carboxylate_transport__dicarboxylate_transport"                                        "g2_resource_acquisition__substrate_uptake__carboxylate_transport__tricarboxylate_transport"                                       "g2_resource_acquisition__substrate_uptake__nucleic_acid_component_transport__nucleoside_transport"                                "g2_resource_acquisition__substrate_uptake__osmolyte_transport"                                                                    "g2_resource_acquisition__substrate_degradation__complex_carbohydrate_depolymerization__xyloglucan_breakdown"                      "g2_resource_acquisition__substrate_assimilation__c1_compounds__co2_fixation"                                                      "g2_resource_acquisition__substrate_assimilation__c1_compounds__methanotrophy"                                                     "g2_resource_use__chemotrophy__chemoorganoheterotrophy__fermentation__fermentation_of_pyruvate"                                    "g2_resource_use__chemotrophy__chemolithoheterotrophy__anaerobic_respiration__methylotrophic_methanogenesis"                      "g2_resource_use__phototrophy__photosystem__anoxygenic"                                                                            "g2_resource_use__phototrophy__pigments__core__anoxygenic"                                                                        "g2_resource_use__phototrophy__pigments__accessory__carotenoid__xanthophyll"                                                     "g2_stress_tolerance__specific__temperature__high__heat_induced_transcriptional_regulation"                                        "g2_stress_tolerance__specific__temperature__low__membrane_stabilization"                                                          "g2_stress_tolerance__specific__oxidative_stress__redox_sensing"                                                                  "g2_stress_tolerance__specific__oxygen_limitation__redox_sensing"                                                                  "g3_resource_acquisition__substrate_uptake__aromatic_acid_transport"                                                             "g3_resource_acquisition__substrate_uptake__carbohydrate_transport__oligosaccharide_transport__tetrasaccharide_transport"          "g3_resource_acquisition__substrate_uptake__carbohydrate_transport__oligosaccharide_transport__trisaccharide_transport"            "g3_resource_acquisition__substrate_uptake__carboxylate_transport__dicarboxylate_transport"                                        "g3_resource_acquisition__substrate_uptake__carboxylate_transport__tricarboxylate_transport"                                       "g3_resource_acquisition__substrate_uptake__nucleic_acid_component_transport__nucleoside_transport"                                "g3_resource_acquisition__substrate_uptake__osmolyte_transport"                                                                   "g3_resource_acquisition__substrate_degradation__complex_carbohydrate_depolymerization__xyloglucan_breakdown"                      "g3_resource_acquisition__substrate_degradation__simple_compound_degradation__carbohydrate_degradation__emp_pathway"               "g3_resource_acquisition__substrate_degradation__simple_compound_degradation__carbohydrate_degradation__fructose_degradation"      "g3_resource_acquisition__substrate_assimilation__c1_compounds__co2_fixation__dicarboxylate_hydroxybutyrate_pathway"               "g3_resource_acquisition__substrate_assimilation__c1_compounds__methanotrophy__formaldehyde_assimilation_with_serine_pathway"      "g3_resource_acquisition__substrate_assimilation__n_compounds__ammonia_assimilation_to_glutamate"                                 "g3_resource_acquisition__substrate_assimilation__n_compounds__ammonia_assimilation_to_glutamine"                                  "g3_resource_use__chemotrophy__chemoorganoheterotrophy__fermentation_of_pyruvate_to_alcohols"                                      "g3_resource_use__chemotrophy__chemoorganoheterotrophy__aerobic_respiration__oxidative_pentose_phosphate_pathway"                  "g3_resource_use__chemotrophy__chemoorganoheterotrophy__aerobic_respiration__electron_transport_chain___etc_complex_ii"            "g3_resource_use__chemotrophy__chemoorganoheterotrophy__aerobic_respiration__electron_transport_chain___etc_complex_iii"           "g3_resource_use__chemotrophy__chemolithoheterotrophy__anaerobic_respiration__methylotrophic_methanogenesis__from_trimethylamine"  "g3_resource_use__phototrophy__photosystem__anoxygenic__anoxygenic_photosystem_ii"                                                 "g3_resource_use__phototrophy__pigments__core__anoxygenic__bacteriochlorophyll_g"                                                  "g3_resource_use__phototrophy__pigments__accessory__carotenoid__xanthophyll__oh_spheroidenone"                                     "g3_stress_tolerance__specific__temperature__high__heat_induced_transcriptional_regulation__heat_induced_transcription_factor"     "g3_stress_tolerance__specific__temperature__low__membrane_stabilization__fatty_acid_desaturase"                                   "g3_stress_tolerance__specific__ph_stress__redox_sensing__redox_sensing_two_component_systems"                                     "g3_stress_tolerance__specific__ph_stress__consumption_of_excessive_cytoplasmic_protons__urease_system"                            "g3_stress_tolerance__specific__oxidative_stress__redox_sensing__redox_sensing_two_component_systems"                              "g3_stress_tolerance__specific__oxygen_limitation__redox_sensing__redox_sensing_two_component_systems"    
+```
+
+Looking at KEGG it seems like the winter bins have the methane metabolism gene (2.3.1.30)
+
+They have a gene for longer cell wall lipids (mycolid acid (but just one gene in the pathway))
+
+Okay so maybe methane is the key here? Interesting...
+
+UBA2100 takeaways: we have 4 separate strains, one that is super present in the summer and one that is more present in the winter. The winter bins have genes for methane metabolism. Overall though their metabolic pathways are pretty incomplete.
+
+- Summer has as slightly higher coding density (92%) than the two winter taxa (90%). They also have a shorter average gene length, and shorter genome. That is really interesting.. Maybe they are just one genome that got split? gc content is about the same for both.
+- Mingentime for winter is shorter than the summer but not super consistently.
+
+```{r}
+#| echo: false
+  load("output/data/mt_mag_large.RData")
+  uba_table <- mt_mag_large$tax_table |> 
+    dplyr::filter(f == "f__UBA2100") |> 
+    mutate(abundant = ifelse(bin == "b__WM14_S9_032" | bin == "b__WM15_S10_035", "winter", "summer")) |> 
+    mutate(abundant = ifelse(bin == "b__WM12_S7_050", "not_very", abundant)) |> 
+    select(abundant, everything()) |> 
+    select(!matches("(hmm_|rule_|g3_|g2_)")) |> 
+    arrange(desc(abundant))
+
+  print(uba_table)
+```
+
+**Are they particle associated or not?**
+
+Starting Friday:
+
+- [x] Read cody paper
+
+- [x] look at growth rates
+
+- [x] look at the genes from microtrait and how those change by sample
+
+- [ ] Try to go through cliques again with the microtrait info
+
+- [ ] Import cazy information to look for that in UBA genomes
+
+Among the most common families, growth rate vs abundance doesn't really show any correlation
+
+![](images/clipboard-812461035.png)
+
+Looks like microtrait genes don't change that much but I ran a lefSE on it and have a sig_taxa table that I can work with. On Monday start there.
+
+# July 13, 2026
+
+First thing today ran ancombc2 on the microtrait genes to look at differentially abundant characteristics.
+
+```{r echo=FALSE}
+#| paged-print: true
+library(microeco)
+library(tidyverse)
+load("output/data/mt_microtrait.RData")
+t2 <- trans_diff$new(dataset = mt_microtrait, method = "ancombc2", 
+                     fix_formula = "strat_season", alpha = 0.05)
+
+sig_taxa_ancombc2 <- t2$res_diff |> 
+  separate_wider_delim(cols = Taxa, delim = "|", 
+                       names = c("l1", "l2", "l3", "l4", "l5", "l6", "l7", "l8", "ASV"),
+                       too_few = "align_start") |>
+  mutate(level = 8 - rowSums(is.na(across(matches("l[0-9]{1}"))))) |>
+  select(level, Significance, everything()) |> 
+  filter(P.adj < 0.05) |> 
+  filter_out(Factors == "(Intercept)") |> 
+  arrange(Significance, level)
+sig_taxa_ancombc2
+
+
+t2 <- trans_diff$new(dataset = mt_microtrait, method = "ancombc2", 
+                     fix_formula = "strat_season_2", alpha = 0.05)
+
+sig_taxa_ancombc2_sum_winter <- t2$res_diff |> 
+  separate_wider_delim(cols = Taxa, delim = "|", 
+                       names = c("l1", "l2", "l3", "l4", "l5", "l6", "l7", "l8", "ASV"),
+                       too_few = "align_start") |>
+  mutate(level = 8 - rowSums(is.na(across(matches("l[0-9]{1}"))))) |>
+  select(level, Significance, everything()) |> 
+  filter(P.adj < 0.05) |> 
+  filter_out(Factors == "(Intercept)") |> 
+  arrange(Significance, level)
+
+sig_taxa_ancombc2_sum_winter
+```
+
+Looking at these tables between summer and winter it looks like:
+
+Hydrogenotrophy from h2/co2 becomes more common in the winter months
+
+Hydrogenotrophic methanogenesis becomes more common in winter months
+
+Pigments:
+
+accessory pigments lycopene and nurosporene are upregulated in winter
+
+carotenoid:carotene:neurosporene and lycopene are both antioxidants and yellow/orangish pigments
+
+### Fatty Acid Desaturase
+
+Low temperature stress tolerance: fatty acid desaturase is downregulated in winter. From this paper (<https://www-sciencedirect-com.ezp1.lib.umn.edu/science/article/pii/S1388198125000381?via%3Dihub>) They have a figure that shows that lipid membranes will be desaturated during cold exposure. That doesn't quite make sense because in winter the water should be colder and have more fatty acid desaturases? But maybe it is just found in some specific organism.
+
+![](images/clipboard-1517136942.png)
+
+Looking at this graph it seems like it is mostly UBA that is causing this up regulation. However, I think the ancombc2 might be backwards. This is clearly upreglated in the winter....
+
+![](images/clipboard-1677188391.png)
+
+Hmm okay here you can kind of see that it is less abundant in the winter. Maybe there are less temperature changes going on during that time?
+
+Okay, that is all that is different from summer to winter. The same is true when looking at summer/fall/winter. There are others but they did not pass the sensitivity analysis which means that they were sensitive to additions of small counts.
+
+- [ ] Make a graph of the ancombc2 results (later)
+
+## Cliques, genes and taxa
+
+Okay looks like the cliques by granularity3 is not showing much helpful. I can take a quick look at module 2 and 3 and see what is going on there.
+
+![](images/clipboard-3613076982.png)
+
+Okay I'm not seeing much there.
+
+- [ ] After lunch import the cazy genes and see how those change
+
+Start with looking at t2_all_genes.RData tomorrow

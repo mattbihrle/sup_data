@@ -64,10 +64,11 @@ genomeset_results_norm <- genomeset_results |>
 test <- genomeset_results_norm |> 
   # map(~column_to_rownames("id")) 
   map( 
-  ~select(.x, where(~ !all(.x == 0)))) |> 
+    ~select(.x, where(~ !all(.x == 0)))) |> 
   # remove the anything that is not part of the original table 
   map(~select(.x, !d:WM16)
   )
+# Remove the columns that are metadata
 
 colnames(test[[1]])[which(grepl(".*:.*", colnames(test[[1]])))] <- 
   paste0("g1_", colnames(test[[1]])[which(grepl(".*:.*", colnames(test[[1]])))])
@@ -78,27 +79,31 @@ colnames(test[[2]])[which(grepl(".*:.*", colnames(test[[2]])))] <-
 colnames(test[[3]])[which(grepl(".*:.*", colnames(test[[3]])))] <- 
   paste0("g3_", colnames(test[[3]])[which(grepl(".*:.*", colnames(test[[3]])))])
 
-colnames(test[[4]])[which(grepl(".*:.*", colnames(test[[4]])))] <- 
-  paste0("hmm_", colnames(test[[4]])[which(grepl(".*:.*", colnames(test[[4]])))])
+test[[4]] <- test[[4]] |> 
+  rename_with(~paste0("hmm_", .x), .cols = !matches("^(id|genome_length|optimumT|mingentime)")
+  )
 
-colnames(test[[5]])[which(grepl(".*:.*", colnames(test[[5]])))] <- 
-  paste0("rule_", colnames(test[[5]])[which(grepl(".*:.*", colnames(test[[5]])))])
+colnames(test[[4]])
+
+
+
+test[[5]] <- test[[5]] |> 
+  rename_with(~paste0("rule_", .x), .cols = !matches("^(id|genome_length|optimumT|mingentime)")
+  )
+colnames(test[[5]])
+
 
 # view(test$trait_matrixatgranularity1)
 # view(mt_mag$tax_table)
 
 
-# Remove the columns that are metadata
-
-test_nometa <- test |> 
-  map(~select(.x ,"id":"optimumT", "mingentime"))
 mt_mag$tax_table <- mt_mag$tax_table |> 
   rownames_to_column("id") |> 
-  left_join(test_nometa$trait_matrixatgranularity1, by = "id") |> 
-  left_join(test_nometa$trait_matrixatgranularity2, by = c("id", "genome_length", "optimumT", "mingentime")) |> 
-  left_join(test_nometa$trait_matrixatgranularity3, by = c("id", "genome_length", "optimumT", "mingentime")) |> 
-  left_join(test_nometa$hmm_matrix, by = c("id", "genome_length", "optimumT", "mingentime")) |> 
-  left_join(test_nometa$rule_matrix, by = c("id", "genome_length", "optimumT", "mingentime")) |> 
+  left_join(test$trait_matrixatgranularity1, by = "id") |> 
+  left_join(test$trait_matrixatgranularity2, by = c("id", "genome_length", "optimumT", "mingentime")) |> 
+  left_join(test$trait_matrixatgranularity3, by = c("id", "genome_length", "optimumT", "mingentime")) |> 
+  left_join(test$hmm_matrix, by = c("id", "genome_length", "optimumT", "mingentime")) |> 
+  left_join(test$rule_matrix, by = c("id", "genome_length", "optimumT", "mingentime")) |> 
   column_to_rownames("id")
 
 # view(test$hmm_matrix)
@@ -107,8 +112,26 @@ mt_mag$tax_table <- mt_mag$tax_table |>
 
 mt_mag_large <- mt_mag
 
+mt_mag_large$tax_table <- mt_mag_large$tax_table |> 
+  rename_with(~str_replace_all(., " ", "_")) |> 
+  rename_with(~str_replace_all(., ":", "__")) |>
+  rename_with(~str_to_lower(.)) |> 
+  rename_with(~str_replace_all(., "[^[a-z][0-9]_.]", "_"))
+
+
+mt_mag_large$tax_table |> 
+  select(contains("denitrification")) |> 
+  colnames()
 save(mt_mag_large, file = "output/data/mt_mag_large.RData")
 
+# Make a quick df of the column names for later lookup
+
+microtrait_columns <- mt_mag_large$tax_table |> 
+  select(matches("^(g[0-9]{1}|hmm|rule)")) |> 
+  colnames() |>
+  as.data.frame() |>
+  rename("columns" = matches(".*")) |> 
+  write_csv(file = "output/data/microtrait_columns.csv")
 
 # Okay from here let me start to look for autotrophs and such
 library(microeco)
@@ -116,9 +139,9 @@ mt_mag_auto <- clone(mt_mag_large)
 
 
 mt_mag_auto$tax_table <- mt_mag_auto$tax_table |> 
-  select(d, p, c, o , f, g, s, bin, matches("g1_.*Resource.*")) |> 
-  mutate(poss_chemotroph = if_any(matches("g1_.*Chemolith.*"), ~.x != 0), 
-         poss_phototroph = if_any(matches("g1_.*Phototro.*"), ~.x != 0), 
+  select(d, p, c, o , f, g, s, bin, matches("g1_.*resource.*")) |> 
+  mutate(poss_chemotroph = if_any(matches("g1_.*chemolith.*"), ~.x != 0), 
+         poss_phototroph = if_any(matches("g1_.*phototro.*"), ~.x != 0), 
          poss_heterotroph = if_any(matches("g1_.*organohetero.*"), ~.x != 0))
 
 

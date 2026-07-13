@@ -51,21 +51,19 @@ load("output/data/temp_df_long.RData")
 # mt_16s$filter_pollution()
 
 #stopped at line 227. going to skip to cliques
-
-# filter taxa that are only in 1 or two of the samples
-mt_16s
-mt_16s$tax_table <- mt_16s$tax_table |> 
-  filter(true_sum > 2)
-mt_16s$tidy_dataset()
-mt_16s
 #filter by prevalence
 mt_16s$filter_taxa(
-  rel_abund = 0.001,  # At least 0.1% in any sample
+  rel_abund = 0.00001,  # At least 0.1% in any sample
 )
 
-#separate out taxa and counts here
-abby_tax <- mt_16s$tax_table
-abby_counts <- t(mt_16s$otu_table)
+mt_16s
+mt_16s$tidy_dataset()
+mt_16s
+
+
+# #separate out taxa and counts here
+# abby_tax <- mt_16s$tax_table
+# abby_counts <- t(mt_16s$otu_table)
 
 #line 979:
 #next they make the co-occurence matrix. they use igraph, this is part of the trans_diff function in microeco
@@ -85,29 +83,12 @@ t_network$cal_network(COR_p_thres = 0.05, COR_optimization = TRUE)
 # This replaces the `cluster_louvain(bac.cor.ig)` function call
 t_network$cal_module(method = "cluster_louvain")
 
-#success? 8 modules. idk if thats good
+#success? 7 modules. idk if thats good
 modules <- igraph::vertex_attr(t_network$res_network, "module")
 head(modules)
 table(modules)
 
-all_taxa <- rownames(mt_16s$otu_table)
-
-# Extract taxa for each module
-clique1_taxa <- all_taxa[modules == "M1"]
-clique2_taxa <- all_taxa[modules == "M2"]
-clique3_taxa <- all_taxa[modules == "M3"]
-clique4_taxa <- all_taxa[modules == "M4"]
-clique5_taxa <- all_taxa[modules == "M5"]
-clique6_taxa <- all_taxa[modules == "M6"]
-
-module1_taxonomy <- as.data.frame(mt_16s$tax_table[clique1_taxa, ])
-module2_taxonomy <- as.data.frame(mt_16s$tax_table[clique2_taxa, ])
-module3_taxonomy <- as.data.frame(mt_16s$tax_table[clique3_taxa, ])
-module4_taxonomy <- as.data.frame(mt_16s$tax_table[clique4_taxa, ])
-module5_taxonomy <- as.data.frame(mt_16s$tax_table[clique5_taxa, ])
-module6_taxonomy <- as.data.frame(mt_16s$tax_table[clique6_taxa, ])
-
-
+test <- t_network$res_network[[1]]
 #plotting network
 V(t_network$res_network)$color <- modules
 
@@ -142,43 +123,42 @@ taxa_names <- igraph::vertex_attr(t_network$res_network, "name")
 
 # Give names to the modules vector
 names(modules) <- taxa_names
-
-
+modules
 
 #ok.... how about summing up the abundance of the modules and plotting them over time?
-#i need to figure out the best way to do relative abundance - there's no clear way with cal_abund
-
-# First clean out the mt_16s table
-
-otu_matrix <- mt_16s$otu_table  # Taxa as rows, samples as columns
-
-# Convert to relative abundance (percentage)
-rel_abund_otu <- apply(otu_matrix, 2, function(x) x / sum(x) * 100)
-
-# Now sum by module
-module_rel_abund <- data.frame(row.names = colnames(otu_matrix))
-
-for(mod in unique(modules)) {
-  taxa_in_mod <- names(modules[modules == mod])
-  module_rel_abund[, mod] <- colSums(rel_abund_otu[taxa_in_mod, , drop = FALSE])
-}
-
-head(module_rel_abund)
-
-# Add time variable (replace 'Time' with your actual column name)
-module_rel_abund$date <- mt_16s$sample_table$date
-module_rel_abund$strat_season <- mt_16s$sample_table$strat_season
-# module_rel_abund$Site <- mt_16s$sample_table$Site
-
-module_long <- pivot_longer(module_rel_abund,
-                            cols = c("M1", "M2", "M3", "M4", "M5", "M6", "M7"),
-                            names_to = "Module",
-                            values_to = "relabund")
-save(module_long, file = "output/data/module_long_16s.RData")
+# #i need to figure out the best way to do relative abundance - there's no clear way with cal_abund
+# 
+# # First clean out the mt_16s table
+# 
+# otu_matrix <- mt_16s$otu_table  # Taxa as rows, samples as columns
+# 
+# # Convert to relative abundance (percentage)
+# rel_abund_otu <- apply(otu_matrix, 2, function(x) x / sum(x) * 100)
+# 
+# # Now sum by module
+# module_rel_abund <- data.frame(row.names = colnames(otu_matrix))
+# 
+# for(mod in unique(modules)) {
+#   taxa_in_mod <- names(modules[modules == mod])
+#   module_rel_abund[, mod] <- colSums(rel_abund_otu[taxa_in_mod, , drop = FALSE])
+# }
+# 
+# head(module_rel_abund)
+# 
+# # Add time variable (replace 'Time' with your actual column name)
+# module_rel_abund$date <- mt_16s$sample_table$date
+# module_rel_abund$strat_season <- mt_16s$sample_table$strat_season
+# # module_rel_abund$Site <- mt_16s$sample_table$Site
+# 
+# module_long <- pivot_longer(module_rel_abund,
+#                             cols = c("M1", "M2", "M3", "M4", "M5", "M6", "M7"),
+#                             names_to = "Module",
+#                             values_to = "relabund")
+# save(module_long, file = "output/data/module_long_16s.RData")
 
 # Add modules to tax_table in 16s data
 
-  # first turn modules vector into df
+# first turn modules vector into df
 modules_df <- data.frame(modules) |> 
   rownames_to_column("otu")
 mt_16s$tax_table <- mt_16s$tax_table |>  
@@ -190,6 +170,8 @@ mt_16s$tax_table <- mt_16s$tax_table |>
 mt_16s$cal_abund()
 save(mt_16s, file = "output/data/mt_16s_cliques.RData")
 save(t_network, file = "output/data/t_network_16s.RData")
+
+mt_16s
 # Look at specifically M1-----------------------------------------------------
 mt_m1 <- clone(mt_16s)
 
@@ -205,7 +187,7 @@ ntaxa = 30
 
 trans_abund$new(dataset = mt_m1, taxrank = rank, ntaxa = ntaxa)$
   plot_bar(facet = "strat_season") +
-     ggtitle("16S", subtitle = paste("top", ntaxa, rank, "in M1"))
+  ggtitle("16S", subtitle = paste("top", ntaxa, rank, "in M1"))
 
 
 # Look at specifically M2
@@ -223,7 +205,7 @@ ntaxa = 30
 
 trans_abund$new(dataset = mt_m2, taxrank = rank, ntaxa = ntaxa)$
   plot_bar(facet = "strat_season") +
-     ggtitle("16S", subtitle = paste("top", ntaxa, rank, "in M2"))
+  ggtitle("16S", subtitle = paste("top", ntaxa, rank, "in M2"))
 
 # Look at specifically M3
 mt_m3 <- clone(mt_16s)
@@ -240,7 +222,7 @@ ntaxa = 30
 
 trans_abund$new(dataset = mt_m3, taxrank = rank, ntaxa = ntaxa)$
   plot_bar(facet = "strat_season") +
-     ggtitle("16S", subtitle = paste("top", ntaxa, rank, "in M3"))
+  ggtitle("16S", subtitle = paste("top", ntaxa, rank, "in M3"))
 
 # Look at specifically M4
 mt_m4 <- clone(mt_16s)
@@ -257,7 +239,424 @@ ntaxa = 30
 
 trans_abund$new(dataset = mt_m4, taxrank = rank, ntaxa = ntaxa, high_level = "g")$
   plot_bar(facet = "strat_season", ggnested = TRUE) +
-     ggtitle("16S", subtitle = paste("top", ntaxa, rank, "in M4"))
+  ggtitle("16S", subtitle = paste("top", ntaxa, rank, "in M4"))
+
+# Cliques but now with the mags-------------------------------------------------
+
+load("output/data/mt_mag.RData")
+
+
+#filter by prevalence
+mt_mag$filter_taxa(
+  rel_abund = 0.00001,  # At least 0.1% in any sample
+)
+
+mt_mag
+mt_mag$tidy_dataset()
+mt_mag
+
+
+# #separate out taxa and counts here
+# abby_tax <- mt_mag$tax_table
+# abby_counts <- t(mt_mag$otu_table)
+
+#line 979:
+#next they make the co-occurence matrix. they use igraph, this is part of the trans_diff function in microeco
+# so i need to create a new trans_diff object.
+
+# Retaining edges with Spearman correlation > 0.65
+t_network <- trans_network$new(dataset = mt_mag,
+                               cor_method = "spearman",
+                               use_corr_p_adjust = FALSE)
+
+#filtering correlations
+#this step corresponds to `bac.cor[bac.cor < 0.7] = 0` in the original script
+t_network$cal_network(COR_p_thres = 0.05, COR_optimization = TRUE)
+
+
+# Calculate modules/cliques using the Louvain algorithm
+# This replaces the `cluster_louvain(bac.cor.ig)` function call
+t_network$cal_module(method = "cluster_louvain")
+
+
+modules <- igraph::vertex_attr(t_network$res_network, "module")
+head(modules)
+table(modules)
+
+test <- t_network$res_network[[1]]
+#plotting network
+V(t_network$res_network)$color <- modules
+
+#make layout
+layout <- layout_with_fr(t_network$res_network)
+
+module_colors <- c("M1" = "red",
+                   "M2" = "orange",
+                   "M3" = "green",
+                   "M4" = "purple",
+                   "M5" = "blue",
+                   "M6" = "yellow",
+                   "M7" = "pink",
+                   "M8" = "brown")
+
+# map modules vector to colors
+vertex_colors <- module_colors[modules]
+
+# Maybe add sample names here?
+plot(t_network$res_network,
+     layout = layout,
+     vertex.size = 5,
+     vertex.color = vertex_colors,
+     vertex.label = NA,
+     edge.width = 0.5,
+     edge.color = "gray80")
+
+
+#giving names to module vector
+modules <- igraph::vertex_attr(t_network$res_network, "module")
+taxa_names <- igraph::vertex_attr(t_network$res_network, "name")
+
+# Give names to the modules vector
+names(modules) <- taxa_names
+modules
+
+#ok.... how about summing up the abundance of the modules and plotting them over time?
+# #i need to figure out the best way to do relative abundance - there's no clear way with cal_abund
+# 
+# # First clean out the mt_mag table
+# 
+# otu_matrix <- mt_mag$otu_table  # Taxa as rows, samples as columns
+# 
+# # Convert to relative abundance (percentage)
+# rel_abund_otu <- apply(otu_matrix, 2, function(x) x / sum(x) * 100)
+# 
+# # Now sum by module
+# module_rel_abund <- data.frame(row.names = colnames(otu_matrix))
+# 
+# for(mod in unique(modules)) {
+#   taxa_in_mod <- names(modules[modules == mod])
+#   module_rel_abund[, mod] <- colSums(rel_abund_otu[taxa_in_mod, , drop = FALSE])
+# }
+# 
+# head(module_rel_abund)
+# 
+# # Add time variable (replace 'Time' with your actual column name)
+# module_rel_abund$date <- mt_mag$sample_table$date
+# module_rel_abund$strat_season <- mt_mag$sample_table$strat_season
+# # module_rel_abund$Site <- mt_mag$sample_table$Site
+# 
+# module_long <- pivot_longer(module_rel_abund,
+#                             cols = c("M1", "M2", "M3", "M4", "M5", "M6", "M7"),
+#                             names_to = "Module",
+#                             values_to = "relabund")
+# save(module_long, file = "output/data/module_long_16s.RData")
+
+# Add modules to tax_table in 16s data
+
+# first turn modules vector into df
+modules_df <- data.frame(modules) |> 
+  rownames_to_column("otu")
+mt_mag$tax_table <- mt_mag$tax_table |>  
+  rownames_to_column("otu_rows") |> 
+  left_join(modules_df, by = join_by(otu_rows == otu)) |>
+  column_to_rownames("otu_rows") |> 
+  mutate(otu = rownames(mt_mag$tax_table)) 
+
+mt_mag$cal_abund()
+save(mt_mag, file = "output/data/mt_mag_cliques.RData")
+save(t_network, file = "output/data/t_network_16s.RData")
+
+mt_mag
+# Look at specifically M1-----------------------------------------------------
+mt_m1 <- clone(mt_mag)
+
+mt_m1$tax_table <- mt_m1$tax_table |> 
+  filter(modules == "M1")
+
+mt_m1$tidy_dataset()$cal_abund()
+# Plot abundances
+
+rank = "f"
+ntaxa = 30
+# Get vector of 20 most abundant families
+
+trans_abund$new(dataset = mt_m1, taxrank = rank, ntaxa = ntaxa)$
+  plot_bar(facet = "strat_season") +
+  ggtitle("mag", subtitle = paste("top", ntaxa, rank, "in M1"))
+
+
+# Look at specifically M2
+mt_m2 <- clone(mt_mag)
+
+mt_m2$tax_table <- mt_m2$tax_table |> 
+  filter(modules == "M2")
+
+mt_m2$tidy_dataset()$cal_abund()
+# Plot abundances
+
+rank = "g"
+ntaxa = 30
+# Get vector of 20 most abundant families
+
+trans_abund$new(dataset = mt_m2, taxrank = rank, ntaxa = ntaxa)$
+  plot_bar(facet = "strat_season") +
+  ggtitle("mag", subtitle = paste("top", ntaxa, rank, "in M2"))
+
+# Look at specifically M3
+mt_m3 <- clone(mt_mag)
+
+mt_m3$tax_table <- mt_m3$tax_table |> 
+  filter(modules == "M3")
+
+mt_m3$tidy_dataset()$cal_abund()
+# Plot abundances
+
+rank = "g"
+ntaxa = 30
+# Get vector of 20 most abundant families
+
+trans_abund$new(dataset = mt_m3, taxrank = rank, ntaxa = ntaxa)$
+  plot_bar(facet = "strat_season") +
+  ggtitle("mag", subtitle = paste("top", ntaxa, rank, "in M3"))
+
+# Look at specifically M4
+mt_m4 <- clone(mt_mag)
+
+mt_m4$tax_table <- mt_m4$tax_table |> 
+  filter(modules == "M4")
+
+mt_m4$tidy_dataset()$cal_abund()
+# Plot abundances
+
+rank = "bin"
+ntaxa = 30
+# Get vector of 20 most abundant families
+
+trans_abund$new(dataset = mt_m4, taxrank = rank, ntaxa = ntaxa)$
+  plot_bar(facet = "strat_season") +
+  ggtitle("mag", subtitle = paste("top", ntaxa, rank, "in M4"))
+
+# Now try it with the microtrait info ------------------------------------------
+
+load("output/data/mt_microtrait.RData")
+
+#stopped at line 227. going to skip to cliques
+#filter by prevalence
+mt_microtrait$filter_taxa(
+  rel_abund = 0.00001,  # At least 0.1% in any sample
+)
+
+mt_microtrait
+mt_microtrait$tidy_dataset()
+mt_microtrait
+
+
+# #separate out taxa and counts here
+# abby_tax <- mt_microtrait$tax_table
+# abby_counts <- t(mt_microtrait$otu_table)
+
+#line 979:
+#next they make the co-occurence matrix. they use igraph, this is part of the trans_diff function in microeco
+# so i need to create a new trans_diff object.
+
+# Retaining edges with Spearman correlation > 0.65
+t_network <- trans_network$new(dataset = mt_microtrait,
+                               cor_method = "spearman",
+                               use_corr_p_adjust = FALSE)
+
+#filtering correlations
+#this step corresponds to `bac.cor[bac.cor < 0.7] = 0` in the original script
+t_network$cal_network(COR_p_thres = 0.05, COR_optimization = TRUE)
+
+
+# Calculate modules/cliques using the Louvain algorithm
+# This replaces the `cluster_louvain(bac.cor.ig)` function call
+t_network$cal_module(method = "cluster_louvain")
+
+
+modules <- igraph::vertex_attr(t_network$res_network, "module")
+head(modules)
+table(modules)
+
+test <- t_network$res_network[[1]]
+#plotting network
+V(t_network$res_network)$color <- modules
+
+#make layout
+layout <- layout_with_fr(t_network$res_network)
+
+module_colors <- c("M1" = "red",
+                   "M2" = "orange",
+                   "M3" = "green",
+                   "M4" = "purple",
+                   "M5" = "blue",
+                   "M6" = "yellow",
+                   "M7" = "pink",
+                   "M8" = "brown")
+
+# map modules vector to colors
+vertex_colors <- module_colors[modules]
+
+# Maybe add sample names here?
+plot(t_network$res_network,
+     layout = layout,
+     vertex.size = 5,
+     vertex.color = vertex_colors,
+     vertex.label = NA,
+     edge.width = 0.5,
+     edge.color = "gray80")
+
+
+#giving names to module vector
+modules <- igraph::vertex_attr(t_network$res_network, "module")
+taxa_names <- igraph::vertex_attr(t_network$res_network, "name")
+
+# Give names to the modules vector
+names(modules) <- taxa_names
+modules
+
+#ok.... how about summing up the abundance of the modules and plotting them over time?
+# #i need to figure out the best way to do relative abundance - there's no clear way with cal_abund
+# 
+# # First clean out the mt_microtrait table
+# 
+# otu_matrix <- mt_microtrait$otu_table  # Taxa as rows, samples as columns
+# 
+# # Convert to relative abundance (percentage)
+# rel_abund_otu <- apply(otu_matrix, 2, function(x) x / sum(x) * 100)
+# 
+# # Now sum by module
+# module_rel_abund <- data.frame(row.names = colnames(otu_matrix))
+# 
+# for(mod in unique(modules)) {
+#   taxa_in_mod <- names(modules[modules == mod])
+#   module_rel_abund[, mod] <- colSums(rel_abund_otu[taxa_in_mod, , drop = FALSE])
+# }
+# 
+# head(module_rel_abund)
+# 
+# # Add time variable (replace 'Time' with your actual column name)
+# module_rel_abund$date <- mt_microtrait$sample_table$date
+# module_rel_abund$strat_season <- mt_microtrait$sample_table$strat_season
+# # module_rel_abund$Site <- mt_microtrait$sample_table$Site
+# 
+# module_long <- pivot_longer(module_rel_abund,
+#                             cols = c("M1", "M2", "M3", "M4", "M5", "M6", "M7"),
+#                             names_to = "Module",
+#                             values_to = "relabund")
+# save(module_long, file = "output/data/module_long_microtrait.RData")
+
+# Add modules to tax_table in microtrait data
+
+# first turn modules vector into df
+modules_df <- data.frame(modules) |> 
+  rownames_to_column("otu")
+mt_microtrait$tax_table <- mt_microtrait$tax_table |>  
+  rownames_to_column("otu_rows") |> 
+  left_join(modules_df, by = join_by(otu_rows == otu)) |>
+  column_to_rownames("otu_rows") |> 
+  mutate(otu = rownames(mt_microtrait$tax_table)) |>
+  select("modules", everything())
+
+mt_microtrait$cal_abund()
+mt_microtrait$taxa_abund$modules
+save(mt_microtrait, file = "output/data/mt_microtrait_cliques.RData")
+save(t_network, file = "output/data/t_network_microtrait.RData")
+
+View(mt_microtrait$tax_table)
+colnames(mt_microtrait$tax_table)
+trans_abund$new(mt_microtrait, ntaxa = 8, taxrank = "modules")$plot_bar()
+
+View(mt_microtrait$taxa_abund$modules)
+module_long <- mt_microtrait$taxa_abund$modules |>
+  rownames_to_column("module") |>
+  pivot_longer(cols = -module, names_to = "sample", values_to = "relabund") |>
+  left_join(mt_microtrait$sample_table, by = "sample")
+
+p2 <- ggplot(module_long, aes(x = date, y = relabund, color = module, group = module, label = rownames(module_long))) +
+  # geom_rect(aes(xmin = sum_start, xmax = fall_start, ymax = max(relabund) +4 , ymin = max(relabund)+1),  fill = "grey", color = NULL) +
+  # geom_rect(aes(xmin = fall_start, xmax = winter_start, ymax = max(relabund) +4 , ymin = max(relabund)+1),  fill = "green4",  color = NULL) +
+  # geom_rect(aes(xmin = winter_start, xmax = spring_start, ymax = max(relabund) +4 , ymin = max(relabund)+1),  fill = "grey",  color = NULL) +
+  # geom_rect(aes(xmin = spring_start, xmax = max(date), ymax = max(relabund) +4 , ymin = max(relabund)+1),  fill = "green4",  color = NULL) +
+  # geom_line(size = 1) +
+  geom_text() +
+  geom_point(size = 2) +
+  labs(title = "Module Abundance Over Time",
+       y = "Relative Abundance") +
+  theme_bw()
+# Add annotation for seasons in ppt
+
+p2
+# Look at specifically M1-----------------------------------------------------
+mt_m1 <- clone(mt_microtrait)
+
+mt_m1$tax_table <- mt_m1$tax_table |> 
+  filter(modules == "M1")
+
+mt_m1$tidy_dataset()$cal_abund()
+# Plot abundances
+
+rank = "l7"
+ntaxa = 30
+# Get vector of 20 most abundant families
+
+trans_abund$new(dataset = mt_m1, taxrank = rank, ntaxa = ntaxa)$
+  plot_bar(facet = "strat_season") +
+  ggtitle("microtrait", subtitle = paste("top", ntaxa, rank, "in M1"))
+
+
+# Look at specifically M2
+mt_m2 <- clone(mt_microtrait)
+
+mt_m2$tax_table <- mt_m2$tax_table |> 
+  filter(modules == "M2")
+
+mt_m2$tidy_dataset()$cal_abund()
+# Plot abundances
+
+rank = "l7"
+ntaxa = 30
+# Get vector of 20 most abundant families
+
+trans_abund$new(dataset = mt_m2, taxrank = rank, ntaxa = ntaxa)$
+  plot_bar(facet = "strat_season") +
+  ggtitle("microtrait", subtitle = paste("top", ntaxa, rank, "in M2"))
+View(mt_m2$tax_table)
+# Look at specifically M3
+mt_m3 <- clone(mt_microtrait)
+
+mt_m3$tax_table <- mt_m3$tax_table |> 
+  filter(modules == "M3")
+
+mt_m3$tidy_dataset()$cal_abund()
+# Plot abundances
+
+rank = "l7"
+ntaxa = 30
+# Get vector of 20 most abundant families
+
+trans_abund$new(dataset = mt_m3, taxrank = rank, ntaxa = ntaxa)$
+  plot_bar(facet = "strat_season") +
+  ggtitle("microtrait", subtitle = paste("top", ntaxa, rank, "in M3"))
+
+# Look at specifically M4
+mt_m4 <- clone(mt_microtrait)
+
+mt_m4$tax_table <- mt_m4$tax_table |> 
+  filter(modules == "M4")
+
+mt_m4$tidy_dataset()$cal_abund()
+# Plot abundances
+
+rank = "otu"
+ntaxa = 30
+# Get vector of 20 most abundant families
+
+trans_abund$new(dataset = mt_m4, taxrank = rank, ntaxa = ntaxa, high_level = "g")$
+  plot_bar(facet = "strat_season", ggnested = TRUE) +
+  ggtitle("microtrait", subtitle = paste("top", ntaxa, rank, "in M4"))
+
+
 
 # Create dates for season starts
 match("Summer", module_long$strat_season)
@@ -279,7 +678,7 @@ p2 <- ggplot(module_long, aes(x = date, y = relabund, color = Module, group = Mo
   theme_bw()
 # Add annotation for seasons in ppt
 
-
+p2
 
 ## Test plotting cliques over the temperature
 

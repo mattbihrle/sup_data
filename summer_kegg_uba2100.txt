@@ -1,0 +1,108 @@
+Global and overview maps
+01100 Metabolic pathways (80)
+01110 Biosynthesis of secondary metabolites (34)
+01120 Microbial metabolism in diverse environments (24)
+01200 Carbon metabolism (15)
+01210 2-Oxocarboxylic acid metabolism (1)
+01230 Biosynthesis of amino acids (15)
+01232 Nucleotide metabolism (6)
+01250 Biosynthesis of nucleotide sugars (10)
+01240 Biosynthesis of cofactors (13)
+01220 Degradation of aromatic compounds (3)
+Carbohydrate metabolism
+00010 Glycolysis / Gluconeogenesis (7)
+00030 Pentose phosphate pathway (8)
+00040 Pentose and glucuronate interconversions (3)
+00051 Fructose and mannose metabolism (7)
+00052 Galactose metabolism (2)
+00053 Ascorbate and aldarate metabolism (1)
+00500 Starch and sucrose metabolism (3)
+00620 Pyruvate metabolism (1)
+00630 Glyoxylate and dicarboxylate metabolism (1)
+00562 Inositol phosphate metabolism (1)
+Energy metabolism
+00710 Carbon fixation by Calvin cycle (7)
+00720 Other carbon fixation pathways (1)
+00680 Methane metabolism (6)
+00910 Nitrogen metabolism (1)
+Lipid metabolism
+00561 Glycerolipid metabolism (1)
+01040 Biosynthesis of unsaturated fatty acids (1)
+Nucleotide metabolism
+00230 Purine metabolism (14)
+00240 Pyrimidine metabolism (8)
+Amino acid metabolism
+00250 Alanine, aspartate and glutamate metabolism (7)
+00260 Glycine, serine and threonine metabolism (6)
+00270 Cysteine and methionine metabolism (3)
+00300 Lysine biosynthesis (2)
+00220 Arginine biosynthesis (5)
+00330 Arginine and proline metabolism (3)
+00340 Histidine metabolism (1)
+00350 Tyrosine metabolism (1)
+00360 Phenylalanine metabolism (4)
+00380 Tryptophan metabolism (1)
+00400 Phenylalanine, tyrosine and tryptophan biosynthesis (2)
+Metabolism of other amino acids
+00430 Taurine and hypotaurine metabolism (1)
+00460 Cyanoamino acid metabolism (2)
+00470 D-Amino acid metabolism (3)
+00480 Glutathione metabolism (2)
+Glycan biosynthesis and metabolism
+00520 Amino sugar and nucleotide sugar metabolism (7)
+00541 Biosynthesis of various nucleotide sugars (6)
+00510 N-Glycan biosynthesis (1)
+00550 Peptidoglycan biosynthesis (13)
+00552 Teichoic acid biosynthesis (1)
+00571 Lipoarabinomannan (LAM) biosynthesis (1)
+Metabolism of cofactors and vitamins
+00730 Thiamine metabolism (1)
+00750 Vitamin B6 metabolism (1)
+00790 Folate biosynthesis (1)
+00670 One carbon pool by folate (6)
+Metabolism of terpenoids and polyketides
+00900 Terpenoid backbone biosynthesis (1)
+01051 Biosynthesis of ansamycins (1)
+Biosynthesis of other secondary metabolites
+00946 Degradation of flavonoids (1)
+00950 Isoquinoline alkaloid biosynthesis (1)
+00960 Tropane, piperidine and pyridine alkaloid biosynthesis (1)
+00401 Novobiocin biosynthesis (1)
+00999 Biosynthesis of various plant secondary metabolites; Including: Crocin biosynthesis, Ginsenoside biosynthesis, Saponin adjuvant biosynthesis, Cannabidiol biosynthesis, Mugineic acid biosynthesis, Pentagalloylglucose biosynthesis, Benzoxazinoid biosynthesis, Gramine biosynthesis, Coumarin biosynthesis, Furanocoumarin biosynthesis, Hordatine biosynthesis, Podophyllotoxin biosynthesis (2)
+Xenobiotics biodegradation and metabolism
+00362 Benzoate degradation (1)
+00627 Aminobenzoate degradation (1)
+00361 Chlorocyclohexane and chlorobenzene degradation (1)
+00622 Xylene degradation (1)
+00643 Styrene degradation (2)
+00621 Dioxin degradation (1)
+00626 Naphthalene degradation (1)
+00624 Polycyclic aromatic hydrocarbon degradation (1)
+00983 Drug metabolism - other enzymes (1)
+Genetic Information Processing
+Transcription
+03020 RNA polymerase (3)
+Folding, sorting and degradation
+04122 Sulfur relay system (1)
+03018 RNA degradation (1)
+Replication and repair
+03030 DNA replication (6)
+03410 Base excision repair (3)
+03420 Nucleotide excision repair (1)
+03430 Mismatch repair (4)
+03440 Homologous recombination (5)
+03460 Fanconi anemia pathway (1)
+Environmental Information Processing
+Membrane transport
+02010 ABC transporters (3)
+Signal transduction
+02020 Two-component system (4)
+04066 HIF-1 signaling pathway (3)
+Cellular Processes
+Transport and catabolism
+04148 Efferocytosis (1)
+Cell growth and death
+04112 Cell cycle - Caulobacter (1)
+Cellular community - prokaryotes
+02024 Quorum sensing (2)
+05111 Biofilm formation - Vibrio cholerae (1)

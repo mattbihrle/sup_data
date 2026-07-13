@@ -83,27 +83,27 @@ mt_16s
 mt_16s$tidy_dataset()
 mt_16s
 
-  # Remove 'Syn Mock' sample 
-  mt_16s$sample_table <- mt_16s$sample_table |> 
-    slice(
+# Remove 'Syn Mock' sample 
+mt_16s$sample_table <- mt_16s$sample_table |> 
+  slice(
     str_which(mt_16s$sample_table$fastqFile, "Syn.*", negate = T)
-      ) |> 
-    rownames_to_column(var = "rownames") |> 
-      # Add in the other metadata
-    left_join(y = sw_meta) |> 
-      # move rownames back
-    column_to_rownames(var = "rownames")
+  ) |> 
+  rownames_to_column(var = "rownames") |> 
+  # Add in the other metadata
+  left_join(y = sw_meta) |> 
+  # move rownames back
+  column_to_rownames(var = "rownames")
 
 mt_16s$tidy_dataset()
 # This should also remove OTUs only found in the synthetic community
 mt_16s
 # set the strat_season to be a factor
 mt_16s$sample_table$strat_season <- factor(mt_16s$sample_table$strat_season, 
-  levels = c("summer", "fall", "winter", "spring"), 
-  labels = c("Summer", "Fall", "Winter", "Spring"),
-   ordered = T)
+                                           levels = c("summer", "fall", "winter", "spring"), 
+                                           labels = c("Summer", "Fall", "Winter", "Spring"),
+                                           ordered = T)
 # Okay here start working with the micRoclean package for contamination------------------------------------------------------------
-      # First thing is to create a sequence of well numbers
+# First thing is to create a sequence of well numbers
 wells <- c(LETTERS[1:8], LETTERS[1:8], LETTERS[1:3])
 wells_num <- rep(1:3, each = 8)[1:length(wells)] |> 
   str_pad(width = 2, side = "left", pad = 0)
@@ -115,12 +115,12 @@ mt_16s$sample_table <- mt_16s$sample_table |>
   mutate(sample_well = wells)
 
 # Now add the control and sample type
- control_samps <- mt_16s$sample_table$sample[12:19]
+control_samps <- mt_16s$sample_table$sample[12:19]
 
 mt_16s$sample_table <- mt_16s$sample_table |> 
   mutate(is_control = ifelse(sample %in% control_samps, TRUE, FALSE), 
-        sample_type = ifelse(is_control == TRUE, "blank", "DNA"), 
-        batch = "a")
+         sample_type = ifelse(is_control == TRUE, "blank", "DNA"), 
+         batch = "a")
 
 
 # mt_16s$sample_table <- mt_16s$sample_table |> 
@@ -153,26 +153,26 @@ head(count)
 # Run it!
 
 mclean_results <-  micRoclean(counts = count, 
-      meta = meta, 
-      research_goal = 'orig.composition', 
-      control_name = rownames(count)[1:8])
+                              meta = meta, 
+                              research_goal = 'orig.composition', 
+                              control_name = rownames(count)[1:8])
 mclean_results$blank <- "all"
 paste("filtering loss:",mclean_results$filtering_loss) |> 
   print()
 
 # remove the taxa that are all 0s 
-  mclean_results$decontaminated_count <- 
-    mclean_results$decontaminated_count |> 
-    as.data.frame() |> 
-    setNames(colnames(count)) |> 
-    dplyr::select(where(~ !all(.x == 0)))
+mclean_results$decontaminated_count <- 
+  mclean_results$decontaminated_count |> 
+  as.data.frame() |> 
+  setNames(colnames(count)) |> 
+  dplyr::select(where(~ !all(.x == 0)))
 
 # Filter to keep only the taxa in the "decontaminated count" table
 full_mt_16s <- clone(mt_16s)
 mt_16s$otu_table <- mt_16s$otu_table |> 
   filter(rownames(mt_16s$otu_table) %in% colnames(mclean_results$decontaminated_count))
 
-  # Then remove the blank columns (WM17-WM24)
+# Then remove the blank columns (WM17-WM24)
 mt_16s$sample_table <- mt_16s$sample_table |>
   filter_out(sample %in% control_samps)
 # Verify that we have 11 samples and less OTUs in otu_table
@@ -204,10 +204,10 @@ n = 100
 rank = "g"
 abund <- trans_abund$new(mt_16s, ntaxa = n, taxrank = rank, high_level = "sheik_contam")$
   plot_bar(others_color = "grey70", ggnested = T, xtext_keep = TRUE, legend_text_italic = FALSE, 
-facet = "strat_season") +
+           facet = "strat_season") +
   theme(axis.text.x = element_text(angle = 45, hjust = 1, vjust = 1, size=9)) +
   ggtitle("16S Data", subtitle = paste(n, "most abundant", rank, "brown, possible contaminent from 16s data,", 
-"green, not possible contaminent")) +
+                                       "green, not possible contaminent")) +
   theme(legend.position = "none")
 abund
 plotly::plotly_build(abund)
@@ -225,46 +225,46 @@ n = 66
 rank = "g"
 abund <- trans_abund$new(sheik_16s, ntaxa = n, taxrank = rank)$
   plot_bar(others_color = "grey70", xtext_keep = TRUE, legend_text_italic = FALSE, 
-facet = "strat_season") +
+           facet = "strat_season") +
   theme(axis.text.x = element_text(angle = 45, hjust = 1, vjust = 1, size=9))
-  # ggtitle("16S Data", subtitle = paste(n, "most abundant", rank, "brown, possible contaminent from 16s data,", 
+# ggtitle("16S Data", subtitle = paste(n, "most abundant", rank, "brown, possible contaminent from 16s data,", 
 # "green, not possible contaminent")) +
-  # theme(legend.position = "none")
+# theme(legend.position = "none")
 abund
 plotly::plotly_build(abund)
 view(sheik_16s$tax_table)
 
 # Acidiovorax seems to be primarily a plant genus so removing that
-  # Remove Acidiovorax from the tax_table
-  mt_16s$tax_table <- mt_16s$tax_table %>%
-    filter(g != "g__Acidiovorax") |> 
-      # Bacillus seems to be primarily human-related so should remove those as well
-    filter(g != "g__Bacillus") |> 
-    # Looks like bradyrhyzobium is primarily soil and nitrogen fixing, I think this would be one to get rid of as well
-    filter(g != "g__Bradyrhizobium") |> 
-    # Brevundimonas seems to be pretty ubiquidus so I will let it stay, it's pretty small anyways
-    # g__Chryseobacterium is found in freshwater and isn't huge so I'll keep it in
-    # s__Deinococcus yunweiensis was originally found as a contaminant, remove it!
-    filter(g != "g__Deinococcus") |> 
-    # g__Devosia is mostly soil bacteria, remove this as well
-    filter(g != "g__Devosia") |> 
-    # flavobacteriums seem to be all over in freshwater, keeping in the ones that are "unknown" for species
-    # Looks like sp VMW seems to be originally from freshwater so I'll keep it
-    # s__Flavobacterium branchiophilum creates a gill disease in fish so likely is a 'real' microbe
-    #s__Flavobacterium swingsii originally isolated from a river so keep it in
-    # s__antartic bacterium was isolated from soil and isn't very abundant. going to remove it
-    filter(s != "s__Antarctic bacterium") |> 
-    # limnobacter seems to be found in lake sediments so I'll keep it in
-    # Novosphingo seem to be pretty much just contaminents removing anything that is unknown
-    filter(g != "g__Novosphingobacter") |> 
-    # g__Paenibacillus has so little abundance and seems to be more soil related
-    filter(g != "g__Paenibacillus") |> 
-    # pedobacter is just a contaminent
-    filter(g != "g__Pedobacter") |> 
-    # Polaromonas is around in just that one WM03 sample. Makes me think it is an error
-    filter(g != "g__Polaromonas") 
-    # pseudomonas seems to be all over the place in water and in soil. and it is most of the samples. I will keep it in. 
-    # unidbacterium is around in alpine lakes so maybe I will keep them in as well
+# Remove Acidiovorax from the tax_table
+mt_16s$tax_table <- mt_16s$tax_table %>%
+  filter(g != "g__Acidiovorax") |> 
+  # Bacillus seems to be primarily human-related so should remove those as well
+  filter(g != "g__Bacillus") |> 
+  # Looks like bradyrhyzobium is primarily soil and nitrogen fixing, I think this would be one to get rid of as well
+  filter(g != "g__Bradyrhizobium") |> 
+  # Brevundimonas seems to be pretty ubiquidus so I will let it stay, it's pretty small anyways
+  # g__Chryseobacterium is found in freshwater and isn't huge so I'll keep it in
+  # s__Deinococcus yunweiensis was originally found as a contaminant, remove it!
+  filter(g != "g__Deinococcus") |> 
+  # g__Devosia is mostly soil bacteria, remove this as well
+  filter(g != "g__Devosia") |> 
+  # flavobacteriums seem to be all over in freshwater, keeping in the ones that are "unknown" for species
+  # Looks like sp VMW seems to be originally from freshwater so I'll keep it
+  # s__Flavobacterium branchiophilum creates a gill disease in fish so likely is a 'real' microbe
+  #s__Flavobacterium swingsii originally isolated from a river so keep it in
+  # s__antartic bacterium was isolated from soil and isn't very abundant. going to remove it
+  filter(s != "s__Antarctic bacterium") |> 
+  # limnobacter seems to be found in lake sediments so I'll keep it in
+  # Novosphingo seem to be pretty much just contaminents removing anything that is unknown
+  filter(g != "g__Novosphingobacter") |> 
+  # g__Paenibacillus has so little abundance and seems to be more soil related
+  filter(g != "g__Paenibacillus") |> 
+  # pedobacter is just a contaminent
+  filter(g != "g__Pedobacter") |> 
+  # Polaromonas is around in just that one WM03 sample. Makes me think it is an error
+  filter(g != "g__Polaromonas") 
+# pseudomonas seems to be all over the place in water and in soil. and it is most of the samples. I will keep it in. 
+# unidbacterium is around in alpine lakes so maybe I will keep them in as well
 
 
 # Okay now that I've gone through all of that, tidy mt_16s once more
