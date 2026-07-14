@@ -18,7 +18,7 @@ cazy_tax <- mt_cazy$tax_table |>
 # Microtrait--------------------------------------------------------------------
 load("output/data/mt_microtrait.RData")
 
-# Same thing but for the rule and hmm
+# Same thing but for the hmm and hmm
 
 g3_tax <- mt_microtrait$tax_table |> 
   mutate(origin = "microtrait") |> 
@@ -26,23 +26,23 @@ g3_tax <- mt_microtrait$tax_table |>
   rename_with(.cols = -c(id, origin), ~paste0("g3_", .x))
 
 
-rule_table <- mt_mag_large$tax_table |> 
-  select(matches("rule_")) |> 
+hmm_table <- mt_mag_large$tax_table |> 
+  select(matches("hmm_")) |> 
   mutate(across(everything(), ~ifelse(.x == TRUE, 1, 0))) |> 
   t() |> 
   as.data.frame()
 
-rule_tax <- rule_table |> 
+hmm_tax <- hmm_table |> 
   mutate(origin = "microtrait", 
-         id = rownames(rule_table)) |> 
+         id = rownames(hmm_table)) |> 
   select(origin, id)
 # Multiply
 
 # (Genes x Bins matrix) %*% (Bins x Samples matrix) = (Genes x Samples matrix)
-rule_abund_matrix <- as.matrix(rule_table) %*% as.matrix(bin_abund)
+hmm_abund_matrix <- as.matrix(hmm_table) %*% as.matrix(bin_abund)
 
 # Convert back to a dataframe for the microtable
-rule_abund <- as.data.frame(rule_abund_matrix)
+hmm_abund <- as.data.frame(hmm_abund_matrix)
 
 #create a tax_table
 
@@ -60,12 +60,12 @@ kegg_tax <- mt_gene_mag$tax_table |>
 # Now create a big otu_table
 
 big_otu <- bind_rows(mt_gene_mag$otu_table, mt_microtrait$otu_table, 
-                     rule_abund, mt_cazy$otu_table)
+                     hmm_abund, mt_cazy$otu_table)
 
 big_tax <- cazy_tax |> 
   full_join(kegg_tax, by = c("id", "origin")) |> 
   full_join(g3_tax, by = c("id","origin")) |> 
-  full_join(rule_tax, by = c("id","origin")) |> 
+  full_join(hmm_tax, by = c("id","origin")) |> 
   column_to_rownames("id")
 
 

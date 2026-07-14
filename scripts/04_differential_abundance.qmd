@@ -212,8 +212,24 @@ t2 <- trans_diff$new(dataset = mt_all_genes, method = "ancombc2",
                      fix_formula = "strat_season", alpha = 0.05)
 View(t2$res_diff)
 save(t2, file = "output/data/t2_ancombc_all_genes.RData")
-st2$res_diff$Taxa |> 
-  str_which("^microtrait")
+
+
+mt_all_genes$tax_table |> 
+  View()
+load("output/data/t2_ancombc_all_genes.RData")
+sig_genes <- t2$res_diff |> 
+  filter(P.adj <= 0.05) |> 
+  filter_out(Factors == "(Intercept)") |> 
+  separate_wider_delim(Taxa, delim = "|", too_many = "merge", names = c("origin", "others")) |> 
+  mutate(other_tax = case_when(
+    origin == "kegg" ~word(others, start = 6, end = 11, sep = "\\|"), 
+    origin == "cazy" ~ word(others, start = 1, end = 4, sep = "\\|"), 
+    origin == "microtrait" ~ word(others, start = 12, end = 19, sep = "\\|"), 
+    origin == "hmm" ~ paste("microtrait_hmm")
+  )
+  ) |> 
+  select(-others)
+
 
 sig_taxa_ancombc2 <- t2$res_diff |> 
   separate_wider_delim(cols = Taxa, delim = "|", 
@@ -226,6 +242,12 @@ sig_taxa_ancombc2 <- t2$res_diff |>
 
 View(sig_taxa_ancombc2)
 write_tsv(sig_taxa_ancombc2, file = "output/data/sig_taxa_all_genes_ancom.RData")
+
+mt_mag_large$tax_table |> 
+  filter(f == "f__UBA2100") |> 
+  select(d, p, c, o, f, g, s, bin) |> 
+  View()
+
 
 ```
 

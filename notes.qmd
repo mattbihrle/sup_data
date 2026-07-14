@@ -1472,4 +1472,57 @@ Okay I'm not seeing much there.
 
 - [ ] After lunch import the cazy genes and see how those change
 
-Start with looking at t2_all_genes.RData tomorrow
+Start with looking at t2_all_genes.RData tomorrow\]
+
+# July 14, 2026
+
+## Graphs for meeting:
+
+### UBA10103 dominance winter
+
+```{r}
+
+
+load("output/data/mt_mag_large.RData")
+library(microeco)
+library(tidyverse)
+library(ggpattern)
+# mt_mag_large$cal_abund()
+plot <- trans_abund$new(mt_mag_large, taxrank = "g", ntaxa = 50)$plot_bar()
+plotly::plotly_build(plot)
+
+```
+
+### UBA bins
+
+```{r}
+uba_table <- clone(mt_mag_large)
+
+uba_table$tax_table <- uba_table$tax_table |> 
+  filter(f == "f__UBA2100")
+
+View(uba_table$tax_table)
+
+uba_table$tidy_dataset()
+uba_table$cal_abund()
+
+
+t1 <- trans_abund$new(uba_table, taxrank = "bin", ntaxa = 10)$plot_bar()
+t1
+```
+
+UBA2100 takeaways: we have 4 separate strains, one that is super present in the summer and one that is more present in the winter. The winter bins have genes for methane metabolism. Overall though their metabolic pathways are pretty incomplete. Some sulfur genes, folate genes for metabolism.
+
+Growth rates didn't show much change (see above).
+
+- [ ] Look at growth rates vs taxa
+
+- [ ] Growth rates summer vs winter
+
+- [ ] 
+
+Help working through looking at KEGG.
+
+Look at CAZy genes
+
+Ran ANCOMBC2 on all gene info that I have. It looks like Glycoside hydrolase\|sialidase or neuraminidase\|3.2.1.18\|GH from the CAZy genes is the biggest difference. Down regulated in the winter.
