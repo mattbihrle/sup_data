@@ -1038,21 +1038,6 @@ library(microeco)
 library(tidyverse)
 ```
 
-### CAZy genes
-```{r}
-library(microeco)
-library(tidyverse)
 
-load("output/data/mt_cazy.RData")
-
-mt_cazy$tax_table |> 
-  View()
-trans_abund$new(mt_cazy, taxrank = "cazy_ec", ntaxa = 40)$plot_bar()
-
-top_5 <- c("3.1.1.72", "3.2.1.1", "2.4.1.13", "3.2.1.17", "2.4.1.129")
-
-mt_cazy$tax_table |> 
-  filter(cazy_ec %in% top_5) |> 
-  view()
 ```
 

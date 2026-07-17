@@ -1519,10 +1519,54 @@ Growth rates didn't show much change (see above).
 
 - [ ] Growth rates summer vs winter
 
-- [ ] 
+- \[ \]
 
 Help working through looking at KEGG.
 
-Look at CAZy genes
+- [x] Look at CAZy genes
 
-Ran ANCOMBC2 on all gene info that I have. It looks like Glycoside hydrolase\|sialidase or neuraminidase\|3.2.1.18\|GH from the CAZy genes is the biggest difference. Down regulated in the winter.
+  Ran ANCOMBC2 on all gene info that I have. It looks like Glycoside hydrolase\|sialidase or neuraminidase\|3.2.1.18\|GH from the CAZy genes is the biggest difference. Down regulated in the winter.
+
+The most common CAZy gene is 3.1.1.72 which is acetyl xylan esterase. It is present across all samples but more common in the winter. Xylan is found in plant cell walls and come macroalgae. These could be particle associated?
+
+Huh so it seems like some of the UBA10103 taxa have the gene and some don't. I wonder how that is for the summer vs winter taxa.
+
+![](images/clipboard-4196283370.png)
+
+### 3.1.1.72
+
+#### The two most abundant winter UBA bins have the xylan breakdown CAZy gene but the two that are abundant in summer do not. That's really interesting
+
+Alpha amylase breaks down starches and sugars. Publismed about in 1961. found in all sorts of species from plants to animal to fungi.
+
+#### 3.2.1.1
+
+#### Again, the winter UBAs have it and the summer UBAs do not (ec 3.2.1.1). 
+
+### 2.4.1.13 Sucrose synthase
+
+Almost all cells have a sucrose synthase. Interestingly the WM 3 sees a significant drop in synthase abundance.
+
+## 3.2.1.17 lysozyme
+
+Active on chitin also help to form and breakdown the cell wall. These are more common in the summer months (when there is more zoops and chitinous stuff around?) and see to be really active in the Bog-950 family.
+
+### 2.4.1.129 petidoglycan glycosyltransferase/murein polymerase
+
+Builds cell walls. More abundant than not, not found in all the Rhodoglobus bins apparently.
+
+## 3.2.1.18 Sialidase
+
+This one was the only gene that came up as diferentially abundant. It seems like it is associated with Bog-950. In the flu virus it cleaves off some the the host cell's signalling molecules. It seems like it could do the same thing in Bog.
+
+Next steps, look at the rest of the UBA genomes.
+
+Initial looking into the rest of the metacerberus output showed that most all genes were just given kegg numbers. The ones that weren't had no other identifieable information. BUT I think I might have accidentally not included all the genes.
+
+After lunch, look at one of the UBA genomes and see which file in the "annotations" folder has the most kegg annotated genes. From there, we can go ahead and and remake:
+
+- The kegg_output that I can put into the kegg mapper
+
+- The mt_gene_mag that I can use in the rest of my R stuff
+
+- Next week start with the bottom of scratch.R

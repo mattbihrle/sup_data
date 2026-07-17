@@ -1,0 +1,236 @@
+---
+title: "15_CAZy_genes_exploration"
+format: html
+editor: visual
+---
+
+# CAZy genes
+
+### CAZy genes
+
+```{r}
+# Load libraries
+library(microeco)
+library(tidyverse)
+
+```
+
+```{r}
+# Load data
+load("output/data/mt_cazy.RData")
+load("output/data/mt_mag_large.RData")
+cazy_table <- read_tsv("output/data/cazy_table.tsv")
+```
+
+### Look for top 5 abundant cazy genes
+
+```{r}
+mt_cazy$tax_table |> 
+  View()
+trans_abund$new(mt_cazy, taxrank = "cazy_ec", ntaxa = 40)$plot_bar()
+
+top_5 <- c("3.1.1.72", "3.2.1.1", "2.4.1.13", "3.2.1.17", "2.4.1.129")
+
+mt_cazy$tax_table |> 
+  filter(cazy_ec %in% top_5) |> 
+  view()
+```
+
+Look at each to see what it does and where it is abundant
+
+## 3.1.1.72, acteylxylan breakdown
+
+```{r}
+xylan_bins <- cazy_table |> 
+  filter(cazy_ec == "3.1.1.72") |> 
+  select(bin) |> 
+  as_vector()
+
+
+temp <- clone(mt_mag_large)
+temp$tax_table <- temp$tax_table |> 
+  mutate(xylan_cazy = ifelse(bin %in% paste0("b__", xylan_bins), TRUE, FALSE)) |> 
+  select(!matches("(hmm_|rule_|g[0-9]{1}_)"))
+
+
+temp$cal_abund()
+
+trans_abund$new(temp, ntaxa = 50, taxrank = "g", high_level = "xylan_cazy")$
+  plot_bar(ggnested = T)
+head(mt_mag_large$tax_table$bin)
+
+temp$tax_table |> 
+  filter(f == "f__UBA2100") |> 
+  select(bin, xylan_cazy) |> 
+  view()
+```
+
+## 3.2.1.1 Alpha-amylase
+
+```{r}
+
+
+cazy_table |> 
+  filter(cazy_ec %in% top_5[2]) |> 
+  arrange(cazy_ec) |> 
+  view()
+# Looks like there are a bunch of different cazy ids for this same ec. 
+
+xylan_bins <- cazy_table |> 
+  filter(cazy_ec == top_5[2]) |> 
+  select(bin) |> 
+  as_vector()
+
+
+temp <- clone(mt_mag_large)
+temp$tax_table <- temp$tax_table |> 
+  mutate(xylan_cazy = ifelse(bin %in% paste0("b__", xylan_bins), TRUE, FALSE)) |> 
+  select(!matches("(hmm_|rule_|g[0-9]{1}_)"))
+
+
+temp$cal_abund()
+
+trans_abund$new(temp, ntaxa = 50, taxrank = "g", high_level = "xylan_cazy")$
+  plot_bar(ggnested = T) +
+  ggtitle(top_5[2])
+
+temp$tax_table |> 
+  filter(f == "f__UBA2100") |> 
+  select(bin, xylan_cazy) |> 
+  view()
+
+```
+
+## 2.4.1.13 Sucrose synthase
+
+```{r}
+cazy_table |> 
+  filter(cazy_ec %in% top_5) |> 
+  arrange(cazy_ec) |> 
+  view()
+# Looks like there are a bunch of different cazy ids for this same ec. 
+
+xylan_bins <- cazy_table |> 
+  filter(cazy_ec == top_5[3]) |> 
+  select(bin) |> 
+  as_vector()
+
+
+temp <- clone(mt_mag_large)
+temp$tax_table <- temp$tax_table |> 
+  mutate(xylan_cazy = ifelse(bin %in% paste0("b__", xylan_bins), TRUE, FALSE)) |> 
+  select(!matches("(hmm_|rule_|g[0-9]{1}_)"))
+
+
+temp$cal_abund()
+
+trans_abund$new(temp, ntaxa = 50, taxrank = "g", high_level = "xylan_cazy")$
+  plot_bar(ggnested = T) +
+  ggtitle(top_5[3])
+
+temp$tax_table |> 
+  filter(f == "f__UBA2100") |> 
+  select(bin, xylan_cazy) |> 
+  view()
+
+```
+
+## 3.2.1.17 lysozyme/lysozyme type G/N-acetylmuramidase
+
+```{r}
+
+
+cazy_table |> 
+  filter(cazy_ec %in% top_5) |> 
+  arrange(cazy_ec) |> 
+  view()
+# Looks like there are a couple of different functions for this same ec. 
+
+xylan_bins <- cazy_table |> 
+  filter(cazy_ec == top_5[4]) |> 
+  select(bin) |> 
+  as_vector()
+
+
+temp <- clone(mt_mag_large)
+temp$tax_table <- temp$tax_table |> 
+  mutate(xylan_cazy = ifelse(bin %in% paste0("b__", xylan_bins), TRUE, FALSE)) |> 
+  select(!matches("(hmm_|rule_|g[0-9]{1}_)"))
+
+
+temp$cal_abund()
+
+trans_abund$new(temp, ntaxa = 50, taxrank = "g", high_level = "xylan_cazy")$
+  plot_bar(ggnested = T) +
+  ggtitle(top_5[4])
+
+temp$tax_table |> 
+  filter(f == "f__UBA2100") |> 
+  select(bin, xylan_cazy) |> 
+  view()
+
+```
+
+# 2.4.1.129 Murein polymerase
+
+```{r}
+
+
+cazy_table |> 
+  filter(cazy_ec %in% top_5) |> 
+  arrange(cazy_ec) |> 
+  view()
+# Looks like there are a couple of different functions for this same ec. 
+
+xylan_bins <- cazy_table |> 
+  filter(cazy_ec == top_5[5]) |> 
+  select(bin) |> 
+  as_vector()
+
+
+temp <- clone(mt_mag_large)
+temp$tax_table <- temp$tax_table |> 
+  mutate(xylan_cazy = ifelse(bin %in% paste0("b__", xylan_bins), TRUE, FALSE)) |> 
+  select(!matches("(hmm_|rule_|g[0-9]{1}_)"))
+
+
+temp$cal_abund()
+
+trans_abund$new(temp, ntaxa = 50, taxrank = "g", high_level = "xylan_cazy")$
+  plot_bar(ggnested = T) +
+  ggtitle(top_5[5])
+
+temp$tax_table |> 
+  filter(f == "f__UBA2100") |> 
+  select(bin, xylan_cazy) |> 
+  view()
+
+```
+
+### 3.2.1.18 deferentially abundant cazy, serialize
+
+```{r}
+cazy_table |> 
+  filter(cazy_ec == "3.2.1.18") |> 
+  view()
+xylan_bins <- cazy_table |> 
+  filter(cazy_ec == "3.2.1.18") |> 
+  select(bin) |> 
+  as_vector()
+
+
+temp <- clone(mt_mag_large)
+temp$tax_table <- temp$tax_table |> 
+  mutate(xylan_cazy = ifelse(bin %in% paste0("b__", xylan_bins), TRUE, FALSE)) |> 
+  select(!matches("(hmm_|rule_|g[0-9]{1}_)"))
+
+
+temp$cal_abund()
+
+trans_abund$new(temp, ntaxa = 50, taxrank = "g", high_level = "xylan_cazy")$
+  plot_bar(ggnested = T) +
+  ggtitle("3.2.1.18")
+
+
+
+```
