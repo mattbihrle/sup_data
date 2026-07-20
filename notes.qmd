@@ -1541,7 +1541,7 @@ Alpha amylase breaks down starches and sugars. Publismed about in 1961. found in
 
 #### 3.2.1.1
 
-#### Again, the winter UBAs have it and the summer UBAs do not (ec 3.2.1.1). 
+#### Again, the winter UBAs have it and the summer UBAs do not (ec 3.2.1.1).
 
 ### 2.4.1.13 Sucrose synthase
 
@@ -1570,3 +1570,35 @@ After lunch, look at one of the UBA genomes and see which file in the "annotatio
 - The mt_gene_mag that I can use in the rest of my R stuff
 
 - Next week start with the bottom of scratch.R
+
+# July 20, 2026
+
+Reworking the kegg outputs to take from the final annotations.
+
+Looking at just the UBA genomes it seem like there are a couple of genes from the kegg rollup that are not in the kegg summary. This is weird. Something to ask Cody about. Moving forward, I should just look at the KEGG genes from the rollup file not just the FOAM which is a subset.
+
+### UBA genomes
+
+Reading the 'expanding world of methylotrophy' paper it mentions oxidation of methylamine but that is not happening in the UBA genomes.
+
+- There is a full pathway for folate to methylene THF
+
+![](images/clipboard-1490711841.png)
+
+There is also a nearly full calvin cycle. Where do the methane products enter here?
+
+![](images/clipboard-647533821.png)
+
+image from sigma aldrich folic acid c1 pool.
+
+These organisms do have the whole pathway here from THF and back. It seems they are using NADP to transfer electrons here. and are able to use tetra hydrofolate. But how do they get it?
+
+- They don't have a full carbon fixation by THF pathway.
+
+- Maybe they are getting folate from somewhere else and using that?<https://www.sigmaaldrich.com/deepweb/assets/sigmaaldrich/marketing/global/documents/591/885/ee_minimap_28.pdf?srsltid=AfmBOoob1bhOGp6aCZX7RzabuxjSNrz3udv1kGlJgZ2T-J2Ds0DniveT>
+
+Takeaways:
+
+The folate cycle seems important for the UBA genomes. It seems that the are using methane as an energy source but not necessarily for carbon fixation. Maybe they are host associated?
+
+Tomorrow, first take a look at pigments and photosystems. Then start looking at other organisms.

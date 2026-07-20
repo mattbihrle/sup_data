@@ -42,6 +42,7 @@ new <- rollup |>
   full_join(kegg, by = c("id", "bin"))
 
 
+library(tidyverse)
 foam <- read_tsv("msi_downloads/metacerb/all_files/uba_genomes/MetaCerb_WM15_S10_MAGScoT_cleanbin_000035/final/annotations-prodigal_WM15_S10_MAGScoT_cleanbin_000035/annotation_summary_KOFam_all_FOAM.tsv") |> 
   drop_na(best_hit)
 kegg <- read_tsv("msi_downloads/metacerb/all_files/uba_genomes/MetaCerb_WM15_S10_MAGScoT_cleanbin_000035/final/annotations-prodigal_WM15_S10_MAGScoT_cleanbin_000035/annotation_summary_KOFam_all_KEGG.tsv") |> 
@@ -59,6 +60,136 @@ kegg$best_hit |>
 
 sum$best_hit |> 
   unique() |> 
+  length() %in%
+  kegg$best_hit
+
+sum(sum$best_hit %in% kegg$best_hit)
+`%!in%` = Negate(`%in%`)
+smol <- kegg |> 
+  filter(kegg$best_hit %!in% sum$best_hit)
+
+#looking at these it seems like summary KEGG is the way to go, try it again with 
+# another bin just to see
+
+
+
+foam <- read_tsv("msi_downloads/metacerb/all_files/uba_genomes/MetaCerb_WM12_S7_MAGScoT_cleanbin_000038/final/annotations-prodigal_WM12_S7_MAGScoT_cleanbin_000038/annotation_summary_KOFam_all_FOAM.tsv") |> 
+  drop_na(best_hit)
+kegg <- read_tsv("msi_downloads/metacerb/all_files/uba_genomes/MetaCerb_WM12_S7_MAGScoT_cleanbin_000038/final/annotations-prodigal_WM12_S7_MAGScoT_cleanbin_000038/annotation_summary_KOFam_all_KEGG.tsv") |> 
+  drop_na(best_hit)
+sum <- read_tsv("msi_downloads/metacerb/all_files/uba_genomes/MetaCerb_WM12_S7_MAGScoT_cleanbin_000038/final/annotations-prodigal_WM12_S7_MAGScoT_cleanbin_000038/final_annotation_summary.tsv") |> 
+  drop_na(best_hit) 
+
+foam$best_hit |> 
+  unique() |> 
   length()
 
-# Starting from here, I should see if I can just remove the duplicates. 
+kegg$best_hit |> 
+  unique() |> 
+  length()
+
+sum$best_hit |> 
+  unique() |> 
+  length()
+
+sum(sum$best_hit %in% kegg$best_hit)
+`%!in%` = Negate(`%in%`)
+smol <- kegg |> 
+  filter(kegg$best_hit %!in% sum$best_hit)
+
+
+# Okay, one more check to see if I want to use rollups or kegg summary
+
+bins <- list.files("msi_downloads/metacerb/all_files/uba_genomes/", full.names = T) |> 
+  str_extract("WM.*_.*_.*_.*_[0-9]{6}") |> 
+  na.omit()
+ i <- 5
+final_filename <- paste0("msi_downloads/metacerb/all_files/uba_genomes/MetaCerb_", bins[i], "/final/annotations-prodigal_", bins[i], "/final_annotation_summary.tsv")
+rollup_filename <- paste0("msi_downloads/metacerb/all_files/uba_genomes/MetaCerb_", bins[i], "/final/rollup/rollup_prodigal_", bins[i], "-KOFam_all_KEGG.tsv")
+summary_filename <- paste0("msi_downloads/metacerb/all_files/uba_genomes/MetaCerb_", bins[i], "/final/annotations-prodigal_", bins[i], "/final_annotation_summary.tsv")
+final <- read_tsv(final_filename) |> 
+  drop_na(best_hit)
+rollup <- read_tsv(rollup_filename) |> 
+  distinct(ID, .keep_all = T)
+
+# Look at which any genes that are in the final table but not in the rollup table
+sum(!final$best_hit %in% rollup$ID)
+# Look at which genes are in the rollup table but not in the final table
+sum(!rollup$ID %in% final$best_hit)
+missing_from_final <- rollup |> 
+  filter_out(rollup$ID %in% final$best_hit) |> 
+  view()
+
+if(sum(missing_from_final$ID %in% final$best_hit) == 0){
+  paste("Rollup table has genes that are not in the final kegg table for bin", bins[i])
+}
+if(sum(final$best_hit %in% rollup$ID) == nrow(final)){
+  paste("All genes from the 'final kegg table are present in the rollup table for bin", bins[i])
+} else {
+  paste("Not all genes from the 'final' kegg table are present in the rollup table for bin", str_remove(bins[i], "MAGScoT_cleanbin_000"))
+}
+
+sum <- read_tsv(summary_filename) |> 
+  drop_na(best_hit)
+
+sum |> 
+  filter(missing_from_final$ID %in% sum$best_hit) |>
+  view()
+
+# Here I want to see everything in summary that is in 
+sum |> 
+  filter_out(sum$best_hit %in% final$best_hit %in% rollup$ID) |> 
+  view()
+
+
+id <- paste0("msi_downloads/metacerb/all_files/uba_genomes/MetaCerb_", bins[i],
+             "/step_10-visualizeData/prodigal_", bins[i], "/KOFam_all_KEGG_level-id.tsv") |> 
+  read_tsv()
+
+final$best_hit %in% id$Id
+
+sum(!rollup$ID %in% id$Id) 
+
+sum(!id$Id %in% rollup$ID)
+sum(!id$Id %in% final$best_hit)
+
+# Okay so confirming here that I do want to use the rollup files. 
+
+mt_mag$tax_table <- mt_mag$tax_table |> 
+  mutate(bin = str_remove(bin, "b__"))
+kegg_rollup <- read_tsv("output/data/kegg_rollup_all.tsv") |> 
+  separate_wider_delim(cols = gene, delim = ",", 
+                       names = c("gene1", "gene2", "gene3", "gene4", "gene5", "gene6", "gene7", "gene8", "gene9"), 
+                       too_few = "align_start") |> 
+  mutate(across(starts_with("gene"), ~str_trim(.x, side = "both") |> str_to_lower())) |> 
+  left_join(mt_mag$tax_table, by = "bin")
+
+mag_tax
+
+
+uba_genomes <- mt_mag$tax_table |> 
+  filter(f == "f__UBA2100") |> 
+  select(bin) |> 
+  mutate(bin = str_remove(bin, "b__")) |> 
+  as_vector()
+
+genes <- c("h4mptp")
+gene <- "ftf"
+kegg_rollup |> 
+  filter(if_any(starts_with("gene"), ~ .x %in% genes)) |>
+  # filter(str_detect(func, ".*methylglutamate.*")) |>
+  # filter(bin %in% uba_genomes) |>
+  nrow()
+  # view()
+  # distinct(func) |> 
+  # print(n = 100)
+
+kegg_rollup |> 
+  filter(bin %in% uba_genomes) |> 
+  filter(l1 == "metabolism") |> 
+  view()
+  
+mt_mag$tax_table |> 
+  filter(bin == "b__WM04_S4_024") |> 
+  view()
+
