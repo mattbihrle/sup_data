@@ -4,13 +4,14 @@ format: html
 ---
 
 # Load Libraries
+
 ```{r}
 library(microeco)
 library(tidyverse)
 library(skimr)
 ```
 
-# Load in microtable objects
+# Load Data
 
 ```{r}
 load("output/data/mt_mag.RData")
@@ -19,12 +20,18 @@ load("output/data/mt_sylph.RData")
 load("output/data/temp_df_long.RData")
 ```
 
+---
 
-# Create environmental object - MAGs
+# Environmental Analysis — MAGs
+
+## Build trans_env Objects
+
+Two objects are created: one with interpolated NAs filled (`complete_na = T`) for complete-case analysis, and one without (`complete_na = F`) to track which values were originally missing.
 
 ```{r}
 
 cols <- ncol(mt_mag$sample_table)
+# AIC: t1 fills NAs (interpolated), t2 keeps them to flag which values were missing
 t1 <- trans_env$new(dataset = mt_mag, env_cols = c(1:cols), standardize = F, complete_na = T)
 t2 <- trans_env$new(dataset = mt_mag, env_cols = c(1:cols), standardize = F, complete_na = F)
 
@@ -33,13 +40,12 @@ env_long_complete <- t1$data_env |>
   pivot_longer(cols = -c(date, strat_season, sample), names_to = "var", values_to = "value") |> 
   mutate(date = ymd(as.character(date)))
 
-
-
 env_long_raw <- t2$data_env |> 
   select(-c(depth, sample_date, use_maestro, strat_season_2, solar_season, mixing, month)) |> 
   pivot_longer(cols = -c(date, strat_season, sample), names_to = "var", values_to = "value") |> 
   mutate(interpolated = ifelse(is.na(value), TRUE, FALSE))
 
+# AIC: tag interpolated values in the complete dataset for visual flagging
 env_long_complete <- env_long_complete |> 
   mutate(interpolated = env_long_raw$interpolated)
 
@@ -47,20 +53,21 @@ env_long_complete |>
   ggplot(aes(date, value, color = interpolated)) +
   geom_point() +
   facet_wrap(~var, scales = "free")
-# Look at which values are shared between the two
-#Check to see what values are missing and such
+```
+
+## Check Completeness and Remove NA Variables
+
+```{r}
+# AIC: skim gives complete_rate per variable — use this to find columns with any NAs
 sum_stats <- skim(t1$data_env)
 sum_stats
 
-# Remove any variables that have NAs in them as per skimr
 na_vars <- sum_stats$skim_variable[which(sum_stats$complete_rate < 1)]
 
 t1$data_env <- t1$data_env |> 
   dplyr::select(-any_of(na_vars))
 
 colnames(t1$data_env)
-
-#Reskim
 
 sum_stats <- skim(t1$data_env)
 sum_stats
@@ -69,14 +76,17 @@ sum_stats
 t1$data_env <- t1$data_env |> 
   dplyr::select(-matches(c("depth", "pres", "use_maestro", "date")))
 colnames(t1$data_env)
+```
 
-# Calculate differences between variables at different sampling dates
+## Wilcoxon Tests by Season Group
+
+```{r}
+# AIC: testing whether env variables differ significantly across seasonal groupings
 t1$cal_diff(group = "strat_season", method = "wilcox")
 view(t1$res_diff)
 
 t1$cal_diff(group = "strat_season_2", method = "wilcox")
 view(t1$res_diff)
-
 
 t1$cal_diff(group = "solar_season", method = "wilcox")
 view(t1$res_diff)
@@ -90,18 +100,23 @@ for(i in 1:length(colnames(t1$data_env))){
     tmp[[i]] <- t1$plot_diff(measure = colnames(t1$data_env)[i], add_sig_text_size = 5, xtext_size = 12) + theme(plot.margin = unit(c(0.1, 0, 0, 1), "cm"))
 }
 plot(gridExtra::arrangeGrob(grobs = tmp, ncol = 3))
+```
 
-# Calculate correlations across the variables
+## Pairwise Correlations
+
+```{r}
 t1$cal_autocor()
 clean_data <- t1$data_env |> 
   select(-matches(c("sample", "strat", "mixing", "solar_season", "month", "turb", "ph_", "do_24")))
 
 plot <- GGally::ggpairs(clean_data)
 plot
+```
 
-# Calculate RDA plot
+## dbRDA — Community vs. Environment
 
-  # first remove the variables we don't want
+```{r}
+# AIC: clone t1 so we can subset env vars without losing the original object
 t2 <- clone(t1)
 t2$ data_env <- t2$data_env |> 
   select(-matches(c("sample", "strat", "mixing", "solar_season", "month", "turb", "ph_", "do_24")))
@@ -114,13 +129,13 @@ t2$trans_ordination(adjust_arrow_length = TRUE, max_perc_env = 1.5)
 # t1$res_rda_trans is the transformed result for plotting
 t2$plot_ordination(plot_color = "strat_season", add_sample_label = "sample") +
   ggarrow::geom_arrow_chain(colour = "black") 
-# Calculate correlation matrix
+
 t2$cal_autocor()
 t2$cal_ordination_anova()
-
 ```
 
-# dbRDA by taxa
+## dbRDA by Taxa (Family Level)
+
 ```{r}
 t2$cal_ordination(method = "RDA", use_measure = "wei_unifrac", taxa_level = "f")
 t2$trans_ordination(show_taxa = 50, adjust_arrow_length = TRUE, max_perc_env = 0.5, max_perc_tax = 0.5)
@@ -128,37 +143,39 @@ t2$plot_ordination(plot_color = "strat_season", add_sample_label = "sample") +
   ggtitle("RDA of mt_mag at family level")
 ```
 
+---
 
-# Create environmental object - 16S
+# Environmental Analysis — 16S
+
+## Build trans_env Object
 
 ```{r}
 
 # First add a "month" column to sample table 
-
 mt_16s$sample_table <- mt_16s$sample_table |> 
   mutate(month = as.factor(month(date)))
 
-#Reorder months to be in order from 8 - 7
-
+# AIC: levels set to water year order (Aug–Jul) rather than calendar order
 mt_16s$sample_table$month <- mt_16s$sample_table$month |> 
   factor(levels = c("8", "9", "10", "11", "12", "1", "2", "3", "4", "5", "6", "7"))
 mt_16s$sample_table$month
+
 cols <- ncol(mt_16s$sample_table)
 t1 <- trans_env$new(dataset = mt_16s, env_cols = c(1:cols), standardize = F, complete_na = T)
+```
 
-#Check to see what values are missing and such
+## Check Completeness and Remove NA Variables
+
+```{r}
 sum_stats <- skim(t1$data_env)
 sum_stats
 
-# Remove any variables that have NAs in them as per skimr
 na_vars <- sum_stats$skim_variable[which(sum_stats$complete_rate < 1)]
 
 t1$data_env <- t1$data_env |> 
   dplyr::select(-any_of(na_vars))
 
 colnames(t1$data_env)
-
-#Reskim
 
 sum_stats <- skim(t1$data_env)
 sum_stats
@@ -167,14 +184,16 @@ sum_stats
 t1$data_env <- t1$data_env |> 
   dplyr::select(-matches(c("depth", "pres", "use_maestro", "date")))
 colnames(t1$data_env)
+```
 
-# Calculate differences between variables at different sampling dates
+## Wilcoxon Tests by Season Group
+
+```{r}
 t1$cal_diff(group = "strat_season", method = "wilcox")
 view(t1$res_diff)
 
 t1$cal_diff(group = "strat_season_2", method = "wilcox")
 view(t1$res_diff)
-
 
 t1$cal_diff(group = "solar_season", method = "wilcox")
 view(t1$res_diff)
@@ -196,10 +215,11 @@ plot(gridExtra::arrangeGrob(grobs = tmp, ncol = 3))
 
 # plot <- GGally::ggpairs(clean_data)
 # plot
+```
 
-# Calculate RDA plot
+## dbRDA — Community vs. Environment
 
-  # first remove the variables we don't want
+```{r}
 t2 <- clone(t1)
 t2$ data_env <- t2$data_env |> 
   select(-matches(c("sample", "strat", "mixing", "solar_season", "month", "turb", "ph_", "do_24", "Seq", "fastq")))
@@ -212,13 +232,13 @@ t2$trans_ordination(adjust_arrow_length = TRUE, max_perc_env = 2)
 # t1$res_rda_trans is the transformed result for plotting
 t2$plot_ordination(plot_color = "strat_season", add_sample_label = "sample") +
   ggarrow::geom_arrow_chain(colour = "black") 
-# Calculate correlation matrix
+
 t2$cal_autocor()
 t2$cal_ordination_anova()
-
 ```
 
-# dbRDA by taxa
+## dbRDA by Taxa (Family Level)
+
 ```{r}
 t2$cal_ordination(method = "RDA", use_measure = "bray", taxa_level = "f")
 t2$trans_ordination(show_taxa = 20, adjust_arrow_length = TRUE, max_perc_env = 0.5, max_perc_tax = 0.5)
@@ -227,7 +247,11 @@ plot <- t2$plot_ordination(plot_color = "strat_season", add_sample_label = "samp
 plot
 ```
 
-# Temp plot
+---
+
+# Temperature Profile
+
+## Load and Process MATLAB Temperature Data
 
 ```{r}
 # Import temp data
@@ -237,42 +261,40 @@ temp_df_long <- temp_df_long |>
 ```
 
 ```{r}
-# Create longer temp object
-
-# For loading .mat file
 library(R.matlab)
 library(tidyverse)
 
- 
 # Load metadata-------------------------------------------------------------------------
 sw_meta <- read_csv("data/sw_metadata.csv") |>
   mutate(date = mdy(date)) |> 
   dplyr::select(!day:year)
 
-# Create secondary stratification season based on combining fall and winter toegether
+# AIC: strat_season_2 collapses fall into winter for a simpler two-season comparison
 sw_meta <- sw_meta |> 
   mutate(strat_season_2 = ifelse(strat_season == "fall", "winter", strat_season))
 sw_meta$strat_season <- factor(sw_meta$strat_season, levels = c("summer", "fall", "winter", "spring"), ordered = T)
 
 sw_meta$strat_season_2 <- factor(sw_meta$strat_season_2, levels = c("summer", "winter", "spring"), ordered = T)
-# Create another stratification based on the equinox
 
+# Create another stratification based on the equinox
 sw_meta <- sw_meta |> 
   mutate(solar_season = ifelse(date < "2024-12-21", "summer", "winter")) |> 
   mutate(solar_season = ifelse(solar_season == "summer" & date >= "2024-09-22", "fall", solar_season)) |> 
   mutate(solar_season = ifelse(solar_season == "winter" & date >= "2025-03-20", "spring", solar_season)) |> 
   mutate(solar_season = ifelse(date > "2025-06-20", "summer", solar_season))
-#import temp file ----------------------------------------------------------------------------
+
+# Import temp file ----------------------------------------------------------------------------
 mat_df <- readMat.default(con = "data/metadata/LSEO24h_temp.mat")
 
 # Extract dataframe we want from 'T' for temp and convert matlab time to poxit time
 temp_df <- mat_df$T |> 
   as.data.frame()
+
 # Set colnames and rownames
 colnames(temp_df) <- mat_df$dep  
 rownames(temp_df) <- mat_df$t 
 
-# Create date column 
+# AIC: MATLAB serial date (days since Jan 0, 0000) offset to Unix epoch (719529 days)
 temp_df <- temp_df |> 
     rownames_to_column(var = "dttm") |>
   mutate(dttm = as_datetime((as.numeric(dttm) - 719529) * 86400)) |> 
@@ -280,7 +302,7 @@ temp_df <- temp_df |>
   mutate(dttm = round_date(dttm, unit = "hour"))
   #   # Select only columns less than 50m
   # dplyr::select(which(as.numeric(colnames(temp_df)) <= 50))
-# move dttm column out, convert to datetime and pivot long
+
 temp_df_long <- temp_df |> 
   # rownames_to_column(var = "dttm") |>
   # mutate(dttm = as_datetime((as.numeric(dttm) - 719529) * 86400)) |> 
@@ -294,26 +316,24 @@ temp_df_long <- temp_df |>
   group_by(date, depth) |> 
   mutate(temp_c_24h_med = median(temp)) |> 
   ungroup()
+```
 
+## Calculate 14-Day Pre-Sample Temperature Average
+
+```{r}
 # First create temporary df of sample dates
   samp_dates <- sw_meta |> 
     dplyr::select(sample) |> 
     mutate(sample_date = as_date(sw_meta$date))
 
-## Create a 14 day averaged temperature---------------------------------
-  
-  # Then create 14 day average
+# AIC: join_by(closest(...)) assigns each temp obs to the next upcoming sample date
 temp_df_long <- temp_df_long |>
-  # Force the date column to be a simple Date, dropping any hours/minutes/seconds
   mutate(date = as_date(date)) |>
-  # Match every temp date to the upcoming sample date
   left_join(samp_dates, join_by(closest(date <= sample_date))) |>
-  # Test to see how far apart sampling dates are
   mutate(test = as.numeric(sample_date - date)) |> 
   # NEW STEP: Force a strict 14-day window!
   # Keep only the rows where the temp date is within 14 days of the sample date
   # filter(test <= 14) |>
-  # Calculate the bin average
   group_by(sample_date, depth) |> 
   mutate(temp_c_14d_avg = mean(temp, na.rm = TRUE)) |> 
   ungroup()
@@ -331,14 +351,16 @@ temp_df_long <- temp_df_long |>
 #   group_by(sample_date, depth) |> 
 #   mutate(temp_c_14d_avg = mean(temp)) |> 
 #   ungroup()
-# Create a coefficient of variation to see if we should average or not
 
+# Create a coefficient of variation to see if we should average or not
 temp_df_long <- temp_df_long |> 
   group_by(date) |> 
   mutate(coeff_var = (sd(temp, na.rm = T)/mean(temp, na.rm = T)) * 100) |> 
   ungroup()
-
 ```
+
+## Temperature Contour Plot
+
 ```{r}
 
 # #Interpolate/grid data first
@@ -354,25 +376,23 @@ temp_df_long <- temp_df_long |>
 #                        z = temp_df_long$temp)
 
 
-#set custom breaks by binning data into 10 bins with equal number
-# of observations
+# AIC: build custom 1°C bin labels to match contour binwidth = 1
 temp_breaks <- cut(temp_df_long$temp, 20) |> 
   unique() |> 
   str_remove("\\(") |> 
   str_remove("\\]") |> 
   str_squish() |> 
-  # Extract everything before the comma to set breaks
   str_extract(".*(?=,)") |> 
     as.numeric() |> 
     na.omit() |> 
-    # reorder numerically
   sort()
 
 temp_labels_1 <- seq(0, 17, by = 1)
 temp_labels_2 <- seq(1, 18, by = 1)
 
 temp_labels <- paste0(temp_labels_1, "-", temp_labels_2)
-  # Create temp plot
+
+# Create temp plot
 temp_df_long |> 
     ungroup() |> 
     # dplyr::select(dttm, depth, temp) |> 
@@ -411,18 +431,17 @@ temp_df_long |>
  quantile(mt_mag$sample_table$temp_c_24h_med)
 ```
 
-# Maestro Plots
+---
+
+# Maestro Sensor Plots
 
 ```{r}
-# Maestro Plot
-
 load("output/data/maestro_df_clean.RData")
 load("output/data/clean_long_m_df.RData")
 
 labels <- read_csv("data/units_cheatsheet.csv")
 
 lookup <- setNames(labels$nice_name, labels$daily_avg)
-
 
 clean_long_m_df |> 
     filter(variable != "T2", variable != "P") |> 
@@ -457,6 +476,8 @@ daily_plot <- maestro_df_clean |>
     theme(legend.position = "none")
 
 daily_plot
+
+# Temp vs. DO
   plot <- maestro_df_clean |> 
     ggplot(aes(x = T, y = DO, color = date)) +
     geom_line() +
@@ -466,6 +487,7 @@ daily_plot
     plot
   plotly::plotly_build(plot)
 
+# Temp vs. DO saturation
     plot <- maestro_df_clean |> 
     ggplot(aes(x = T, y = do_sat_percent, color = date)) +
     geom_point() +
@@ -475,6 +497,7 @@ daily_plot
     plot
   plotly::plotly_build(plot)
 
+# Temp vs. pH
     plot <- maestro_df_clean |> 
     ggplot(aes(x = T, y = pH, color = date)) +
     geom_point() +
@@ -484,6 +507,7 @@ daily_plot
     plot
   plotly::plotly_build(plot)
 
+# Temp vs. Chlorophyll
     plot <- maestro_df_clean |> 
     ggplot(aes(x = T, y = CHL, color = date)) +
     geom_point() +
@@ -494,4 +518,108 @@ daily_plot
   plotly::plotly_build(plot)
 
   colnames(maestro_df_clean)
+```
+
+## Sample Table Variables Over Time
+
+WM03 where things look all sorts of weird has high chla and cdom and do saturation. The maestro temp is pretty high but it seems like the rest is pretty standard.
+
+```{r}
+mt_mag$sample_table |> 
+  view()
+
+mt_mag$sample_table |> 
+  select(sample, date, contains("24h")) |>
+  mutate(is_WM03 = sample == "WM03") |> 
+  pivot_longer(cols = -c(sample, date, is_WM03), names_to = "var", values_to = "val") |> 
+  ggplot(aes(date, val, group = var, color = is_WM03)) +
+  geom_point() +
+  geom_line() +
+  facet_wrap(~var, scales = "free") +
+  theme_classic()
+```
+
+---
+
+# Storm Investigation
+
+I want to look and see if there was a storm around WM03 sampling time.
+
+## WM Weather Station
+
+```{r}
+  wm <- read_table("data/metadata/wm_wx_data_2024.txt") |> 
+  rbind(read_table("data/metadata/wm_wx_data_2025.txt"))
+
+units <- data.frame(col = colnames(wm), unit = as_vector(wm[1,])) |> 
+  rownames_to_column("delete") |> 
+  select(-delete)
+
+clean_wm <- wm |> 
+  mutate(across(everything(), as.numeric)) |> 
+  filter_out(if_all(everything(), is.na)) |> 
+  mutate(dttm = ymd_hm(paste(`#YY`, MM, DD, hh, mm))) |> 
+  select(-(`#YY`:mm)) |> 
+  rename_with(~str_to_lower(.x)) |> 
+  select(-tide, -vis, -mwd, -apd, -dpd) |> 
+  mutate(across(!matches("dttm"), ~as.numeric(.x))) |> 
+  # AIC: wspd > 80 likely instrument errors; set to NA
+  mutate(wspd = ifelse(wspd > 80, NA, wspd),
+         date = round_date(dttm, unit = "day")) |> 
+  group_by(date) |> 
+  mutate(across(wdir:dewp, ~mean(.x), .names = "mean_{.col}"), 
+         across(wdir:dewp, ~max(.x), .names = "max_{.col}"), 
+         across(wdir:dewp, ~median(.x), .names = "med_{.col}"))|> 
+  ungroup()
+
+# Plot wind speed over dttm
+clean_wm|> 
+  ggplot(aes(date, mean_wspd)) +
+  geom_point() +
+  geom_vline(data = mt_mag$sample_table, aes(xintercept = date, color = sample == "WM03"))
+
+clean_wm |> 
+  filter(date >= "2024-07-01" & date <= "2025-01-01") |> 
+  pivot_longer(cols = -c(date, dttm), names_to = "var", values_to = "val") |> 
+  ggplot(aes(date, val)) +
+  geom_point() + 
+  facet_wrap(~var, scales = "free") +
+  geom_vline(data = mt_mag$sample_table, aes(xintercept = date, color = sample == "WM03"))
+```
+
+Hmm, okay from this data maybe it is a wind direction thing? The wind speed looks minimal compared to the rest of the surrounding dates.
+
+## ROAM4 Weather Station
+
+```{r}
+  rock <- read_table("data/metadata/roam4_wx_data_2024.txt") |> 
+  rbind(read_table("data/metadata/roam4_wx_data_2025.txt"))
+
+units <- data.frame(col = colnames(rock), unit = as_vector(rock[1,])) |> 
+  rownames_to_column("delete") |> 
+  select(-delete)
+
+clean_rock <- rock |> 
+  mutate(across(everything(), as.numeric)) |> 
+  filter_out(if_all(everything(), is.na)) |> 
+  mutate(dttm = ymd_hm(paste(`#YY`, MM, DD, hh, mm))) |> 
+  select(-(`#YY`:mm)) |> 
+  rename_with(~str_to_lower(.x)) |>
+  select(-contains("g")) |> 
+  mutate(across(!matches("dttm"), ~as.numeric(.x))) |> 
+  mutate(wspd = ifelse(wspd > 80, NA, wspd),
+         date = as_date(round_date(dttm, unit = "day"))) |> 
+  group_by(date) |> 
+  mutate(across(is.numeric, ~mean(.x), .names = "mean_{.col}"), 
+         across(is.numeric, ~max(.x), .names = "max_{.col}"))|> 
+  ungroup()
+
+# Plot wind speed over dttm
+clean_rock|> 
+  filter(date >= "2024-07-01" & date <= "2025-06-01") |> 
+  pivot_longer(cols = -c(date, dttm), names_to = "var", values_to = "val") |> 
+  ggplot(aes(date, val)) +
+  geom_point() + 
+  facet_wrap(~var, scales = "free") +
+  geom_vline(data = mt_mag$sample_table, aes(xintercept = date, color = sample == "WM03"))
 ```

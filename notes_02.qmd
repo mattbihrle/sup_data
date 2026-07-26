@@ -1,0 +1,80 @@
+---
+title: "notes_02"
+format: html
+editor: visual
+---
+
+# July 21, 2026
+
+New notes doc to help with that other one starting to be a bit unwieldy
+
+### UBA information
+
+The winter and non abundant genomes have the petE gene or plastocyanin gene which is part of an electron transport chain in photosynthetic organisms. However, there is not the same in the two summer UBA bins.
+
+Winter \> WM15_035, WM14_032
+
+Summer \> WM12_038, WM14_031
+
+Smol \> WM12_050
+
+That's about all I can find for photosystems
+
+### Chitinophagales
+
+![](images/clipboard-1693659244.png)
+
+Looks like there is a steady increase in the LD1 family. The Chitinogphagaceae family is mostly abundant at the beginning and at WM03.
+
+- [ ] Look at WM03 to see if there is a difference in the environmental data there.
+
+Looking at just the bins within chitinophagales, it looks like there are three distinct groupings.
+
+WM01-03 has a pretty equal distribution of Bins WM11_008, WM01_002, WM12_002, WM02_003
+
+WM04 - WM05, WM11-12 is dominated byWM12_003 and WM04_004 with some other other 4. WM13-WM16 is mostly just WM12_003 and WM04_004 with very little of the others.
+
+#### Bog - 950
+
+One of the major bins (WM04_004) has a complete pathway for assimilatory sulfate reduction ending at sulfide, but no genes for dissimilatory sulfate reduction.
+
+Also a nearly complete calvin cycle but missing rbcS
+
+Nitrogen: has genes for ammonia to glutamate
+
+Photosystems, it has the cytochrome f complex with transfers electrons from photosystem I to photosystem II but it doesn't have anything to respond to photons. Maybe that is a more common thing?
+
+It has a nearly complete Wood-Ljungdahl pathway
+
+Genes for folate biosynthesis (nearly complete)
+
+There are genes for phospholipid transport which I guess makes sense.
+
+Weirdly there are a number of genes for terpenoids biosynthesis which
+
+Notes:
+
+```{r}
+library(tidyverse)
+load("output/data/mt_mag.RData")
+
+mt_mag$sample_table |> 
+  select(sample, date, contains("24h")) |>
+  mutate(is_WM03 = sample == "WM03") |> 
+  pivot_longer(cols = -c(sample, date, is_WM03), names_to = "var", values_to = "val") |> 
+  ggplot(aes(date, val, group = var, color = is_WM03)) +
+  geom_point() +
+  geom_line() +
+  facet_wrap(~var, scales = "free") +
+  theme_classic()
+```
+
+From this plot we can see that CDOM is pretty high during WM03. Was there a storm on that date?
+
+# July 26, 2026
+
+Continuing to look at contaminants from the sheik list. I think that I should probably remove Bacillus cerus from the list. It is so so abundant across all samples which makes me think it is a contaminant.
+
+![](images/clipboard-3025514351.png)
+
+![Here you can see a little bit that they are in the top 100 but not incredibly abundant... I think maybe I'm just going to keep it in. ](images/clipboard-1721814902.png)

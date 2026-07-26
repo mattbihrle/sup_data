@@ -3,34 +3,39 @@ library(microeco)
 library(file2meco) # for importing 16S phyloseq objects
 library(micRoclean) # for cleaning out contamination
 library(tidyverse)
+library(googlesheets4)
 
-# Import meta data ----------------------------------------------------------
+# Import meta data from 2024-2025 year -----------------------------------------
 sw_meta <- read_csv("output/data/metadata_supwinter.csv") |> 
   dplyr::select(!matches(c("12h_med", "round_date")))|> 
-  distinct()
+  distinct() |> 
+  mutate(full_id = paste0("s_2425_", sample))
+
+# Import master spreadsheet from google
+# gs4_auth()
+ext_sheet <- read_sheet("https://docs.google.com/spreadsheets/d/1Iq5AIxiH-EBa2lT83cKCUsLwYCvvCl0iHlCbkJw9rQo/edit?gid=1015683691#gid=1015683691")
 # Create a sample table for import into the microtable
 sample_table <- sw_meta |> 
-    column_to_rownames("sample") |> 
+  full_join(ext_sheet, by = "full_id") |> 
+  mutate(rows = full_id) |> 
+    column_to_rownames("rows") |> 
     as.data.frame()
-# Add sample back as a column
-sample_table <- sample_table |> 
-  mutate(sample = rownames(sample_table))
 
 sample_table <- sample_table |> 
-  mutate(strat_season = fct_reorder(strat_season, date), 
-         strat_season_2 = fct_reorder(strat_season_2, date),
-         solar_season = fct_reorder(solar_season, date), 
+  mutate(strat_season = fct_reorder(strat_season, date, .na_rm = F), 
+         strat_season_2 = fct_reorder(strat_season_2, date, .na_rm = F),
+         solar_season = fct_reorder(solar_season, date, .na_rm = F), 
          mixing = fct_relevel(mixing, "stratified_std", "mixed", "stratified_inverse"))
 
 
 # Import 16S data----------------------------------------------------------------------------
   # First the sample names
-  names_df <- readr::read_tsv("data/16s/lotus3_out/final_sample_map_4_R.txt")
+  names_df <- readr::read_table("msi_downloads/lotus3_out/final_sample_map_4_R.txt")
   names_vec <- setNames(names_df$SampleID, names_df$RealNames)
 
 
   # Load microeco object
-    mt_16s <- phyloseq::import_biom("data/16s/lotus3_out/OTU.biom") |> 
+    mt_16s <- phyloseq::import_biom("msi_downloads/lotus3_out/OTU.biom") |> 
         phyloseq2meco()
       # Rename columns
       mt_16s$otu_table <- mt_16s$otu_table |> 
@@ -44,9 +49,10 @@ sample_table <- sample_table |>
       rownames_to_column("sample") |> 
       dplyr::left_join(names_df, by = join_by(sample == SampleID)) |> 
       column_to_rownames("RealNames") 
+    
     # Create a column of sample names for later metadata
     mt_16s$sample_table <- mt_16s$sample_table|> 
-      mutate(sample = str_extract(rownames(mt_16s$sample_table), ".{4}"))
+      mutate(full_id = str_extract(rownames(mt_16s$sample_table), ".*(?=_S[0-9]{1,2})"))
       # Reorder rows alphabetically
       mt_16s$sample_table <- mt_16s$sample_table |> 
         slice(order(rownames(mt_16s$sample_table)))
@@ -90,7 +96,7 @@ mt_16s$sample_table <- mt_16s$sample_table |>
   ) |> 
   rownames_to_column(var = "rownames") |> 
   # Add in the other metadata
-  left_join(y = sw_meta) |> 
+  left_join(y = sample_table, by = "full_id") |> 
   # move rownames back
   column_to_rownames(var = "rownames")
 
@@ -102,26 +108,17 @@ mt_16s$sample_table$strat_season <- factor(mt_16s$sample_table$strat_season,
                                            levels = c("summer", "fall", "winter", "spring"), 
                                            labels = c("Summer", "Fall", "Winter", "Spring"),
                                            ordered = T)
-# Okay here start working with the micRoclean package for contamination------------------------------------------------------------
-# First thing is to create a sequence of well numbers
-wells <- c(LETTERS[1:8], LETTERS[1:8], LETTERS[1:3])
-wells_num <- rep(1:3, each = 8)[1:length(wells)] |> 
-  str_pad(width = 2, side = "left", pad = 0)
-wells <- paste0(wells, wells_num)
-print(wells)
 
-# Now add that to the mt_16s$sample_table
-mt_16s$sample_table <- mt_16s$sample_table |> 
-  mutate(sample_well = wells)
+
+# Okay here start working with the micRoclean package for contamination------------------------------------------------------------
 
 # Now add the control and sample type
-control_samps <- mt_16s$sample_table$sample[12:19]
+control_samps <- mt_16s$sample_table$full_id[which(mt_16s$sample_table$pumped == FALSE)]
 
 mt_16s$sample_table <- mt_16s$sample_table |> 
-  mutate(is_control = ifelse(sample %in% control_samps, TRUE, FALSE), 
-         sample_type = ifelse(is_control == TRUE, "blank", "DNA"), 
-         batch = "a")
-
+  mutate(is_control = ifelse(full_id %in% control_samps, TRUE, FALSE), 
+         sample_type = ifelse(is_control == TRUE, "blank", "DNA")
+  )
 
 # mt_16s$sample_table <- mt_16s$sample_table |> 
 #   mutate( 
@@ -132,9 +129,9 @@ mt_16s$sample_table <- mt_16s$sample_table |>
 
 meta <- mt_16s$sample_table |> 
   dplyr::select(sample_type, is_control, sample_well, batch) |>
-  rownames_to_column("sample") |> 
-  arrange(desc(is_control), sample) |> 
-  column_to_rownames("sample")
+  rownames_to_column("full_id") |> 
+  arrange(batch, desc(is_control), full_id) |> 
+  column_to_rownames("full_id")
 
 
 
@@ -144,9 +141,9 @@ head(meta)
 count <- mt_16s$otu_table |> 
   t() |> 
   as.data.frame() |>
-  rownames_to_column("sample") |>
-  slice(match(rownames(meta), sample)) |>
-  column_to_rownames("sample") 
+  rownames_to_column("full_id") |>
+  slice(match(rownames(meta), full_id)) |>
+  column_to_rownames("full_id") 
 all(rownames(count) == rownames(meta))
 
 head(count)
@@ -155,7 +152,8 @@ head(count)
 mclean_results <-  micRoclean(counts = count, 
                               meta = meta, 
                               research_goal = 'orig.composition', 
-                              control_name = rownames(count)[1:8])
+                              control_name = control_samps)
+
 mclean_results$blank <- "all"
 paste("filtering loss:",mclean_results$filtering_loss) |> 
   print()
@@ -174,16 +172,17 @@ mt_16s$otu_table <- mt_16s$otu_table |>
 
 # Then remove the blank columns (WM17-WM24)
 mt_16s$sample_table <- mt_16s$sample_table |>
-  filter_out(sample %in% control_samps)
+  filter_out(full_id %in% control_samps)
 # Verify that we have 11 samples and less OTUs in otu_table
 mt_16s
 #Tidy dataset
 mt_16s$tidy_dataset()
 mt_16s
-
+# save(mt_16s, file = "output/data/mt_16s.RData")
+# stop()
 # -------------------------------------------------------------------------------
 # Import list of contaminants from Sheik et al 2018 Supplemental Material
-
+load("output/data/mt_16s.RData")
 contam_genus <- read_tsv("sheik_2018_contamination_table.txt") |> 
   rename_with(tolower) |>  
   filter_out(extraction == FALSE & water == FALSE) |> 
@@ -200,17 +199,18 @@ view(mt_16s$tax_table)
 
 
 # hmm okay I want to try and plot how the abundance of the sheik contaminents changes
-n = 100
-rank = "g"
-abund <- trans_abund$new(mt_16s, ntaxa = n, taxrank = rank, high_level = "sheik_contam")$
-  plot_bar(others_color = "grey70", ggnested = T, xtext_keep = TRUE, legend_text_italic = FALSE, 
-           facet = "strat_season") +
-  theme(axis.text.x = element_text(angle = 45, hjust = 1, vjust = 1, size=9)) +
-  ggtitle("16S Data", subtitle = paste(n, "most abundant", rank, "brown, possible contaminent from 16s data,", 
-                                       "green, not possible contaminent")) +
-  theme(legend.position = "none")
-abund
-plotly::plotly_build(abund)
+# n = 100
+# rank = "g"
+# abund <- trans_abund$new(mt_16s, ntaxa = n, taxrank = rank, high_level = "sheik_contam")$
+#   plot_bar(others_color = "grey70", ggnested = T, xtext_keep = TRUE, legend_text_italic = FALSE, 
+#            facet = "strat_season") +
+#   theme(axis.text.x = element_text(angle = 45, hjust = 1, vjust = 1, size=9)) +
+#   ggtitle("16S Data", subtitle = paste(n, "most abundant", rank, "brown, possible contaminent from 16s data,", 
+#                                        "green, not possible contaminent")) +
+#   theme(legend.position = "none",
+#         # axis.text.x = element_blank())
+# abund
+# plotly::plotly_build(abund)
 
 # Okay now I want to look at just the taxa that are sheik_contams
 
@@ -221,25 +221,63 @@ sheik_16s$tax_table <- sheik_16s$tax_table |>
 sheik_16s$tidy_dataset()
 sheik_16s$cal_abund()
 
-n = 66
-rank = "g"
-abund <- trans_abund$new(sheik_16s, ntaxa = n, taxrank = rank)$
-  plot_bar(others_color = "grey70", xtext_keep = TRUE, legend_text_italic = FALSE, 
-           facet = "strat_season") +
-  theme(axis.text.x = element_text(angle = 45, hjust = 1, vjust = 1, size=9))
-# ggtitle("16S Data", subtitle = paste(n, "most abundant", rank, "brown, possible contaminent from 16s data,", 
-# "green, not possible contaminent")) +
-# theme(legend.position = "none")
-abund
-plotly::plotly_build(abund)
-view(sheik_16s$tax_table)
+# n = 66
+# rank = "g"
+# abund <- trans_abund$new(sheik_16s, ntaxa = n, taxrank = rank)$
+#   plot_bar(others_color = "grey70", xtext_keep = TRUE, legend_text_italic = FALSE, 
+#            facet = "strat_season") +
+#   theme(axis.text.x = element_text(angle = 45, hjust = 1, vjust = 1, size=9))
+# # ggtitle("16S Data", subtitle = paste(n, "most abundant", rank, "brown, possible contaminent from 16s data,", 
+# # "green, not possible contaminent")) +
+# # theme(legend.position = "none")
+# abund
+# plotly::plotly_build(abund)
+genus <- sheik_16s$tax_table |> 
+  arrange(g)
 
+sheik_16s$tax_table |>
+  filter(g == "g__Bacillus") |> 
+  arrange(s) |> 
+  view()
+
+
+test <- clone(mt_16s)
+test$tax_table <- test$tax_table |> 
+  filter_out(s == "s__unknown")
+
+test$cal_abund()
+
+trans_abund$new(test, ntaxa = 100, taxrank = "s")$
+  plot_bar() |> 
+  plotly::plotly_build()
+
+trans_abund$new(mt_16s, ntaxa = 100, taxrank = "s")$
+  plot_bar() |> 
+  plotly::plotly_build()
 # Acidiovorax seems to be primarily a plant genus so removing that
 # Remove Acidiovorax from the tax_table
 mt_16s$tax_table <- mt_16s$tax_table %>%
   filter(g != "g__Acidiovorax") |> 
   # Bacillus seems to be primarily human-related so should remove those as well
   filter(g != "g__Bacillus") |> 
+  # Get ride of afipia
+  filter(g != "g__Afipia") |> 
+  # Some of the aquabacterium seem to be a mix of human derived and other. Because they already have a small abundance,
+  # I will remove them
+  filter(g != "g__Aquabacterium") |>
+  # Of the artrhobacter genus one species is particularly found in blood, removing that
+  filter(s != "s__Arthrobacter woluwensis") |> 
+  # Bacillus mar... found in human stool removing that.
+  filter(s != "s__Bacillus marasmi") |> 
+  # As far as the other bacillus they seem to some found in water and some human related.
+  # I will take out each species that is not water related. 
+  # I cannot find any information that cohnii is water related
+  filter(s != "s__Bacillus cohnii") |> 
+  # I am going to keep Bacillus cerus in because it is found all over but I am 
+  # keeping an eye on it because it could also be a contaminant
+  # Bosea is found in freshwater so I'll keep it in.
+  # Brevibacillus is also in water so I'll keep it in
+  # START HERE
   # Looks like bradyrhyzobium is primarily soil and nitrogen fixing, I think this would be one to get rid of as well
   filter(g != "g__Bradyrhizobium") |> 
   # Brevundimonas seems to be pretty ubiquidus so I will let it stay, it's pretty small anyways

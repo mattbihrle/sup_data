@@ -192,4 +192,7 @@ kegg_rollup |>
 mt_mag$tax_table |> 
   filter(bin == "b__WM04_S4_024") |> 
   view()
+\
 
+mt_16s$sample_table |> 
+  view()
