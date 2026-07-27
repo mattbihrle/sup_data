@@ -1,9 +1,15 @@
-# Load libraries
-library(microeco)
-library(file2meco) # for importing 16S phyloseq objects
-library(micRoclean) # for cleaning out contamination
-library(tidyverse)
-library(googlesheets4)
+
+# List packages to load
+packages <- c("microeco", "file2meco", "micRoclean", "tidyverse", "googlesheets4")
+# Install packages not yet installed
+installed_packages <- packages %in% rownames(installed.packages())
+if (any(installed_packages == FALSE)) {
+  install.packages(packages[!installed_packages])
+}
+# Packages loading
+invisible(lapply(packages, library, character.only = TRUE))
+# Remove the list of packages and installed packages from the environment
+rm(installed_packages, packages)
 
 # Import meta data from 2024-2025 year -----------------------------------------
 sw_meta <- read_csv("output/data/metadata_supwinter.csv") |> 
@@ -181,20 +187,28 @@ mt_16s
 # save(mt_16s, file = "output/data/mt_16s.RData")
 # stop()
 # -------------------------------------------------------------------------------
-# Import list of contaminants from Sheik et al 2018 Supplemental Material
+# Import list of contaminants from Sheik et al 2018 Supplemental Material and from Eisenhofer 2019
 load("output/data/mt_16s.RData")
-contam_genus <- read_tsv("sheik_2018_contamination_table.txt") |> 
+
+contam_genus <- read_tsv("sheik_2018_contamination_table.txt") |>
   rename_with(tolower) |>  
   filter_out(extraction == FALSE & water == FALSE) |> 
   dplyr::select(g) |> 
   as_vector()
+
+e_contam <- read_tsv("eisenhofer_contam.txt") |> 
+as_vector() |> 
+  sort()
+
+contam_genus <- c(contam_genus, e_contam) |> 
+  unique()
 
 # Label which taxa are found in that list
 
 mt_16s$tax_table <- mt_16s$tax_table |> 
   mutate(sheik_contam = ifelse(g %in% paste0("g__", contam_genus), TRUE, FALSE))
 
-view(mt_16s$tax_table)
+# view(mt_16s$tax_table)
 
 
 
@@ -233,31 +247,70 @@ sheik_16s$cal_abund()
 # abund
 # plotly::plotly_build(abund)
 genus <- sheik_16s$tax_table |> 
+  mutate(across(everything(), ~str_remove(.x, "[a-z]{1}__"))) |> 
   arrange(g)
-
-sheik_16s$tax_table |>
-  filter(g == "g__Bacillus") |> 
-  arrange(s) |> 
-  view()
+  # slice(unique(str_which(g, "g__Caulobacter")):nrow(sheik_16s$tax_table))
+view(genus)
+# sheik_16s$tax_table |>
+#   filter(g == "g__Bacillus") |> 
+#   arrange(s) |> 
+#   view()
 
 
 test <- clone(mt_16s)
-test$tax_table <- test$tax_table |> 
-  filter_out(s == "s__unknown")
-
+test$tax_table <- test$tax_table |>
+  filter_out(g == "g__unknown")
+test$cal_abund()
+trans_abund$new(test, ntaxa = 50, taxrank = "s")$
+  plot_bar()
 test$cal_abund()
 
-trans_abund$new(test, ntaxa = 100, taxrank = "s")$
-  plot_bar() |> 
-  plotly::plotly_build()
+geni <- trans_abund$new(test, ntaxa = 630 , taxrank = "g")$
+  plot_bar()
+geni$data$Taxonomy
+top_tax <- geni$data |> 
+  select(Taxonomy) |> 
+  distinct()
 
-trans_abund$new(mt_16s, ntaxa = 100, taxrank = "s")$
+top_tax <- top_tax |> 
+  mutate(tax_rank = 630 - as.numeric(rownames(top_tax))) |> 
+  mutate(tax = as.character(Taxonomy)) |> 
+  arrange(tax)
+
+genus <- genus |> 
+  left_join(top_tax, by = join_by("g" == "tax"))
+  
+# trans_abund$new(mt_16s, ntaxa = 200, taxrank = "s")$
+#   plot_bar() |> 
+#   plotly::plotly_build()
+
+mt_16s$tax_table |> 
+  distinct(g, .keep_all = T) |> 
+  nrow()
+
+
+trans_abund$new(test, ntaxa = 200, taxrank = "g")$
   plot_bar() |> 
   plotly::plotly_build()
-# Acidiovorax seems to be primarily a plant genus so removing that
-# Remove Acidiovorax from the tax_table
+# Hand removing taxa based on the rules:
+# Found in either the Sheik contamination or Eisenhofer contamination list AND at least one of:
+# 1) If it is a "small" abundance (not included in top 200 genuses by mean abundance or determined as "small" by visual inspection)
+# 2) If the genus or species are not recorded to be found in water samples
+# 3) Based on other conclusions from quick lit search and relative abundance (will be explain in text)
+# When in doubt, will air on the side of removing more
+
+bottom_tax <- top_tax |> 
+  filter(tax_rank >= 200)
 mt_16s$tax_table <- mt_16s$tax_table %>%
+  # filter out contaminants that are not in the top 200 genuses
+  filter(sheik_contam == TRUE & g %in% paste0("g__", bottom_tax$tax)) |> 
+  # Acidiovorax seems to be primarily a plant genus so removing that
+  # Remove Acidiovorax from the tax_table
   filter(g != "g__Acidiovorax") |> 
+  # Achromobacter
+  filter( g != "g__Achromobacter") |> 
+  filter(g != "g__Acinetobacter") |> 
+  # Keep aeromicrobium in because it is found in marine systems
   # Bacillus seems to be primarily human-related so should remove those as well
   filter(g != "g__Bacillus") |> 
   # Get ride of afipia
@@ -265,8 +318,6 @@ mt_16s$tax_table <- mt_16s$tax_table %>%
   # Some of the aquabacterium seem to be a mix of human derived and other. Because they already have a small abundance,
   # I will remove them
   filter(g != "g__Aquabacterium") |>
-  # Of the artrhobacter genus one species is particularly found in blood, removing that
-  filter(s != "s__Arthrobacter woluwensis") |> 
   # Bacillus mar... found in human stool removing that.
   filter(s != "s__Bacillus marasmi") |> 
   # As far as the other bacillus they seem to some found in water and some human related.
@@ -277,33 +328,58 @@ mt_16s$tax_table <- mt_16s$tax_table %>%
   # keeping an eye on it because it could also be a contaminant
   # Bosea is found in freshwater so I'll keep it in.
   # Brevibacillus is also in water so I'll keep it in
-  # START HERE
   # Looks like bradyrhyzobium is primarily soil and nitrogen fixing, I think this would be one to get rid of as well
   filter(g != "g__Bradyrhizobium") |> 
-  # Brevundimonas seems to be pretty ubiquidus so I will let it stay, it's pretty small anyways
+  # Brevundimonas seems to be pretty ubiquitous so I will let it stay, it's pretty small anyways
+  # Brevebacterium is found in food and human skin so I'll take it out
+  filter(g != "g__Brevibacterium") |>
+  # Caulobacter is found in FW, keeping it in
+  # comamonas is found in freshwater, keeping it in
   # g__Chryseobacterium is found in freshwater and isn't huge so I'll keep it in
-  # s__Deinococcus yunweiensis was originally found as a contaminant, remove it!
+  # Corynebacterium is found on humans but the two species identified are found in marine environments so I think I should keep them
+  # Cupriavidas is found all over so might be a contaminant, removing it
+  filter(g != "g__Cupriavidus") |> 
+  # Curvibacter are from well water so keep them in
+  # s__Deinococcus yunweiensis was originally found as a contaminant, remove it and the rest. Their defining characteristic is being resistant to UV radiation which makes me think they just resisted the UV, cleaning and freezing
   filter(g != "g__Deinococcus") |> 
   # g__Devosia is mostly soil bacteria, remove this as well
   filter(g != "g__Devosia") |> 
+  # Dietzia looks to be mostly human related, removing that as well
+  filter(g != "g__Dietzia") |> 
+  # Dyadobacteria is such a small abundance I am going to remove it
+  filter(g != "g__Dyadobacter") |> 
   # flavobacteriums seem to be all over in freshwater, keeping in the ones that are "unknown" for species
   # Looks like sp VMW seems to be originally from freshwater so I'll keep it
   # s__Flavobacterium branchiophilum creates a gill disease in fish so likely is a 'real' microbe
   #s__Flavobacterium swingsii originally isolated from a river so keep it in
   # s__antartic bacterium was isolated from soil and isn't very abundant. going to remove it
   filter(s != "s__Antarctic bacterium") |> 
+  # Hydrotalea has been found in aquatic environments so I will keep it in
+  # Janthinobacteria are found in freshwater so I will keep them in
+  # Leptothrix found in freshwater so will keep
   # limnobacter seems to be found in lake sediments so I'll keep it in
+  # Massilia are found in freshwater so I should keep them in, but one to keep an eye on
+  # Mesorhizobium are found in freshwater so I'll keep them in
+  # Microbacterium is not found once I swap to the new kits so I am going to call it a contaminant and remove it
+  filter( g != "g__Microbacterium") |> 
+  filter(g != "g__Microlunatus") |> 
+  filter(g != "g__Nevskia") |> 
   # Novosphingo seem to be pretty much just contaminents removing anything that is unknown
-  filter(g != "g__Novosphingobacter") |> 
+  filter(g != "g__Novosphingobium") |> 
+  
   # g__Paenibacillus has so little abundance and seems to be more soil related
   filter(g != "g__Paenibacillus") |> 
+  # Patulibacter are mostly just soil and wastewater samples
+  filter(g != "g__Patulibacter") |> 
   # pedobacter is just a contaminent
   filter(g != "g__Pedobacter") |> 
+  # START HERE WITH pedomicrobium
   # Polaromonas is around in just that one WM03 sample. Makes me think it is an error
   filter(g != "g__Polaromonas") 
 # pseudomonas seems to be all over the place in water and in soil. and it is most of the samples. I will keep it in. 
 # unidbacterium is around in alpine lakes so maybe I will keep them in as well
-
+geni$data |> 
+  view()
 
 # Okay now that I've gone through all of that, tidy mt_16s once more
 

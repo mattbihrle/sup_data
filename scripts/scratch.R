@@ -1,6 +1,6 @@
 library(microeco)
 library(file2meco)
- |> |> |> |> |> |> |> |> |> |> |> |> |> |> |> |> |> |> |> |> |> |> |> |> |> ion and its growth rate (r).
+ 
 p2 <- ggplot(data, aes(x = Abundance, y = Growth_Rate, color = Species)) +
   geom_point(size = 4) +
   geom_smooth(method = "lm", se = FALSE, linetype = "dashed", color = "black") +
@@ -192,7 +192,25 @@ kegg_rollup |>
 mt_mag$tax_table |> 
   filter(bin == "b__WM04_S4_024") |> 
   view()
-\
-
 mt_16s$sample_table |> 
   view()
+
+
+mass <- clone(mt_16s)
+mass$tax_table <- mass$tax_table |> 
+  filter(g == "g__Massilia")
+mass$cal_abund()
+  trans_abund$new(mass, taxrank = "otu", ntaxa = 30)$
+  plot_bar()
+
+load("output/data/mt_16s.RData")
+otus <- mt_16s$tax_table |> 
+  filter(g == "g__Patulibacter") |> 
+  select(otu) |> 
+  as_vector() |> 
+  str_remove("o__")
+
+a <- mt_16s$otu_table |> 
+  filter(rownames(mt_16s$otu_table) %in% otus) |> 
+  select(!where(~sum(.x) == 0)) |> 
+  colnames()
