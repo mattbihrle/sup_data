@@ -78,3 +78,7 @@ Continuing to look at contaminants from the sheik list. I think that I should pr
 ![](images/clipboard-3025514351.png)
 
 ![Here you can see a little bit that they are in the top 100 but not incredibly abundant... I think maybe I'm just going to keep it in.](images/clipboard-1721814902.png)
+
+# July 27, 2026
+
+Kept working through the contaminants. Added the list from Einsenhofer and figured out a more efficient workflow.
