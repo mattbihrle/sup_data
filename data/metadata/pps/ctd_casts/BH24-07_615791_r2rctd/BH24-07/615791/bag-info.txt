@@ -1,0 +1,31 @@
+Source-Organization: Rolling Deck to Repository (R2R) Program
+contributor-name_0: Data Manager
+contributor-email_0: info@rvdata.us
+contributor-role_0: pointOfContact
+contributor-name_1: Dubinin, George
+contributor-email_1: gtdubinin@ucsd.edu
+contributor-role_1: resourceProvider
+contributor-name_2: Hudak, Rebecca
+contributor-email_2: rhudak@whoi.edu
+contributor-role_2: processor
+External-Description: Environmental sensor data and documentation from U.S. oceanographic research vessels
+Bagging-Date: 2026-05-12T20:40:04Z
+External-Identifier: doi:10.7284/615791
+Bag-Size: 17.69 MB
+Payload-Oxum: 18546297.13
+Bag-Group-Identifier: BH24-07
+Bag-Count: 1 of 1
+Internal-Sender-Identifier: BH24-07_615791_r2rctd.tar
+Internal-Sender-Description: Fileset 615791 (r2rctd data) from cruise BH24-07
+R2R-CruiseID: BH24-07
+R2R-CruiseDOI: doi:10.7284/910729
+R2R-FilesetID: 615791
+R2R-FormatID: 100074
+R2R-ProcessType: processed
+R2R-FilesetInformation: https://service.rvdata.us/info/fileset/615791
+R2R-ParentFileset: 162794
+R2R-ParentDeviceType: ctd
+R2R-ParentDeviceModel: com.seabird SBE-911+
+R2R-ParentFilesetInformation: https://service.rvdata.us/info/fileset/162794
+R2R-License: Creative Commons - Public Domain Mark 1.0
+R2R-Manifest: file-info.txt has fileid,md5sum,path,size(byte)

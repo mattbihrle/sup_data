@@ -214,3 +214,48 @@ a <- mt_16s$otu_table |>
   filter(rownames(mt_16s$otu_table) %in% otus) |> 
   select(!where(~sum(.x) == 0)) |> 
   colnames()
+
+
+rose <- trans_abund$new(test, ntaxa = 200, taxrank = "g")$
+  plot_bar()
+
+rose_plot <- rose$data |> 
+  filter(Taxonomy == "Roseomonas") |> 
+  ggplot(aes(Sample, Abundance)) +
+  geom_col()
+plotly::plotly_build(rose_plot)
+
+mt_16s$sample_table |> 
+  select(full_id, ext_date) |> 
+  view()
+
+rosey <- clone(mt_16s)
+
+rosey$tax_table <- rosey$tax_table |> 
+  filter(g == "g__Roseomonas") 
+rosey$cal_abund()
+
+trans_abund$new(rosey, ntaxa = 15, taxrank = "otu")$plot_bar() |> 
+  plotly::plotly_build()
+smol <- clone(mt_16s)
+smol$tax_table <- smol$tax_table |> 
+  filter_out(g == "g__unknown")
+trans_abund$new(smol, ntaxa = 1000, taxrank = "otu", high_level = "g")$
+  plot_bar(ggnested = T) |> 
+  plotly::plotly_build()
+
+
+sed <- clone(mt_16s)
+
+sed$tax_table <- sed$tax_table |> 
+  filter(g == "g__Sphingomonas")
+sed$cal_abund()
+trans_abund$new(sed, ntaxa = 100, taxrank = "otu", high_level = "s")$
+  plot_bar(ggnested = TRUE) |> 
+  plotly::plotly_build()
+
+
+full_t_df |> 
+  filter(str_detect(xml_file, "Superior")) |> 
+  filter(dttm_utc > "2024-08-15" & dttm_utc < "2025-09-01") |> 
+  view()

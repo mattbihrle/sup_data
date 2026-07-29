@@ -1,0 +1,115 @@
+7
+
+________________________________________________________________
+Configuration: WTS-125M-FV               CF2 V2_11 of Jun  3 2021
+
+               _________________________________
+                   Offload/Display Data File
+               _________________________________
+                   Wed Aug 28 21:26:55 2024
+
+          <1> Display ALL data
+          <2> Display event summary data
+          <3> Display pump data
+          <4> EEPROM data backup cache
+          <M> Main Menu
+
+          Selection [] ? 1
+
+  There is no deployment data in active memory
+  Press any key to continue
+
+
+________________________________________________________________
+Configuration: WTS-125M-FV               CF2 V2_11 of Jun  3 2021
+
+               _________________________________
+                   Offload/Display Data File
+               _________________________________
+                   Wed Aug 28 21:27:00 2024
+
+          <1> Display ALL data
+          <2> Display event summary data
+          <3> Display pump data
+          <4> EEPROM data backup cache
+          <M> Main Menu
+
+          Selection [] ? 2
+
+  There is no deployment data in active memory
+  Press any key to continue
+
+
+________________________________________________________________
+Configuration: WTS-125M-FV               CF2 V2_11 of Jun  3 2021
+
+               _________________________________
+                   Offload/Display Data File
+               _________________________________
+                   Wed Aug 28 21:27:08 2024
+
+          <1> Display ALL data
+          <2> Display event summary data
+          <3> Display pump data
+          <4> EEPROM data backup cache
+          <M> Main Menu
+
+          Selection [] ? 4
+
+ To copy the EEPROM cache file to a disk file, initiate your
+ communication program's file logging command now and then press
+ any key to start the transfer.  The cache file remains resident
+ in the EEPROM until overwritten during the next deployment.
+
+
+
+_____________
+
+Event Summary
+_____________
+
+
+
+The EEPROM data backup cache is empty.
+
+End of EEPROM event backup cache.
+
+Terminate file logging operation now
+and press any key to continue.
+
+
+________________________________________________________________
+Configuration: WTS-125M-FV               CF2 V2_11 of Jun  3 2021
+
+               _________________________________
+                   Offload/Display Data File
+               _________________________________
+                   Wed Aug 28 21:27:22 2024
+
+          <1> Display ALL data
+          <2> Display event summary data
+          <3> Display pump data
+          <4> EEPROM data backup cache
+          <M> Main Menu
+
+          Selection [] ? 3
+
+  There is no deployment data in active memory
+  Press any key to continue
+
+
+________________________________________________________________
+Configuration: WTS-125M-FV               CF2 V2_11 of Jun  3 2021
+
+               _________________________________
+                   Offload/Display Data File
+               _________________________________
+                   Wed Aug 28 21:27:26 2024
+
+          <1> Display ALL data
+          <2> Display event summary data
+          <3> Display pump data
+          <4> EEPROM data backup cache
+          <M> Main Menu
+
+          Selection [] ? 

@@ -17,12 +17,18 @@ load("output/data/mt_sylph.RData")
 # Load Required Libraries
 
 ```{r}
-library(plotly)
-library(ggalluvial)
-library(ggarrow)
-library(tidyverse)
-library(microeco)
-library(ggrepel)
+
+packages <- c("plotly", "ggalluvial", "ggarrow", "tidyverse", "microeco", "ggrepel")
+
+# Install packages not yet installed
+installed_packages <- packages %in% rownames(installed.packages())
+if (any(installed_packages == FALSE)) {
+  install.packages(packages[!installed_packages])
+}
+# Packages loading
+invisible(lapply(packages, library, character.only = TRUE))
+# Remove the list of packages and installed packages from the environment
+rm(installed_packages, packages)
 ```
 
 # Final plots (atm)

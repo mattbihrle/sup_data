@@ -172,6 +172,7 @@ mclean_results$decontaminated_count <-
   dplyr::select(where(~ !all(.x == 0)))
 
 # Filter to keep only the taxa in the "decontaminated count" table
+  # First save the mt_16s before doing any filtering
 full_mt_16s <- clone(mt_16s)
 mt_16s$otu_table <- mt_16s$otu_table |> 
   filter(rownames(mt_16s$otu_table) %in% colnames(mclean_results$decontaminated_count))
@@ -184,7 +185,7 @@ mt_16s
 #Tidy dataset
 mt_16s$tidy_dataset()
 mt_16s
-# save(mt_16s, file = "output/data/mt_16s.RData")
+save(mt_16s, file = "output/data/mt_16s.RData")
 # stop()
 # -------------------------------------------------------------------------------
 # Import list of contaminants from Sheik et al 2018 Supplemental Material and from Eisenhofer 2019
@@ -250,7 +251,7 @@ genus <- sheik_16s$tax_table |>
   mutate(across(everything(), ~str_remove(.x, "[a-z]{1}__"))) |> 
   arrange(g)
   # slice(unique(str_which(g, "g__Caulobacter")):nrow(sheik_16s$tax_table))
-view(genus)
+# view(genus)
 # sheik_16s$tax_table |>
 #   filter(g == "g__Bacillus") |> 
 #   arrange(s) |> 
@@ -284,14 +285,10 @@ genus <- genus |>
 #   plot_bar() |> 
 #   plotly::plotly_build()
 
-mt_16s$tax_table |> 
-  distinct(g, .keep_all = T) |> 
-  nrow()
 
-
-trans_abund$new(test, ntaxa = 200, taxrank = "g")$
-  plot_bar() |> 
-  plotly::plotly_build()
+# trans_abund$new(test, ntaxa = 200, taxrank = "g")$
+#   plot_bar() |> 
+#   plotly::plotly_build()
 # Hand removing taxa based on the rules:
 # Found in either the Sheik contamination or Eisenhofer contamination list AND at least one of:
 # 1) If it is a "small" abundance (not included in top 200 genuses by mean abundance or determined as "small" by visual inspection)
@@ -366,20 +363,31 @@ mt_16s$tax_table <- mt_16s$tax_table %>%
   filter(g != "g__Nevskia") |> 
   # Novosphingo seem to be pretty much just contaminents removing anything that is unknown
   filter(g != "g__Novosphingobium") |> 
-  
   # g__Paenibacillus has so little abundance and seems to be more soil related
   filter(g != "g__Paenibacillus") |> 
   # Patulibacter are mostly just soil and wastewater samples
   filter(g != "g__Patulibacter") |> 
   # pedobacter is just a contaminent
   filter(g != "g__Pedobacter") |> 
-  # START HERE WITH pedomicrobium
-  # Polaromonas is around in just that one WM03 sample. Makes me think it is an error
-  filter(g != "g__Polaromonas") 
+  # I am going to keep Polaromonas in as it is found all over the place and is found in most of my samples but in varying proportions
 # pseudomonas seems to be all over the place in water and in soil. and it is most of the samples. I will keep it in. 
-# unidbacterium is around in alpine lakes so maybe I will keep them in as well
-geni$data |> 
-  view()
+  # Ralstonia is found in just the WM2122 year. That's odd, I'll keep it in. It is primarily a bacterial pathogen which is interesting
+  # Rhodococcus is found in water and doesn't have any suspicious patterns. Keep it in
+  # Roseomonas is primarily found in a group of samples that was extracted at the same time. Of those taxa, 
+  # the most common is one that is found in drinking water suggesting it isn't really a freshwater taxa, plus it is not very abundant overall. I am going to remove it. 
+  filter(g != "g__Roseomonas") 
+  # Sediminibacterium. This one has a lot of OTUs and is quite abundant. The candidatus Jacksonbacteria
+    # is found in some water samples. I will keep it in. The goheungnse species was originally 
+    # cultured from a freshwater reservior so keep that in as well. For the other "unknown" species I might as well keep them in too.
+  # Sphingobium are found everywhere. I will keep them in
+  # Sphingomonas is found in all the samples and species of it are found in freshwater. I am a little worried abou the pattern where they are most abundnant in the samples that are oldest suggesting that they are gradually taking over.
+    # I might run it by Cody and see what he thinks. Looking at the breakdown of OTUs it seems like most of the abundance comes from OTU4 and OTU82. I should look more into these to see what they are similar to. 
+    # For now keeping sphinogomonas in
+  # Sphynogopyxis have been found in freshwater and are pretty abundant. Keeping them in
+  # Stenotrophomonas is found all over and is most abundant in the Lake Erie sample so it seems to be fine. 
+  # Sulfuritaleta was found in freshwater lakes, keep it in
+  # unidbacterium is around in alpine lakes so maybe I will keep them in as well
+  # Variovorax are found in freshwater so keep them in too
 
 # Okay now that I've gone through all of that, tidy mt_16s once more
 
@@ -395,6 +403,7 @@ contam_16s$tax_table <- contam_16s$tax_table |>
 contam_16s
 contam_16s$tidy_dataset()
 save(contam_16s, file = "output/data/contam_16s.RData")
+save(full_mt_16s, file = "output/data/full_16s.RData")
 ## Calculate relative abunance and diversity metrics-----------------------------------------
 
 mt_16s$cal_abund()

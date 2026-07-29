@@ -1,0 +1,13 @@
+245314	b98058ec36dabeb29dc663fb6edcab08	data/lakeerie_ctd1_24Hz.cnv	579649
+245315	0afb7f084613985f5cfb1bc2b5bfe111	data/lakeontario_ctd1_24Hz.cnv	3354858
+245316	921ffb8dde8780537263e190490b80ab	data/lakehuron_ctd1_24Hz.cnv	3910052
+245317	13a43046dd2936939dc96290fd89c6f0	data/station 4_90m_24Hz.cnv	1817839
+245318	a0926c7f557f15d150476c35e19bb06d	data/wm_ctd1_1db.cnv	82481
+245319	f97a5fe6a6fc500a733ef9bd3ecc32bd	data/wm_ctd1_24Hz.cnv	3555830
+245320	b3abf45b1d09dc30af7293d5f11ccc1a	data/lakemichigan_ctd1_24Hz.cnv	3291460
+245321	c39092e3adf1fda42f8a30180cc55b31	data/lakeontario_ctd1_1db.cnv	67748
+245322	5b4fa2f73d616d38537fe3fe6f0a886f	data/lakeerie_ctd1_1db.cnv	13720
+245323	a7753d56e8100c4df0a80429734ce4e9	data/lakeerie_ctd2_1db.cnv	18784
+245324	5a49176c79572f115ca02382b6fd0f5b	data/lakehuron_ctd1_1db.cnv	72382
+245325	c554ecc11561c519dee511ad4c99b795	data/lakeerie_ctd2_24Hz.cnv	1723449
+245326	1eb2e6de07541f1b8c0c8ddc2c98fb51	data/lakemichigan_ctd1_1db.cnv	58045

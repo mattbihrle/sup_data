@@ -82,3 +82,7 @@ Continuing to look at contaminants from the sheik list. I think that I should pr
 # July 27, 2026
 
 Kept working through the contaminants. Added the list from Einsenhofer and figured out a more efficient workflow.
+
+# July 29, 2026
+
+- [ ] Look at OTU4 and OTU82 from sediminibacterium to see what they are similar to. For now I will keep them in.
