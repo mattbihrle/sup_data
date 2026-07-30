@@ -259,3 +259,9 @@ full_t_df |>
   filter(str_detect(xml_file, "Superior")) |> 
   filter(dttm_utc > "2024-08-15" & dttm_utc < "2025-09-01") |> 
   view()
+load("output/data/mt_16s.RData")
+load("output/data/sample_table.RData")
+
+mt_new <- microtable$new(tax_table = mt_16s$tax_table, otu_table = mt_16s$otu_table, sample_table = sample_table)
+
+mt_new$tidy_dataset()

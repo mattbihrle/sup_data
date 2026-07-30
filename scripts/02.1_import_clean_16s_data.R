@@ -11,29 +11,8 @@ invisible(lapply(packages, library, character.only = TRUE))
 # Remove the list of packages and installed packages from the environment
 rm(installed_packages, packages)
 
-# Import meta data from 2024-2025 year -----------------------------------------
-sw_meta <- read_csv("output/data/metadata_supwinter.csv") |> 
-  dplyr::select(!matches(c("12h_med", "round_date")))|> 
-  distinct() |> 
-  mutate(full_id = paste0("s_2425_", sample))
-
-# Import master spreadsheet from google
-# gs4_auth()
-ext_sheet <- read_sheet("https://docs.google.com/spreadsheets/d/1Iq5AIxiH-EBa2lT83cKCUsLwYCvvCl0iHlCbkJw9rQo/edit?gid=1015683691#gid=1015683691")
-# Create a sample table for import into the microtable
-sample_table <- sw_meta |> 
-  full_join(ext_sheet, by = "full_id") |> 
-  mutate(rows = full_id) |> 
-    column_to_rownames("rows") |> 
-    as.data.frame()
-
-sample_table <- sample_table |> 
-  mutate(strat_season = fct_reorder(strat_season, date, .na_rm = F), 
-         strat_season_2 = fct_reorder(strat_season_2, date, .na_rm = F),
-         solar_season = fct_reorder(solar_season, date, .na_rm = F), 
-         mixing = fct_relevel(mixing, "stratified_std", "mixed", "stratified_inverse"))
-
-
+# Import metadata ----------
+load("output/data/sample_table.RData")
 # Import 16S data----------------------------------------------------------------------------
   # First the sample names
   names_df <- readr::read_table("msi_downloads/lotus3_out/final_sample_map_4_R.txt")
@@ -45,21 +24,28 @@ sample_table <- sample_table |>
         phyloseq2meco()
       # Rename columns
       mt_16s$otu_table <- mt_16s$otu_table |> 
-        rename(any_of(names_vec))
+        rename(any_of(names_vec)) |> 
+        # Remove the S__ from the end of the otu columns
+        rename_with(~ str_extract(.x,".*(?=_S[0-9]{1,2})" ))
       # Reorder columns
       mt_16s$otu_table <- mt_16s$otu_table |> 
        dplyr::select(order(colnames(mt_16s$otu_table)))
       colnames(mt_16s$otu_table)
       # rename rows
     mt_16s$sample_table <- mt_16s$sample_table |> 
-      rownames_to_column("sample") |> 
-      dplyr::left_join(names_df, by = join_by(sample == SampleID)) |> 
-      column_to_rownames("RealNames") 
+      rownames_to_column("sample_seq") |> 
+      dplyr::left_join(names_df, by = join_by(sample_seq == SampleID)) |> 
+        mutate(full_id = str_extract(RealNames, ".*(?=_S[0-9]{1,2})")) |> 
+        mutate(rows = full_id) |> 
+      select(-RealNames)
     
-    # Create a column of sample names for later metadata
-    mt_16s$sample_table <- mt_16s$sample_table|> 
-      mutate(full_id = str_extract(rownames(mt_16s$sample_table), ".*(?=_S[0-9]{1,2})"))
-      # Reorder rows alphabetically
+    # join the 16s sample table and the one created earlier
+
+mt_16s$sample_table <- mt_16s$sample_table |> 
+  left_join(sample_table, by = "full_id") |> 
+  column_to_rownames("rows")
+colnames(mt_16s$sample_table)
+# Reorder rows alphabetically
       mt_16s$sample_table <- mt_16s$sample_table |> 
         slice(order(rownames(mt_16s$sample_table)))
     print(rownames(mt_16s$sample_table))
@@ -99,21 +85,16 @@ mt_16s
 mt_16s$sample_table <- mt_16s$sample_table |> 
   slice(
     str_which(mt_16s$sample_table$fastqFile, "Syn.*", negate = T)
-  ) |> 
-  rownames_to_column(var = "rownames") |> 
-  # Add in the other metadata
-  left_join(y = sample_table, by = "full_id") |> 
-  # move rownames back
-  column_to_rownames(var = "rownames")
+  )
 
 mt_16s$tidy_dataset()
 # This should also remove OTUs only found in the synthetic community
 mt_16s
-# set the strat_season to be a factor
-mt_16s$sample_table$strat_season <- factor(mt_16s$sample_table$strat_season, 
-                                           levels = c("summer", "fall", "winter", "spring"), 
-                                           labels = c("Summer", "Fall", "Winter", "Spring"),
-                                           ordered = T)
+# # set the strat_season to be a factor
+# mt_16s$sample_table$strat_season <- factor(mt_16s$sample_table$strat_season, 
+#                                            levels = c("summer", "fall", "winter", "spring"), 
+#                                            labels = c("Summer", "Fall", "Winter", "Spring"),
+#                                            ordered = T)
 
 
 # Okay here start working with the micRoclean package for contamination------------------------------------------------------------
@@ -186,11 +167,11 @@ mt_16s
 mt_16s$tidy_dataset()
 mt_16s
 save(mt_16s, file = "output/data/mt_16s.RData")
-# stop()
+
 # -------------------------------------------------------------------------------
 # Import list of contaminants from Sheik et al 2018 Supplemental Material and from Eisenhofer 2019
 load("output/data/mt_16s.RData")
-
+mt_16s
 contam_genus <- read_tsv("sheik_2018_contamination_table.txt") |>
   rename_with(tolower) |>  
   filter_out(extraction == FALSE & water == FALSE) |> 
@@ -298,9 +279,10 @@ genus <- genus |>
 
 bottom_tax <- top_tax |> 
   filter(tax_rank >= 200)
-mt_16s$tax_table <- mt_16s$tax_table %>%
+
+mt_16s$tax_table <- mt_16s$tax_table |> 
   # filter out contaminants that are not in the top 200 genuses
-  filter(sheik_contam == TRUE & g %in% paste0("g__", bottom_tax$tax)) |> 
+  filter_out(sheik_contam == TRUE & g %in% paste0("g__", bottom_tax$tax)) |> 
   # Acidiovorax seems to be primarily a plant genus so removing that
   # Remove Acidiovorax from the tax_table
   filter(g != "g__Acidiovorax") |> 
@@ -358,11 +340,11 @@ mt_16s$tax_table <- mt_16s$tax_table %>%
   # Massilia are found in freshwater so I should keep them in, but one to keep an eye on
   # Mesorhizobium are found in freshwater so I'll keep them in
   # Microbacterium is not found once I swap to the new kits so I am going to call it a contaminant and remove it
-  filter( g != "g__Microbacterium") |> 
+  filter(g != "g__Microbacterium") |> 
   filter(g != "g__Microlunatus") |> 
   filter(g != "g__Nevskia") |> 
   # Novosphingo seem to be pretty much just contaminents removing anything that is unknown
-  filter(g != "g__Novosphingobium") |> 
+  filter_out(g == "g__Novosphingobium" & s == "s__unknown") |> 
   # g__Paenibacillus has so little abundance and seems to be more soil related
   filter(g != "g__Paenibacillus") |> 
   # Patulibacter are mostly just soil and wastewater samples
@@ -393,7 +375,7 @@ mt_16s$tax_table <- mt_16s$tax_table %>%
 
 mt_16s$tidy_dataset()
 mt_16s
-stop()
+
 # Create a tax table of just the taxa that were removed from the full dataset 
 
 contam_16s <- clone(full_mt_16s)
@@ -402,6 +384,7 @@ contam_16s$tax_table <- contam_16s$tax_table |>
   filter_out(otu %in% mt_16s$tax_table$otu)
 contam_16s
 contam_16s$tidy_dataset()
+contam_16s
 save(contam_16s, file = "output/data/contam_16s.RData")
 save(full_mt_16s, file = "output/data/full_16s.RData")
 ## Calculate relative abunance and diversity metrics-----------------------------------------

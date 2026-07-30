@@ -36,8 +36,8 @@ rm(installed_packages, packages)
 ```{r}
 
 # 16S, Robust Aitchison, NMDS and stressplot
-
-  tb2 <- trans_beta$new(mt_16s, group = "strat_season_2", measure = "bray")
+mt_16s
+  tb2 <- trans_beta$new(mt_16s, group = "strat_season", measure = "bray")
 tb2$cal_ordination(method = "NMDS")
 tb2$cal_manova(manova_all = TRUE)
 print(tb2$res_manova)

@@ -86,3 +86,11 @@ Kept working through the contaminants. Added the list from Einsenhofer and figur
 # July 29, 2026
 
 - [ ] Look at OTU4 and OTU82 from sediminibacterium to see what they are similar to. For now I will keep them in.
+
+# July 30, 2026
+
+Made an nmds plot of the 16S data but there is pretty clear clumping of the sample years being more similar than the season. That makes me think there might be more contamination than I thought
+
+![](images/paste-1.png)
+
+That's kinda a bummer.
