@@ -60,6 +60,9 @@ colnames(mt_16s$sample_table)
     colnames(mt_16s$tax_table) 
   # Replace question marks with 'unknown'
     mt_16s |> tidy_taxonomy(pattern = "\\?", replacement = "unknown")
+  # Replace blanks with "unknown"
+    mt_16s$tax_table <- mt_16s$tax_table |> 
+      mutate(across(everything(), ~str_replace(.x, "__$", "__unknown")))
     mt_16s$tax_table[1:5,]
 
   # Remove mitochondria and chloroplasts
@@ -90,6 +93,21 @@ mt_16s$sample_table <- mt_16s$sample_table |>
 mt_16s$tidy_dataset()
 # This should also remove OTUs only found in the synthetic community
 mt_16s
+
+mt_16s$tax_table <- mt_16s$tax_table |> 
+  mutate(otu_row = rownames(mt_16s$tax_table)) |> 
+  pivot_longer(cols = c(k, p, c, o, f, g, s), names_to = "rank", values_to = "val") |> 
+  mutate(known_val = if_else(str_detect(val, "unknown"), NA_character_, val)) |> 
+  group_by(otu_row) |> 
+  fill(known_val, .direction = "down") |> 
+  mutate(val = if_else(str_detect(val, "unknown") & !is.na(known_val), 
+          paste0(val, "_", known_val), val)) |> 
+  select(-known_val) |> 
+  pivot_wider(names_from = rank, values_from = val) |> 
+  ungroup() |> 
+  column_to_rownames("otu_row")
+
+# Label all blanks as unknowns
 # # set the strat_season to be a factor
 # mt_16s$sample_table$strat_season <- factor(mt_16s$sample_table$strat_season, 
 #                                            levels = c("summer", "fall", "winter", "spring"), 
@@ -405,3 +423,4 @@ save(mt_16s, file = "output/data/mt_16s.RData")
 obs <- ls()
 rm(list = obs)
 rm(obs)
+

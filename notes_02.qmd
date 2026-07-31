@@ -94,3 +94,87 @@ Made an nmds plot of the 16S data but there is pretty clear clumping of the samp
 ![](images/paste-1.png)
 
 That's kinda a bummer.
+
+# July 31, 2026
+
+Learning from yesterday I think I should try and see if there are any differences that I can pull out of the beta diversity. I could also try to run an ancombc2 on the reads or check out the trans_func to see if there is functional diversity. I also think I might try and add in the taxa that I didn't take out by hand and see what happens there.
+
+Okay, plan for today–
+
+- [x] NMDS on full 16s and 16s without my hand removal
+
+- [x] NMDS/MANOVA looking at a variety of variables
+
+- [x] Setup/run an aldex2/ancombc2 on the 16s data (Start here)
+
+- [x] try the trans_func stuff to see what I find
+
+- [ ] Try to take a look at OTU4 and 80? to see what is up with them
+
+- [x] Look at just raw abundances across seasons
+
+Some interesting patterns but nothing crazy.
+
+![](images/paste-2.png)
+
+![](images/paste-3.png)
+
+![](images/paste-4.png)
+
+Looking at the nmds for the full16s data, the clean and just the contaminants it seems like there are not huge shifts between either bit there is the most clustering by deployment rather than by season at all. Maybe I can color by pressure and depth or temp will have something to do with it?
+
+![](images/paste-5.png)
+
+After calcuating functional redundancy (03.4) it looks like most of what I have is aerobic chemoheterotrophy and there is some intracellular parasites . Other wise I don't see a lot of difference.
+
+I should try the tax4fun stuff but for now I want to move on to something else.
+
+From the ancombc2 and aldex2_kw I should keep an eye on:
+
+OTU204
+
+OTU946
+
+OTU1191
+
+OTU658
+
+OTU881
+
+OTU837
+
+OTU1044
+
+This plot of how the significant taxa changes (03.3) seems have some indication that the green OTU204 is more common in the winter and summer than in the spring.
+
+![](images/paste-6.png)
+
+That one is the flavobacterium of unknown species. Cyanobium is also different across all seasons as well as a planctomycete thing. I can also see that the longivirga aurentica is one of the most common.
+
+![](output/plots/longivirga.png) ![](output/plots/longivirga_by_season.png)
+
+It's abundance doesn't really change much by season I would say.
+
+```{r}
+load("output/data/mt_16s.RData")
+
+s_mt <- clone(mt_16s)
+
+s_mt$sample_table <- s_mt$sample_table |> 
+  filter(lake == "superior")
+a <- trans_abund$new(s_mt, taxrank = "g", ntaxa = 50)$plot_bar(facet = "strat_season") |> 
+  plotly::plotly_build()
+
+a
+a <- trans_abund$new(s_mt, taxrank ="s", ntaxa = 100)$plot_bar(facet = "strat_season") 
+plotly::plotly_build()
+
+a
+
+a <- trans_abund$new(s_mt, taxrank ="s", ntaxa = 100)$plot_bar(facet = "deployment") |> 
+  plotly::plotly_build()
+
+
+```
+
+Next I want to look at the cliques. Start there next time. I think the 16S data doesn't tell much of a story but we well see.
