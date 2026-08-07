@@ -167,34 +167,51 @@ mt_16s$tax_table <- mt_16s$tax_table |>
   column_to_rownames("otu_rows") |> 
   mutate(otu = rownames(mt_16s$tax_table)) 
 
+
+mt_16s$tax_table <- mt_16s$tax_table |> 
+  mutate(mod_num = str_pad(str_remove(modules, "M"), width = 2, side = "left", pad = "0")) |> 
+  mutate(modules = ifelse(mod_num == "NA", NA, paste0("M", mod_num))) |> 
+  select(-mod_num)
+
+mt_16s$tax_table$modules <- factor(mt_16s$tax_table$modules)
+
 mt_16s$cal_abund()
 save(mt_16s, file = "output/data/mt_16s_cliques.RData")
 save(t_network, file = "output/data/t_network_16s.RData")
+load("output/data/mt_16s_cliques.RData")
 
+mt_16s$tax_table <- mt_16s$tax_table |> 
+  mutate(mod_num = str_pad(str_remove(modules, "M"), width = 2, side = "left", pad = "0")) |> 
+  mutate(modules = ifelse(mod_num == "NA", NA, paste0("M", mod_num))) |> 
+  select(-mod_num)
+
+mt_16s$tax_table$modules <- factor(mt_16s$tax_table$modules)
+
+mt_16s$tax_table$modules
 mt_16s
 # Look at specifically M1-----------------------------------------------------
 mt_m1 <- clone(mt_16s)
 
 mt_m1$tax_table <- mt_m1$tax_table |> 
-  filter(modules == "M1")
+  filter(modules == "M06")
 
 mt_m1$tidy_dataset()$cal_abund()
 # Plot abundances
 
-rank = "f"
+rank = "g"
 ntaxa = 30
 # Get vector of 20 most abundant families
 
 trans_abund$new(dataset = mt_m1, taxrank = rank, ntaxa = ntaxa)$
   plot_bar(facet = "strat_season") +
-  ggtitle("16S", subtitle = paste("top", ntaxa, rank, "in M1"))
+  ggtitle("16S", subtitle = paste("top", ntaxa, rank, "in M06"))
 
 
 # Look at specifically M2
 mt_m2 <- clone(mt_16s)
 
 mt_m2$tax_table <- mt_m2$tax_table |> 
-  filter(modules == "M2")
+  filter(modules == "M01")
 
 mt_m2$tidy_dataset()$cal_abund()
 # Plot abundances
@@ -205,7 +222,7 @@ ntaxa = 30
 
 trans_abund$new(dataset = mt_m2, taxrank = rank, ntaxa = ntaxa)$
   plot_bar(facet = "strat_season") +
-  ggtitle("16S", subtitle = paste("top", ntaxa, rank, "in M2"))
+  ggtitle("16S", subtitle = paste("top", ntaxa, rank, "in M02"))
 
 # Look at specifically M3
 mt_m3 <- clone(mt_16s)
@@ -245,17 +262,23 @@ ntaxa = 30
 
 # Plot module abundances over time ------------------------------------------------------
 
-t1 <- trans_abund$new(mt_16s, taxrank = "modules", ntaxa = 20)
-
+t1 <- trans_abund$new(mt_16s, taxrank = "modules", ntaxa = 7)
+plot_line(t1)
+mt_16s$tax_table$modules |> 
+  table()
 t1$data_abund |> 
+  filter(Taxonomy %in% unique(t1$data_abund$Taxonomy)[1:7]) |> 
   ggplot(aes(x = date, y = Abundance, color = Taxonomy, label = Taxonomy)) +
-  # geom_rect(aes(xmin = sum_start, xmax = fall_start, ymax = max(relabund) +4 , ymin = max(relabund)+1),  fill = "grey", color = NULL) +
-  # geom_rect(aes(xmin = fall_start, xmax = winter_start, ymax = max(relabund) +4 , ymin = max(relabund)+1),  fill = "green4",  color = NULL) +
-  # geom_rect(aes(xmin = winter_start, xmax = spring_start, ymax = max(relabund) +4 , ymin = max(relabund)+1),  fill = "grey",  color = NULL) +
-  # geom_rect(aes(xmin = spring_start, xmax = max(date), ymax = max(relabund) +4 , ymin = max(relabund)+1),  fill = "green4",  color = NULL) +
-  geom_line(size = 1) +
-  geom_text() +
-  geom_point(size = 2) +
+    # geom_rect(aes(xmin = sum_start, xmax = fall_start, ymax = max(relabund) +4 , ymin = max(relabund)+1),  fill = "grey", color = NULL) +
+    # geom_rect(aes(xmin = fall_start, xmax = winter_start, ymax = max(relabund) +4 , ymin = max(relabund)+1),  fill = "green4",  color = NULL) +
+    # geom_rect(aes(xmin = winter_start, xmax = spring_start, ymax = max(relabund) +4 , ymin = max(relabund)+1),  fill = "grey",  color = NULL) +
+    # geom_rect(aes(xmin = spring_start, xmax = max(date), ymax = max(relabund) +4 , ymin = max(relabund)+1),  fill = "green4",  color = NULL) +
+    geom_vline(aes(xintercept = date, color= strat_season), alpha = 0.3, linewidth = 8) +
+    geom_line(size = 1) +
+      geom_text() +
+        geom_point(size = 2) +
+  scale_color_brewer(palette = "Paired") +
+  # scale_fill_discrete() +
   labs(title = "Module Abundance Over Time",
        y = "Relative Abundance") +
   theme_bw()
@@ -274,179 +297,5 @@ p2 <- ggplot(module_long, aes(x = date, y = relabund, color = module, group = mo
 # Add annotation for seasons in ppt
 
 p2
-# Look at specifically M1-----------------------------------------------------
-mt_m1 <- clone(mt_microtrait)
-
-mt_m1$tax_table <- mt_m1$tax_table |> 
-  filter(modules == "M1")
-
-mt_m1$tidy_dataset()$cal_abund()
-# Plot abundances
-
-rank = "l7"
-ntaxa = 30
-# Get vector of 20 most abundant families
-
-trans_abund$new(dataset = mt_m1, taxrank = rank, ntaxa = ntaxa)$
-  plot_bar(facet = "strat_season") +
-  ggtitle("microtrait", subtitle = paste("top", ntaxa, rank, "in M1"))
 
 
-# Look at specifically M2
-mt_m2 <- clone(mt_microtrait)
-
-mt_m2$tax_table <- mt_m2$tax_table |> 
-  filter(modules == "M2")
-
-mt_m2$tidy_dataset()$cal_abund()
-# Plot abundances
-
-rank = "l7"
-ntaxa = 30
-# Get vector of 20 most abundant families
-
-trans_abund$new(dataset = mt_m2, taxrank = rank, ntaxa = ntaxa)$
-  plot_bar(facet = "strat_season") +
-  ggtitle("microtrait", subtitle = paste("top", ntaxa, rank, "in M2"))
-View(mt_m2$tax_table)
-# Look at specifically M3
-mt_m3 <- clone(mt_microtrait)
-
-mt_m3$tax_table <- mt_m3$tax_table |> 
-  filter(modules == "M3")
-
-mt_m3$tidy_dataset()$cal_abund()
-# Plot abundances
-
-rank = "l7"
-ntaxa = 30
-# Get vector of 20 most abundant families
-
-trans_abund$new(dataset = mt_m3, taxrank = rank, ntaxa = ntaxa)$
-  plot_bar(facet = "strat_season") +
-  ggtitle("microtrait", subtitle = paste("top", ntaxa, rank, "in M3"))
-
-# Look at specifically M4
-mt_m4 <- clone(mt_microtrait)
-
-mt_m4$tax_table <- mt_m4$tax_table |> 
-  filter(modules == "M4")
-
-mt_m4$tidy_dataset()$cal_abund()
-# Plot abundances
-
-rank = "otu"
-ntaxa = 30
-# Get vector of 20 most abundant families
-
-trans_abund$new(dataset = mt_m4, taxrank = rank, ntaxa = ntaxa, high_level = "g")$
-  plot_bar(facet = "strat_season", ggnested = TRUE) +
-  ggtitle("microtrait", subtitle = paste("top", ntaxa, rank, "in M4"))
-
-
-
-# Create dates for season starts
-match("Summer", module_long$strat_season)
-sum_start <- module_long$date[match("Summer", module_long$strat_season)]
-fall_start <- module_long$date[match("Fall", module_long$strat_season)]
-winter_start <- module_long$date[match("Winter", module_long$strat_season)]
-spring_start <- module_long$date[match("Spring", module_long$strat_season)]
-# Line plot - all regions
-p2 <- ggplot(module_long, aes(x = date, y = relabund, color = Module, group = Module, label = rownames(module_long))) +
-  geom_rect(aes(xmin = sum_start, xmax = fall_start, ymax = max(relabund) +4 , ymin = max(relabund)+1),  fill = "grey", color = NULL) +
-  geom_rect(aes(xmin = fall_start, xmax = winter_start, ymax = max(relabund) +4 , ymin = max(relabund)+1),  fill = "green4",  color = NULL) +
-  geom_rect(aes(xmin = winter_start, xmax = spring_start, ymax = max(relabund) +4 , ymin = max(relabund)+1),  fill = "grey",  color = NULL) +
-  geom_rect(aes(xmin = spring_start, xmax = max(date), ymax = max(relabund) +4 , ymin = max(relabund)+1),  fill = "green4",  color = NULL) +
-  geom_line(size = 1) +
-  geom_text() +
-  geom_point(size = 2) +
-  labs(title = "Module Abundance Over Time",
-       y = "Relative Abundance") +
-  theme_bw()
-# Add annotation for seasons in ppt
-
-p2
-
-## Test plotting cliques over the temperature
-
-temp_df_long |> 
-    ungroup() |> 
-    # select(dttm, depth, temp) |> 
-    drop_na(temp) |> 
-    mutate(depth = as.numeric(depth)) |> 
-    # filter(depth < 50) |> 
-        dplyr::select(date, depth, temp, sample_date) |> 
-        # drop_na(temp) |> 
-        distinct() |> 
-    ggplot(aes(x = date, y = depth, z = temp)) +
-      # geom_contour_filled(breaks = breaks) +
-      geom_contour_filled(binwidth = 1) +
-        # scale_fill_brewer(palette = "RdBu", direction = -1) +
-        scale_fill_viridis_d(option = "turbo", labels = temp_labels) +
-  labs(x = "Date", y = "Depth (m)", fill = "Temperature (°C)") +
-    theme_classic() +
-    theme(
-      text = element_text(size = 15),
-      panel.border = element_rect(colour = "black", fill = "red", linewidth = 3)
-    ) +
-  scale_y_reverse(expand = c(0,0), n.breaks = 10) +
-  scale_x_date(expand = c(0,0), date_breaks = "1 month", date_label = "%b", limits = c(as_date("2024-07-20"), NA), ) +
-    guides(fill = guide_legend(ncol = 1, reverse = T)) +
-  # Clique Data
-  geom_point(data = module_long, mapping = aes(x = date, y = 160 - relabund*1.5, z = NULL, color = Module, group = Module, label = rownames(module_long)), size = 2) +
-  geom_line(data = module_long, mapping = aes(x = date, y = 160 - relabund*1.5, z = NULL, color = Module, group = Module, label = rownames(module_long), size = 1)) +
-  scale_color_viridis_d(option = "turbo") +
-    geom_point(data = samp_dates, aes(x = sample_date, y = 38, z = NULL), color = 'white') +
-    # geom_point(data = samp_dates, aes(x = sample_date, y = 22, z = NULL), color = 'white') +
-    # geom_hline(yintercept = 22, color = 'white', linetype = "dashed" ) +
-    # geom_vline(xintercept = sw_meta$date[which(sw_meta$strat_season == "summer")], color = "red") +
-    # geom_vline(xintercept = sw_meta$date[which(sw_meta$strat_season == "fall")]) +
-    # geom_vline(xintercept = sw_meta$date[which(sw_meta$strat_season == "winter")], , color = "red") +
-    # geom_vline(xintercept = sw_meta$date[which(sw_meta$strat_season == "spring")]) +
-    theme(text = element_text(size = 25), aspect.ratio = 0.7) +
-  guides(size = "none") +
-    NULL
-#maybe just one region over time with bars
-
-# ggplot(module_long, aes(x = as.factor(Time), y = relabund, fill = Sampling.Region)) +
-#   geom_bar(stat = "identity", position = "stack") +
-#   facet_wrap(~Module, scales = "free_y")
-
-
-#the problem with this is that it shows all data points from each site which are all very different. I'm going to do boxplots with averages and see if that looks better
-
-# module_means <- module_long %>%
-#   group_by(Sampling.Region, Time, Site, Module) %>%
-#   dplyr::summarise(Mean_Abund = mean(relabund, na.rm = TRUE))
-
-#so that each line only goes through averages, not every point
-# line_means <- module_long %>%
-#   group_by(Sampling.Region, Time, Module) %>%
-#   dplyr::summarise(
-#     Mean_Abund = median(relabund, na.rm = TRUE),
-#     .groups = 'drop'
-#   )
-
-# module_long_estuary <- module_long %>%
-#   filter(!Sampling.Region %in% c("Apostle Islands", "Jay Cooke State Park", "Pokegama River"))
- 
-# line_means_estuary <- line_means %>%
-#   filter(!Sampling.Region %in% c("Apostle Islands", "Jay Cooke State Park", "Pokegama River"))
-
-# module_means_estuary <- module_means %>%
-#   filter(!Sampling.Region %in% c("Apostle Islands", "Jay Cooke State Park", "Pokegama River"))
- 
-# ggplot(module_long_estuary, aes(x = factor(Time), y = relabund, fill = Module)) +
-#   #geom_boxplot(alpha = 1, outlier.size = 0.5) +
-#   # Line connecting the means
-#   geom_line(data = line_means_estuary,
-#             aes(x = factor(Time), y = Mean_Abund, group = Module, color = Module),
-#             size = 1.2, inherit.aes = FALSE) +
-#   # Points at the means
-#   #geom_point(data = module_means_estuary,
-#              #aes(x = factor(Time), y = Mean_Abund, color = Module),
-#              #size = 0.5, inherit.aes = FALSE) +
-#   facet_wrap(~Sampling.Region) +
-#   labs(y = "Relative Abundance (%)", x = "Time Point") +
-#   theme_minimal() +
-#   theme(axis.text.x = element_text(angle = 45, hjust = 1))

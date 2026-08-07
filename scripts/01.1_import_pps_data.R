@@ -21,7 +21,7 @@ sw_meta <- read_csv("output/data/metadata_supwinter.csv") |>
   mutate(full_id = paste0("s_2425_", sample))
 
 # Import master spreadsheet from google
-# gs4_auth()
+gs4_auth(email = "bihrl005@d.umn.edu")
 ext_sheet <- read_sheet("https://docs.google.com/spreadsheets/d/1Iq5AIxiH-EBa2lT83cKCUsLwYCvvCl0iHlCbkJw9rQo/edit?gid=1015683691#gid=1015683691") |> 
   # make sure all columns are the correct type 
   mutate(across(contains("dttm"), ~parse_date_time(.x, orders = c("dmyHMS", "mdyHMS"))),
@@ -112,59 +112,59 @@ sample_table <- sample_table |>
 
 # Quick graph to see how the years change 
 
-# p1 <- sample_table |> 
-#   drop_na(date) |> 
-#   group_by(deployment) |> 
-#   filter(lake == "superior") |> 
-#   mutate(med_t = median(temp_c_24h_med_pps)) |> 
-#   ungroup() |> 
-# ggplot(aes(date, temp_c_24h_med_pps, color = deployment)) +
-#   geom_point() +
-#     scale_fill_viridis_d() +
-#     scale_x_date(date_breaks = "1 month") +
-#       stat_smooth(formula = y~1, aes(group = 1), method = "lm", se = FALSE) +
-#       # stat_summary(fun = median, geom = "hline", aes(yintercept = after_stat(y))) +
-#       facet_wrap(~deployment, scales = "free") +
-# geom_hline(aes(yintercept = med_t, group = deployment)) + 
-# geom_vline(aes(xintercept = as_date("2024-08-18"), color = "green")) +
-# geom_vline(aes(xintercept = as_date("2024-12-22"), color = "red"))+
-# geom_vline(aes(xintercept = as_date("2025-02-02"), color = "black")) +
-# geom_vline(aes(xintercept = as_date("2025-05-25"), color = "blue")) +
-#   theme(axis.text.x = element_text(angle = 75, hjust = 1))
-# # load("output/data/temp_df_long_full.RData")
-# p1
-# # Add temp labels
-# temp_labels_1 <- seq(0, 17, by = 1)
-# temp_labels_2 <- seq(1, 18, by = 1)
-
-# temp_labels <- paste0(temp_labels_1, "-", temp_labels_2)
+p1 <- sample_table |> 
+  drop_na(date) |> 
+  group_by(deployment) |> 
+  filter(lake == "superior") |> 
+  mutate(med_t = median(temp_c_24h_med_pps)) |> 
+  ungroup() |> 
+ggplot(aes(date, temp_c_24h_med_pps, color = deployment)) +
+  geom_point() +
+    scale_fill_viridis_d() +
+    scale_x_date(date_breaks = "1 month") +
+      stat_smooth(formula = y~1, aes(group = 1), method = "lm", se = FALSE) +
+      # stat_summary(fun = median, geom = "hline", aes(yintercept = after_stat(y))) +
+      facet_wrap(~deployment, scales = "free") +
+geom_hline(aes(yintercept = med_t, group = deployment)) + 
+geom_vline(aes(xintercept = as_date("2024-08-18"), color = "green")) +
+geom_vline(aes(xintercept = as_date("2024-12-22"), color = "red"))+
+geom_vline(aes(xintercept = as_date("2025-02-02"), color = "black")) +
+geom_vline(aes(xintercept = as_date("2025-05-25"), color = "blue")) +
+  theme(axis.text.x = element_text(angle = 75, hjust = 1))
 # load("output/data/temp_df_long_full.RData")
-# p2 <- temp_df_long_full |> 
-#     ungroup() |> 
-#     # select(dttm, depth, temp) |> 
-#     drop_na(temp) |> 
-#     mutate(depth = as.numeric(depth)) |> 
-#     # filter(depth < 50) |> 
-#         dplyr::select(date, depth, temp) |> 
-#         # drop_na(temp) |> 
-#         distinct() |> 
-#     ggplot(aes(x = date, y = depth, z = temp)) +
-#       # geom_contour_filled(breaks = breaks) +
-#       geom_contour_filled(binwidth = 1) +
-#         # scale_fill_brewer(palette = "RdBu", direction = -1) +
-#         scale_fill_viridis_d(option = "turbo", labels = temp_labels) +
-#   labs(x = "Date", y = "Depth (m)", fill = "Temperature (°C)") +
-#   geom_point(data = filter(sample_table, deployment == "s_2425_WM"), aes(x = date, y = 38, z = NULL), color = 'white') +
-#     theme_classic() +
-#     theme(
-#       text = element_text(size = 15),
-#       panel.border = element_rect(colour = "black", fill = "red", linewidth = 3)
-#     ) +
-#   scale_y_reverse(expand = c(0,0), n.breaks = 10) +
-#   scale_x_date(expand = c(0,0), date_breaks = "1 month", date_label = "%b", limits = c(as_date("2024-07-20"), as_date("2025-08-15"))) +
-#     guides(fill = guide_legend(ncol = 1, reverse = T)) 
-# p1
-# p1/p2
+p1
+# Add temp labels
+temp_labels_1 <- seq(0, 17, by = 1)
+temp_labels_2 <- seq(1, 18, by = 1)
+
+temp_labels <- paste0(temp_labels_1, "-", temp_labels_2)
+load("output/data/temp_df_long_full.RData")
+p2 <- temp_df_long_full |> 
+    ungroup() |> 
+    # select(dttm, depth, temp) |> 
+    drop_na(temp) |> 
+    mutate(depth = as.numeric(depth)) |> 
+    # filter(depth < 50) |> 
+        dplyr::select(date, depth, temp) |> 
+        # drop_na(temp) |> 
+        distinct() |> 
+    ggplot(aes(x = date, y = depth, z = temp)) +
+      # geom_contour_filled(breaks = breaks) +
+      geom_contour_filled(binwidth = 1) +
+        # scale_fill_brewer(palette = "RdBu", direction = -1) +
+        scale_fill_viridis_d(option = "turbo", labels = temp_labels) +
+  labs(x = "Date", y = "Depth (m)", fill = "Temperature (°C)") +
+  geom_point(data = filter(sample_table, deployment == "s_2425_WM"), aes(x = date, y = 38, z = NULL), color = 'white') +
+    theme_classic() +
+    theme(
+      text = element_text(size = 15),
+      panel.border = element_rect(colour = "black", fill = "red", linewidth = 3)
+    ) +
+  scale_y_reverse(expand = c(0,0), n.breaks = 10) +
+  scale_x_date(expand = c(0,0), date_breaks = "1 month", date_label = "%b", limits = c(as_date("2024-07-20"), as_date("2025-08-15"))) +
+    guides(fill = guide_legend(ncol = 1, reverse = T)) 
+p2
+p1/p2
 
 # Next up I could write some code for the superior samples to determine summer vs mixed vs winter. 
 
@@ -190,40 +190,39 @@ sample_table <- sample_table |>
 # summer when the temp is above 4C, between 3-4C we have fall/spring and winter is below 3C
 
 s_df <- sample_table |> 
-  filter(lake == "superior") |> 
-  filter_out(deployment == "s_2324_WM") |> 
+  filter(lake == "superior") |>  
   group_by(deployment) |> 
   mutate(max_t_date = date[which(temp_c_24h_med_pps == max(temp_c_24h_med_pps))],
         min_t_date = date[which(temp_c_24h_med_pps == min(temp_c_24h_med_pps))]) |> 
   ungroup() |> 
       mutate(strat_season_new = case_when(
-    temp_c_24h_med_pps >= 4 & (date <= max_t_date | date > min_t_date) ~ "summer", 
-    (temp_c_24h_med_pps <= 3 & date < min_t_date) |(temp_c_24h_med_pps <=2 & date >= min_t_date) ~ "winter", 
+    temp_c_24h_med_pps >= 3.8 & (date <= max_t_date | date > min_t_date) ~ "summer", 
+    (temp_c_24h_med_pps <= 3 & date < min_t_date) |(temp_c_24h_med_pps <=2.2 & date >= min_t_date)| (date == min_t_date) ~ "winter", 
     temp_c_24h_med_pps > 3 & date > max_t_date & date < min_t_date ~ "fall", 
     temp_c_24h_med_pps < 4 & temp_c_24h_med_pps > 2 & date > min_t_date ~ "spring"
   )) |> 
 select(full_id, temp_c_24h_med, temp_c_24h_med_pps,strat_season, strat_season_new, date, deployment)  
 
 
-# p3 <- s_df |> 
-#   # filter(deployment == "s_2425_WM") |> 
-#   ggplot(aes(x = date, y = temp_c_24h_med_pps, color = strat_season_new)) +
-#   geom_point() +
-#     scale_x_date(
-#     date_breaks = "1 month",   # Forces a tick mark for every month
-#     date_labels = "%b"         # "%b" formats the date to a 3-letter month
-#   )
-# p3
-# p4 <- s_df |> 
-#   filter(deployment == "s_2425_WM") |> 
-#   ggplot(aes(x = date, y = temp_c_24h_med_pps, color = strat_season)) +
-#     scale_x_date(
-#     date_breaks = "1 month",   # Forces a tick mark for every month
-#     date_labels = "%b"         # "%b" formats the date to a 3-letter month
-#   ) +
-#   geom_point()
+p3 <- s_df |>
+  # filter(deployment == "s_2425_WM") |>
+  ggplot(aes(x = date, y = temp_c_24h_med_pps, color = strat_season_new)) +
+  geom_point() +
+    scale_x_date(
+    date_breaks = "1 month",   # Forces a tick mark for every month
+    date_labels = "%b"         # "%b" formats the date to a 3-letter month
+  )
+p3
+p4 <- s_df |>
+  filter(deployment == "s_2324_WM") |>
+  ggplot(aes(x = date, y = temp_c_24h_med_pps, color = strat_season_new)) +
+    scale_x_date(
+    date_breaks = "1 month",   # Forces a tick mark for every month
+    date_labels = "%b"         # "%b" formats the date to a 3-letter month
+  ) +
+  geom_point()
 
-# p3/p4/p2
+p3/p4/p2
 
 # Okay now to replace the old strat season with the new
 sample_table <- sample_table |> 

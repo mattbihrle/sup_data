@@ -178,3 +178,79 @@ a <- trans_abund$new(s_mt, taxrank ="s", ntaxa = 100)$plot_bar(facet = "deployme
 ```
 
 Next I want to look at the cliques. Start there next time. I think the 16S data doesn't tell much of a story but we well see.
+
+# August 03, 2026
+
+## 16S Data Summary
+
+- The NMDS shows clumping by deployment but not by season
+
+- Top interesting taxa are:
+
+  - Longivirga Aurantica
+
+    - Lake sediment bacteria (actinomycete)
+
+  - Cyanobium–They are most abundant during the spring and summer
+
+  - 
+
+  - OTU204 flavobacterium
+
+    ![](output/plots\cliques_16s_all_abundance_by_season.png)
+
+I'm seeing a spike in module 67 (purple) during the summer months. That one is primarily synechococcus so that's interesting to see. I wonder if we have a genome for that?
+
+M1 and M2 run in opposition to each other, I wonder why that is?
+
+As per Cody's suggestion I tried a bunch of rarefying and normalizing and they all came out about the same. The function is in "scratch.R" if needed in the future.
+
+```{r}
+load("output/data/mt_16s.RData")
+
+s_mt <- clone(mt_16s)
+
+for(i in 1:12){
+  s_mt <- clone(mt_16s)
+  s_mt$sample_table <- s_mt$sample_table |> 
+  filter(lake == "superior") |> 
+  mutate(month = month(date)) |> 
+    filter(month == i)
+  s_mt$tidy_dataset()
+
+  a <- trans_abund$new(s_mt, taxrank = "g", ntaxa = 50)$plot_bar(facet = "deployment") +
+  ggtitle(paste0("Month:", i))
+  print(a)
+}
+```
+
+This shows comparisons month to month, it all seems pretty similar to me...
+
+Taken from gemini :(
+
+|  |  |  |  |  |
+|---------------|---------------|---------------|---------------|---------------|
+| **Research Goal** | **group** | **within_group** | **by_group** | **What it Measures** |
+| **Seasonal Turnover** | `"season"` | `FALSE` | `"deployment"` | Turnover between seasons, paired strictly within each deployment year. |
+| **Deployment Shifts** | `"deployment"` | `FALSE` | `"season"` | Turnover between deployment years, paired strictly within the same season. |
+| **Within-Season Dispersion** | `"season"` | `TRUE` | `"deployment"` | Dissimilarity among bi-weekly samples within each individual season-deployment pair. |
+
+Stopped at beta turnover in mecoturn. Look at Cody's email for more. Hopefully I can start here with the "b" object and see what has come of that.
+
+# August 05, 2026
+
+Working on beta dispersal. I have some notes on what I was thinking about in one of the stegen papers in zotero under stats. I think I need a break from it now. What I am trying to do is seeing if I can quantify much turnover there is with each sample.
+
+Next steps:
+
+- [ ] Beta dispersion
+
+- [ ] upset plots
+
+# August 07, 2026
+
+I'm seeing here there is a trend that the closer in time two samples are, the more likely it is that environmental selection is responsible for the differences between the samples. Which makes sense, there is less time for the samples to change.
+
+![](output/plots/beta_dispersion_significant_diff.png)
+
+I next want to look at temperature and mixing and if that has an affect. Start next time by calculating days since stratification and see if that tells us anything.

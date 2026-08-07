@@ -265,3 +265,111 @@ load("output/data/sample_table.RData")
 mt_new <- microtable$new(tax_table = mt_16s$tax_table, otu_table = mt_16s$otu_table, sample_table = sample_table)
 
 mt_new$tidy_dataset()
+
+mt_16s$tax_table |> 
+  filter(str_detect(g, "Cyano")) |> 
+  view()
+
+
+
+
+# Function to test a bunch of different normalizations and plotting
+
+plot_nmds <- function(mt_16s, norm = NULL, betadiv = NULL, group = "strat_season") {
+# First normalize
+    for(i in 1:length(norm)) {
+  n <- trans_norm$new(mt_16s)
+n <- n$norm(method = norm[i])
+n$cal_betadiv(method = betadiv)
+ # Then run the normalization with each of the beta diversity measures
+ for(ii in 1:length(betadiv)){
+tb2 <- trans_beta$new(n, group = "solar_season", measure = betadiv[ii])
+tb2$cal_ordination(method = "NMDS")
+
+plot <- tb2$plot_ordination(plot_color = group, plot_shape = "deployment", plot_type = c("point", "ellipse"), NMDS_stress_pos = NULL, ellipse_level = 0.95) +
+  # geom_arrow_chain(colour = "black") + 
+    ggtitle("NMDS Ordination of WM Data", subtitle = paste("Stress = ", round(tb2$res_ordination$model$stress, 2), 
+  "Normalization:", norm[i], "Distance:", betadiv[ii])) + 
+    # geom_label_repel(label = mt_16s$sample_table$full_id, color = "black") +
+    labs(color = group) +
+    guides(fill = "none") +
+    theme_classic() +
+    theme(
+      text = element_text(size = 15),
+      panel.border = element_rect(colour = "black", fill = NA, linewidth = 3)
+    )
+  print(plot)
+    }
+  }
+}
+norms <- c("hellinger", "rarefy", "SRS", "GMPR", "CSS", "DESeq2", "normalize", "standardize", "log")
+betadiv = c("bray", "robust.aitchison")
+plot_nmds(mt_16s, norm = norms, betadiv = betadiv, group = "strat_season")
+
+library(mecoturn)
+load("output/data/mt_16s.RData")
+b <- betaturn$new(mt_16s, measure = "betaNRI", filter_thres = 0.0001)
+save(b, "output/data/betaturn.RData")
+b$cal_group_distance(group = "solar_season")
+head(b$res_group_distance)
+data(wheat_16S)
+wheat_16S$sample_table
+
+#Convert .nwk tree file to phylo format
+
+tree <- ape::read.tree("data/16s/lotus3_out/OTUphylo.nwk")
+
+mt_16s$phylo_tree <- tree
+mt_16s
+mt_16s$tidy_dataset()
+mt_16s
+
+
+# Functions I'd use?
+
+# Load and install packages
+
+load("output/data/mt_16s.RData")
+
+s_mt <- clone(mt_16s)
+
+for(i in 1:12){
+  s_mt <- clone(mt_16s)
+  s_mt$sample_table <- s_mt$sample_table |> 
+  filter(lake == "superior") |> 
+  mutate(month = month(date)) |> 
+    filter(month == i)
+  s_mt$tidy_dataset()
+
+  a <- trans_abund$new(s_mt, taxrank = "g", ntaxa = 50)$plot_bar(facet = "deployment") +
+  ggtitle(paste0("Month:", i))
+  print(a)
+}
+load("output/data/mt_16s.RData")
+mt_r <- clone(mt_16s) 
+
+mt_r$rarefy_samples()
+
+n <- trans_norm$new(mt_r)
+
+n <- n$norm(method = "hellinger")
+
+
+n$cal_betadiv(method = "bray")
+
+tb2 <- trans_beta$new(n, group = "strat_season", measure = "bray")
+tb2$cal_ordination(method = "NMDS")
+
+plot <- tb2$plot_ordination(plot_color = "strat_season", plot_shape = "deployment", plot_type = c("point", "ellipse"), NMDS_stress_pos = NULL, ellipse_level = 0.95) +
+  # geom_arrow_chain(colour = "black") + 
+    ggtitle("NMDS Ordination of WM Data", subtitle = paste("Stress = ", round(tb2$res_ordination$model$stress, 2), 
+  "Normalization:", "hellinger", "Distance:", "bray")) + 
+    # geom_label_repel(label = mt_16s$sample_table$full_id, color = "black") +
+    labs(color = "strat_season") +
+    guides(fill = "none") +
+    theme_classic() +
+    theme(
+      text = element_text(size = 15),
+      panel.border = element_rect(colour = "black", fill = NA, linewidth = 3)
+    )
+  plot

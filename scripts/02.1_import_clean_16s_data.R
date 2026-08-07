@@ -407,6 +407,11 @@ save(contam_16s, file = "output/data/contam_16s.RData")
 save(full_mt_16s, file = "output/data/full_16s.RData")
 ## Calculate relative abunance and diversity metrics-----------------------------------------
 
+# Add phylogenetic tree
+
+mt_16s$phylo_tree <- ape::read.tree("data/16s/lotus3_out/OTUphylo.nwk")
+mt_16s$tidy_dataset()
+
 mt_16s$cal_abund()
 mt_16s$taxa_abund$p[1:5,1:5]
 
@@ -414,7 +419,7 @@ mt_16s$taxa_abund$p[1:5,1:5]
 mt_16s$cal_alphadiv()
 
 # Calc Bray Curtis Dissimilarity
-mt_16s$cal_betadiv(method = c("bray","aitchison","robust.aitchison", "jaccard"))
+mt_16s$cal_betadiv(method = c("bray","aitchison","robust.aitchison"))
 mt_16s$beta_diversity$bray
 
 
