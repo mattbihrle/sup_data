@@ -373,3 +373,10 @@ plot <- tb2$plot_ordination(plot_color = "strat_season", plot_shape = "deploymen
       panel.border = element_rect(colour = "black", fill = NA, linewidth = 3)
     )
   plot
+
+
+mt_16s$sample_table |> 
+  filter(deployment == "s_2122_WM") |> 
+  select(full_id, strat_season, date, everything()) |> 
+  view()
+

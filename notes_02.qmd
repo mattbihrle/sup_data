@@ -253,4 +253,22 @@ I'm seeing here there is a trend that the closer in time two samples are, the mo
 
 ![](output/plots/beta_dispersion_significant_diff.png)
 
-I next want to look at temperature and mixing and if that has an affect. Start next time by calculating days since stratification and see if that tells us anything.
+I next want to look at temperature and mixing and if that has an effect. Start next time by calculating days since stratification and see if that tells us anything.
+
+![Looking at the beta dispersion colored by number of days since the onset of fall, there doesn't seem to be a huge patter. I guess you could say that in the green range is where most of the diversity due to selection is. Howeve](output/plots\beta_turnover_days_since_fall.png)
+
+![](output/plots\beta_dispersion_temperature_diff.png)
+
+However, if we look at the temperature difference we see that most of the significant bNTI difference is below a temperature difference of 4C. That is saying that selection is more important when temperatures are between 4 degrees difference. And of the non-significant portion (\>2 \<-2), drift and dispersal are bigger drivers.
+
+![](output/plots\beta_dispersion_deployment.png)
+
+Looking at beta dispersion by deployment it seem like the samples from s_2122 and s_2223 have more of a spread of difference than the others. What were those years like?
+
+![](output/plots\beta_dispersion_sig_stations.png)
+
+If I just take WM2122 and filter to see only the significant stations I can see that WM7, 8, 15, 17, 19, 20 are most of the significant ones. I'm super curious what those have in common?
+
+It may just be the end of the day but I feel like I've been doing enough here to see that:
+
+- The means of the deployments are not statistically significant, neither are the means of stratification season. Next I want to look to see if ice conditions or storm conditions might have caused any of these changes? Start here on Wednesday.
